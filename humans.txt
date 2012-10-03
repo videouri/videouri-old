@@ -1,0 +1,16 @@
+/* the humans responsible & colophon */
+/* humanstxt.org */
+
+/* TEAM */
+  Chef: Alexandru Budurovici
+  Site: www.videouri.com
+  Twitter: @videouri
+  Location: Madrid, Spain
+
+/* THANKS */
+  ES Translator: Carlos Moreno Ortega
+  Location: Madrid, Spain
+
+/* SITE */
+  Language: English / Castellano / Romanian
+  IDE: Sublime2, Notepad++

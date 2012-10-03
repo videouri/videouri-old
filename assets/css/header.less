@@ -1,0 +1,114 @@
+header {
+  width: 100%;
+  border-width: 1px 0 0;
+  border-top: 1px solid #ddd;
+  hr{
+    margin-top: 10px;
+  }
+
+  #header_content {
+    position: relative;
+
+    #top_menu {
+      margin-top: -1px;
+      padding: 20px;
+
+      background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPHJhZGlhbEdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgY3g9IjUwJSIgY3k9IjUwJSIgcj0iNzUlIj4KICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmZmZmZmYiIHN0b3Atb3BhY2l0eT0iMSIvPgogICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjZmZmZmZmIiBzdG9wLW9wYWNpdHk9IjAiLz4KICA8L3JhZGlhbEdyYWRpZW50PgogIDxyZWN0IHg9Ii01MCIgeT0iLTUwIiB3aWR0aD0iMTAxIiBoZWlnaHQ9IjEwMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+      background: -moz-radial-gradient(center, ellipse cover,  rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%);
+      background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(255,255,255,0)));
+      background: -webkit-radial-gradient(center, ellipse cover,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%);
+      background: -o-radial-gradient(center, ellipse cover,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%);
+      background: -ms-radial-gradient(center, ellipse cover,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%);
+      background: radial-gradient(center, ellipse cover,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%);
+      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#00ffffff',GradientType=1 );
+
+      -webkit-border-bottom-right-radius: 5px;
+      -webkit-border-bottom-left-radius: 5px;
+      -moz-border-radius-bottomright: 5px;
+      -moz-border-radius-bottomleft: 5px;
+      border-bottom-right-radius: 5px;
+      border-bottom-left-radius: 5px;
+
+      .box-shadow(0px 8px 6px -6px #888);
+
+      ul {
+        position: relative;
+        margin: 0;
+        padding: 0;
+        line-height: 0;
+
+        li { 
+          display: inline;
+          padding: 0;
+          margin: 0;
+          font: bold 16px/0 'Ubuntu', Helvetica, Arial, sans-serif;
+          color: #fff;
+
+          a {
+            color:#6C695E;
+            text-shadow: 0 1px 0 #FFFFFF;
+          }
+
+        }
+
+        .left { position: absolute; left: 0; }
+        .logo { background: url('../imgs/logo.png') no-repeat center; width: 300px; height: 60px; }
+        .welcome { text-align:center; display: block; margin: 0 auto; }
+        .variable { color: #F24507; font-style: italic;}
+        .right { position: absolute; top: 0; right: 0; }
+
+      } // end of .top_menu ul
+
+    } // end of .top_menu
+
+    .top_header {
+      overflow: hidden;
+      margin: 20px 0 0 0;
+      padding: 0;
+
+      #search_form {
+        display: block;
+        overflow: hidden;
+        float: right;
+
+        input[type="text"] {
+          border: 0;
+          font: "Monotype Corsiva";
+          border-bottom: 1px dashed black;
+          background-color: transparent;
+          font-size:24px;
+          text-align: right;
+          outline:none;
+          padding:6px 5px 6px 20px;
+          text-shadow:1px 1px 1px #fff;
+          width:500px;
+          height: 38px;
+          float:left;
+        }
+
+        .button {
+          border:none;
+          border-bottom: 1px dashed #000;
+          background: transparent;
+          outline:none;
+          cursor:pointer;
+
+          .button-content {
+            background: #f2f2f2 url('../imgs/search.png') no-repeat center;
+            box-shadow: none;
+            display: block;
+            opacity: 0.6;
+            padding: 0;
+            height: 50px;
+            width: 43px;
+          }
+
+        }
+
+      } // end of .top_header #search_form
+
+    } // end of .top_header
+
+  } // end of #header_content
+
+} // end of header
