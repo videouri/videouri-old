@@ -16,12 +16,12 @@
  * through the world wide web, please send an email to
  * licensing@ellislab.com so we can send you a copy immediately.
  *
- * @package		CodeIgniter
- * @author		EllisLab Dev Team
- * @copyright	Copyright (c) 2008 - 2012, EllisLab, Inc. (http://ellislab.com/)
- * @license		http://opensource.org/licenses/AFL-3.0 Academic Free License (AFL 3.0)
- * @link		http://codeigniter.com
- * @since		Version 1.0
+ * @package     CodeIgniter
+ * @author      EllisLab Dev Team
+ * @copyright   Copyright (c) 2008 - 2012, EllisLab, Inc. (http://ellislab.com/)
+ * @license     http://opensource.org/licenses/AFL-3.0 Academic Free License (AFL 3.0)
+ * @link        http://codeigniter.com
+ * @since       Version 1.0
  * @filesource
  */
 
@@ -33,7 +33,7 @@
 | URL to your CodeIgniter root. Typically this will be your base URL,
 | WITH a trailing slash:
 |
-|	http://example.com/
+|   http://example.com/
 |
 | If this is not set then CodeIgniter will guess the protocol, domain and
 | path to your installation.
@@ -81,14 +81,14 @@ $config['index_page'] = '';
 | URI string.  The default setting of 'AUTO' works for most servers.
 | If your links do not seem to work, try one of the other delicious flavors:
 |
-| 'AUTO'			Default - auto detects
-| 'PATH_INFO'		Uses the PATH_INFO
-| 'QUERY_STRING'	Uses the QUERY_STRING
-| 'REQUEST_URI'		Uses the REQUEST_URI
-| 'ORIG_PATH_INFO'	Uses the ORIG_PATH_INFO
+| 'AUTO'            Default - auto detects
+| 'CLI' or 'argv'   Uses $_SERVER['argv'] (for php-cli only)
+| 'PATH_INFO'       Uses $_SERVER['PATH_INFO']
+| 'REQUEST_URI'     Uses $_SERVER['REQUEST_URI']
+| 'QUERY_STRING'    Uses $_SERVER['QUERY_STRING']
 |
 */
-$config['uri_protocol']	= 'AUTO';
+$config['uri_protocol'] = 'AUTO';
 
 /*
 |--------------------------------------------------------------------------
@@ -113,7 +113,7 @@ $config['url_suffix'] = '';
 | than english.
 |
 */
-$config['language']	= 'english';
+$config['language'] = 'english';
 
 /*
 |--------------------------------------------------------------------------
@@ -122,6 +122,8 @@ $config['language']	= 'english';
 |
 | This determines which character set is used by default in various methods
 | that require a character set to be provided.
+|
+| See http://php.net/htmlspecialchars for a list of supported charsets.
 |
 */
 $config['charset'] = 'UTF-8';
@@ -215,15 +217,15 @@ $config['directory_trigger']	= 'd'; // experimental not currently in use
 | You can enable error logging by setting a threshold over zero. The
 | threshold determines what gets logged. Threshold options are:
 |
-|	0 = Disables logging, Error logging TURNED OFF
-|	1 = Error Messages (including PHP errors)
-|	2 = Debug Messages
-|	3 = Informational Messages
-|	4 = All Messages
+|   0 = Disables logging, Error logging TURNED OFF
+|   1 = Error Messages (including PHP errors)
+|   2 = Debug Messages
+|   3 = Informational Messages
+|   4 = All Messages
 |
 | You can also pass in a array with threshold levels to show individual error types
-| 
-| 	array(2) = Debug Messages, without Error Messages
+|
+|   array(2) = Debug Messages, without Error Messages
 |
 | For a live site you'll usually only enable Errors (1) to be logged otherwise
 | your log files will fill up very fast.
@@ -283,19 +285,24 @@ $config['encryption_key'] = 's?Gufre_re$7tuTAq3@U_AbR';
 | Session Variables
 |--------------------------------------------------------------------------
 |
-| 'sess_cookie_name'		= the name you want for the cookie
-| 'sess_expiration'			= the number of SECONDS you want the session to last.
+| 'sess_driver'             = the driver to load: cookie (Classic), native (PHP sessions),
+|   or your custom driver name
+| 'sess_valid_drivers'      = additional valid drivers which may be loaded
+| 'sess_cookie_name'        = the name you want for the cookie
+| 'sess_expiration'         = the number of SECONDS you want the session to last.
 |   by default sessions last 7200 seconds (two hours).  Set to zero for no expiration.
-| 'sess_expire_on_close'	= Whether to cause the session to expire automatically
+| 'sess_expire_on_close'    = Whether to cause the session to expire automatically
 |   when the browser window is closed
-| 'sess_encrypt_cookie'		= Whether to encrypt the cookie
-| 'sess_use_database'		= Whether to save the session data to a database
-| 'sess_table_name'			= The name of the session database table
-| 'sess_match_ip'			= Whether to match the user's IP address when reading the session data
-| 'sess_match_useragent'	= Whether to match the User Agent when reading the session data
-| 'sess_time_to_update'		= how many seconds between CI refreshing Session Information
+| 'sess_encrypt_cookie'     = Whether to encrypt the cookie
+| 'sess_use_database'       = Whether to save the session data to a database
+| 'sess_table_name'         = The name of the session database table
+| 'sess_match_ip'           = Whether to match the user's IP address when reading the session data
+| 'sess_match_useragent'    = Whether to match the User Agent when reading the session data
+| 'sess_time_to_update'     = how many seconds between CI refreshing Session Information
 |
 */
+$config['sess_driver']          = 'cookie';
+$config['sess_valid_drivers']   = array();
 $config['sess_cookie_name']		= 'videouri_com';
 $config['sess_expiration']		= 86400;
 $config['sess_expire_on_close']	= FALSE;
@@ -373,17 +380,29 @@ $config['csrf_exclude_uris'] = array();
 | by the output class.  Do not 'echo' any values with compression enabled.
 |
 */
-$config['compress_output'] = false;
+$config['compress_output'] = FALSE;
+
+/*
+|--------------------------------------------------------------------------
+| Minify
+|--------------------------------------------------------------------------
+|
+| Removes extra characters (usually unnecessary spaces) from your
+| output for faster page load speeds.  Makes your outputted HTML source
+| code less readable.
+|
+*/
+$config['minify_output'] = FALSE;
 
 /*
 |--------------------------------------------------------------------------
 | Master Time Reference
 |--------------------------------------------------------------------------
 |
-| Options are 'local' or 'gmt'.  This pref tells the system whether to use
-| your server's local time as the master 'now' reference, or convert it to
-| GMT.  See the 'date helper' page of the user guide for information
-| regarding date handling.
+| Options are 'local' or any PHP supported timezone. This preference tells
+| the system whether to use your server's local time as the master 'now'
+| reference, or convert it to the configured one timezone. See the 'date
+| helper' page of the user guide for information regarding date handling.
 |
 */
 $config['time_reference'] = 'local';
@@ -407,11 +426,16 @@ $config['rewrite_short_tags'] = FALSE;
 | Reverse Proxy IPs
 |--------------------------------------------------------------------------
 |
-| If your server is behind a reverse proxy, you must whitelist the proxy IP
-| addresses from which CodeIgniter should trust the HTTP_X_FORWARDED_FOR
-| header in order to properly identify the visitor's IP address.
-| Comma-delimited, e.g. '10.0.1.200,10.0.1.201'
+| If your server is behind a reverse proxy, you must whitelist the proxy
+| IP addresses from which CodeIgniter should trust headers such as
+| HTTP_X_FORWARDED_FOR and HTTP_CLIENT_IP in order to properly identify
+| the visitor's IP address.
 |
+| You can use both an array or a comma-separated list of proxy addresses,
+| as well as specifying whole subnets. Here are a few examples:
+|
+| Comma-separated:  '10.0.1.200,192.168.5.0/24'
+| Array:        array('10.0.1.200', '192.168.5.0/24')
 */
 $config['proxy_ips'] = '';
 

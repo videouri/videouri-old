@@ -65,11 +65,12 @@ h6 { font-size: 10px; line-height: 16px; }*/
 
   #home {
     float: left;
-    background: url("../imgs/content-bg.png") no-repeat scroll top left;
+    background: #fff;
+    .box-shadow(0 1px 1px #888);
 
     .container {
       float: left;
-      width: 950px;
+      width: 100%;
       padding-top:6px;
 
       .tabNavigation {
@@ -155,25 +156,22 @@ h6 { font-size: 10px; line-height: 16px; }*/
       } // end of ul.tabNavigation
 
       #left-block, #right-block {
-        margin: 0;
-        padding-top: 10px;
+        margin: 10px auto;
+        //padding-top: 10px;
       }
 
       #left-block {
         float: left;
         height: 100%;
         width: 190px;
-        
-        border-right: 1px solid gray;
-
+        background: #F8F8F8;
         position: relative;
-        left: 12px;
       }
 
       #right-block {
-        background-color: #F8F8F8;
+        //background-color: #F8F8F8;
         float: right;
-        width: 753px;
+        width: 772px;
 
         position: relative;
         left: 6px;
@@ -225,6 +223,7 @@ h6 { font-size: 10px; line-height: 16px; }*/
               margin-left: 3px;
 
               li {
+                float: left;
                 text-transform: capitalize;
               }
             }
@@ -238,7 +237,13 @@ h6 { font-size: 10px; line-height: 16px; }*/
               text-align: right;
             }
 
-            #periods-list{}
+            #periods-list{
+
+              li {
+                float: left;
+                text-transform: capitalize;
+              }
+            }
           }
 
         } // end of #options-block 
@@ -252,7 +257,7 @@ h6 { font-size: 10px; line-height: 16px; }*/
           .column {
             float: left;
             margin-right: 12px;
-            width: 174px;
+            width: 232px;
             text-align: left;
 
             .block {
@@ -260,7 +265,6 @@ h6 { font-size: 10px; line-height: 16px; }*/
               padding-bottom: 15px;
               //position: relative;
               //z-index: 55;
-
 
               .top{
                 display: inline-block;
@@ -328,10 +332,12 @@ h6 { font-size: 10px; line-height: 16px; }*/
               .middle {
                 padding: 10px;
                 border: 1px solid #E4E4E4;
-                background-color: #F3F3F3;
+                background-color: #fff;
+                .box-shadow(0 1px 1px #eee);
+                .border-radius(1px 1px 4px 4px);
                 a{
                   img{
-                    width: 152px;
+                    width: 210px;
                     height: 122px;
                     //.box-shadow(0 1px 4px #AAAAAA);
                   }
@@ -681,6 +687,13 @@ footer {
   height:auto !important;
   height:100%;
   min-height: 100px;
+}
+#my-div {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  width: 300px;
+  background: red;
 }
 footer hr{ border: 0; height: 30px; background: url('../imgs/footer-top.png') repeat-x scroll; }
   #footerContainer {margin: 0 auto; position: relative;}

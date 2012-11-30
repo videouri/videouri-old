@@ -1,3 +1,4 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
 <!DOCTYPE html>
 <!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="<?=$this->lang->lang();?>"> <![endif]-->
 <!--[if IE 7]><html class="no-js lt-ie9 lt-ie8" lang="<?=$this->lang->lang();?>"> <![endif]-->
@@ -6,13 +7,13 @@
 <html lang="<?=$this->lang->lang();?>" xmlns:fb="http://ogp.me/ns/fb#">
 
 	<head>
-		<meta content="text/html; charset=UTF-8" http-equiv="content-type">
-
+		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-		<meta name="viewport" content="width=device-width" />
 
 		<title><?=$this->template->title->default(lang('page_title'));?></title>
 		<meta name="description" content="<?=$this->template->description->default(lang('page_description'));?>" />
+
+		<meta name="viewport" content="width=device-width" />
 		
 		<meta property="og:title" content="<?=$this->template->title;?>">
 		<meta property="og:site_name" content="Videouri"/>
@@ -47,15 +48,17 @@
 
 		<meta name="author" content="videouri.com" >
 		<meta name="owner" content="videouri.com" >
-		<link type="text/plain" rel="author" href="http://www.videouri.com/humans.txt" />
+		<link type="text/plain" rel="author" href="<?=base_url();?>humans.txt" />
 		<?php if(isset($canonical)) : ?>
 		<link rel="canonical" href="<?=base_url().$canonical;?>" />
 		<?php endif; ?>
 
-		<script src="<?=base_url();?>assets/js/libs/modernizr-2.0.6.min.js"></script>
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+		<script src="<?=base_url();?>assets/js/libs/modernizr.js"></script>
+
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 		<script>window.jQuery || document.write('<script src="<?=base_url();?>assets/js/libs/jquery.min.js"><\/script>')</script>
-		<script src="<?=base_url();?>assets/js/libs/jquery-ui-1.8.17.custom.min.js"></script>
+
+		<!--<script src="<?=base_url();?>assets/js/libs/jquery-ui-1.8.17.custom.min.js"></script>-->
 		<script src="<?=base_url();?>assets/js/libs/less-1.3.0.min.js"></script>
 
 	</head>
@@ -94,6 +97,10 @@
 
 		</header>
 
+		<div id="my-div">
+		  Search: <input type="text" />
+		</div>
+
 		<div id="main" role="main">
 			<?=$this->template->content;?>
     	</div>
@@ -116,16 +123,8 @@
             </ul>
         </footer>
 
-        <script>
-            var uvOptions = {};
-            (function() {
-                var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true;
-                uv.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'appwidget.uservoice.com/tkqfx5ehyGPj3L2I5YA.js?_nc=true';
-                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s);
-            })();
-        </script>
-
         <?=$this->template->javascript; ?>
+
         <script src="<?=base_url();?>assets/js/libs/jquery.cookie.js"></script>
         <script> $.query = { spaces: false }; </script>
         <script src="<?=base_url();?>assets/js/libs/jquery.query.js"></script>
@@ -133,21 +132,15 @@
         <script src="<?=base_url();?>assets/js/script.js"></script>
 
         <script>
-            var _gaq=[['_setAccount','UA-28752800-1'],['_trackPageview']];
+        
+        	var _gaq=[['_setAccount','UA-28752800-1'],['_trackPageview']];
             (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
             g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
             s.parentNode.insertBefore(g,s)}(document,'script'));
-        </script>
 
-        <script>
-          /*var _gaq = _gaq || [];
-          _gaq.push(['_setAccount', 'UA-28752800-1']);
-          _gaq.push(['_trackPageview']);
-          (function() {
-            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-          })();*/
+        	localStorage.clear()
+	        console.log(window.localStorage);
+
         </script>
 
     </body>

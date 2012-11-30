@@ -1,4 +1,26 @@
-$(function(){
+$('#my-div').hide();
+
+$(document).ready(function() {
+
+    $(document).scroll(function (e) {
+        /*console.log(' ');
+        console.log('------------------------------------');
+        console.log('window.innerHeight: '+window.innerHeight);
+        console.log('document.documentElement.clientHeight: '+document.documentElement.clientHeight);
+        console.log('document.body.clientHeight: '+document.body.clientHeight);
+        console.log('window.pageYOffset: '+window.pageXOffset);
+        console.log('document.documentElement.scrollTop: '+document.documentElement.scrollTop);
+        console.log('document.body.scrollTop: '+document.body.scrollTop);
+        console.log('------------------------------------');
+        console.log(' ');*/
+        //console.log(document.body.scrollTop);
+        //if (document.documentElement.scrollTop >= 140) {
+        if( $(this).scrollTop() >= 140 ) {
+            $('#my-div').show(200);
+        } else {
+            $('#my-div').hide(200);
+        }
+    });
 
     $('.inputbox').click(function(){
         $('.filter_menu').slideDown();

@@ -1,7 +1,8 @@
-/.htaccess
 */config/development
-*/config/app.php
+
 */logs/log-*.php
 */logs/!index.html
+
 */cache/*
 */cache/!index.html
+

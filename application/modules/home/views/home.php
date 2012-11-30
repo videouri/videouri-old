@@ -4,7 +4,7 @@
 
         <ul class="tabNavigation">
             <!--<li><a href="#popular"><?#=lang('popular_videos');?></a></li>-->
-            <li class="selected2" data-method="top_rated"><a href="#top_rated"><?=lang('toprated_videos');?></a></li>
+            <li class="selected1" data-method="top_rated"><a href="#top_rated"><?=lang('toprated_videos');?></a></li>
             <li><a href="#most_viewed" data-method="most_viewed"><?=lang('mostviewed_videos');?></a></li>
         </ul>
 

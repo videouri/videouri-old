@@ -1,4 +1,4 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 /**
  * CodeIgniter
  *
@@ -24,6 +24,7 @@
  * @since		Version 1.0
  * @filesource
  */
+defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
  * CodeIgniter Driver Library Class
@@ -54,13 +55,29 @@ class CI_Driver_Library {
 	protected $lib_name;
 
 	/**
+	 * Get magic method
+	 *
 	 * The first time a child is used it won't exist, so we instantiate it
 	 * subsequents calls will go straight to the proper child.
 	 *
-	 * @param	mixed	$child
-	 * @return	mixed
+	 * @param   string  Child class name
+	 * @return  object  Child class
 	 */
 	public function __get($child)
+	{
+		// Try to load the driver
+		return $this->load_driver($child);
+	}
+
+	/**
+	 * Load driver
+	 *
+	 * Separate load_driver call to support explicit driver load by library or user
+	 *
+	 * @param   string  Child class name
+	 * @return  object  Child class
+	 */
+	public function load_driver($child)
 	{
 		if ( ! isset($this->lib_name))
 		{
@@ -156,7 +173,8 @@ class CI_Driver {
 	/**
 	 * Array of methods and properties for the parent class(es)
 	 *
-	 * @var array
+	 * @static
+	 * @var	array
 	 */
 	protected static $_reflections = array();
 
