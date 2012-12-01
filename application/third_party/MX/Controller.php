@@ -45,7 +45,6 @@ class MX_Controller
 	*
 	* @var array
 	*/
-
 	protected $_debug = array();
 	
 	public function __construct() 
@@ -66,5 +65,4 @@ class MX_Controller
 	{
 		return CI::$APP->$class;
 	}
-
 }
