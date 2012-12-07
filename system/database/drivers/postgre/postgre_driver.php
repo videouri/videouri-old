@@ -131,13 +131,32 @@ class CI_DB_postgre_driver extends CI_DB {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Non-persistent database connection
+	 * Database connection
 	 *
+	 * @param	bool	$persistent
 	 * @return	resource
 	 */
-	public function db_connect()
+	public function db_connect($persistent = FALSE)
 	{
-		return @pg_connect($this->dsn);
+		if ($persistent === TRUE
+			&& ($this->conn_id = @pg_pconnect($this->dsn))
+			&& pg_connection_status($this->conn_id) === PGSQL_CONNECTION_BAD
+			&& pg_ping($this->conn_id) === FALSE
+		)
+		{
+			return FALSE;
+		}
+		else
+		{
+			$this->conn_id = @pg_connect($this->dsn);
+		}
+
+		if ($this->conn_id && ! empty($this->schema))
+		{
+			$this->simple_query('SET search_path TO '.$this->schema.',public');
+		}
+
+		return $this->conn_id;
 	}
 
 	// --------------------------------------------------------------------
@@ -149,15 +168,7 @@ class CI_DB_postgre_driver extends CI_DB {
 	 */
 	public function db_pconnect()
 	{
-		$conn = @pg_pconnect($this->dsn);
-		if ($conn && pg_connection_status($conn) === PGSQL_CONNECTION_BAD)
-		{
-			if (pg_ping($conn) === FALSE)
-			{
-				return FALSE;
-			}
-		}
-		return $conn;
+		return $this->db_connect(TRUE);
 	}
 
 	// --------------------------------------------------------------------
@@ -337,7 +348,6 @@ class CI_DB_postgre_driver extends CI_DB {
 	 * "Smart" Escape String
 	 *
 	 * Escapes data based on type
-	 * Sets boolean and null types
 	 *
 	 * @param	string	$str
 	 * @return	mixed
@@ -580,7 +590,7 @@ class CI_DB_postgre_driver extends CI_DB {
 			{
 				if ($field !== $index)
 				{
-					$final[$field][] =  'WHEN '.$val[$index].' THEN '.$val[$field];
+					$final[$field][] = 'WHEN '.$val[$index].' THEN '.$val[$field];
 				}
 			}
 		}
@@ -627,90 +637,6 @@ class CI_DB_postgre_driver extends CI_DB {
 	protected function _limit($sql)
 	{
 		return $sql.' LIMIT '.$this->qb_limit.($this->qb_offset ? ' OFFSET '.$this->qb_offset : '');
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * WHERE, HAVING
-	 *
-	 * Called by where(), or_where(), having(), or_having()
-	 *
-	 * @param	string	'qb_where' or 'qb_having'
-	 * @param	mixed
-	 * @param	mixed
-	 * @param	string
-	 * @param	bool
-	 * @return	object
-	 */
-	protected function _wh($qb_key, $key, $value = NULL, $type = 'AND ', $escape = NULL)
-	{
-		$qb_cache_key = ($qb_key === 'qb_having') ? 'qb_cache_having' : 'qb_cache_where';
-
-		if ( ! is_array($key))
-		{
-			$key = array($key => $value);
-		}
-
-		// If the escape value was not set will will base it on the global setting
-		is_bool($escape) OR $escape = $this->_protect_identifiers;
-
-		foreach ($key as $k => $v)
-		{
-			$prefix = (count($this->$qb_key) === 0 && count($this->$qb_cache_key) === 0)
-				? $this->_group_get_type('')
-				: $this->_group_get_type($type);
-
-			if (is_null($v) && ! $this->_has_operator($k))
-			{
-				// value appears not to have been set, assign the test to IS NULL
-				$k .= ' IS NULL';
-			}
-
-			if ( ! is_null($v))
-			{
-				if (is_bool($v))
-				{
-					$v = ' '.($v ? 'TRUE' : 'FALSE');
-				}
-				elseif ($escape === TRUE)
-				{
-					$v = ' '.(is_int($v) ? $v : $this->escape($v));
-				}
-
-				if ( ! $this->_has_operator($k))
-				{
-					$k .= ' = ';
-				}
-			}
-
-			$this->{$qb_key}[] = array('condition' => $prefix.$k.$v, 'escape' => $escape);
-			if ($this->qb_caching === TRUE)
-			{
-				$this->{$qb_cache_key}[] = array('condition' => $prefix.$k.$v, 'escape' => $escape);
-				$this->qb_cache_exists[] = substr($qb_key, 3);
-			}
-
-		}
-
-		return $this;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Is literal
-	 *
-	 * Determines if a string represents a literal value or a field name
-	 *
-	 * @param	string	$str
-	 * @return	bool
-	 */
-	protected function _is_literal($str)
-	{
-		$str = trim($str);
-
-		return (empty($str) OR ctype_digit($str) OR $str[0] === "'" OR in_array($str, array('TRUE', 'FALSE'), TRUE));
 	}
 
 	// --------------------------------------------------------------------

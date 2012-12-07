@@ -96,29 +96,40 @@ class CI_Lang {
 			return;
 		}
 
-		// Determine where the language file is and load it
-		if ($alt_path !== '' && file_exists($alt_path.'language/'.$idiom.'/'.$langfile))
+		// Load the base file, so any others found can override it
+		$basepath = BASEPATH.'language/'.$idiom.'/'.$langfile;
+		if (($found = file_exists($basepath)) === TRUE)
 		{
-			include($alt_path.'language/'.$idiom.'/'.$langfile);
+			include($basepath);
+		}
+
+		// Do we have an alternative path to look in?
+		if ($alt_path !== '')
+		{
+			$alt_path .= 'language/'.$idiom.'/'.$langfile;
+			if (file_exists($alt_path))
+			{
+				include($alt_path);
+				$found = TRUE;
+			}
 		}
 		else
 		{
-			$found = FALSE;
-
 			foreach (get_instance()->load->get_package_paths(TRUE) as $package_path)
 			{
-				if (file_exists($package_path.'language/'.$idiom.'/'.$langfile))
+				$package_path .= 'language/'.$idiom.'/'.$langfile;
+				if ($basepath !== $package_path && file_exists($package_path))
 				{
-					include($package_path.'language/'.$idiom.'/'.$langfile);
+					include($package_path);
 					$found = TRUE;
 					break;
 				}
 			}
+		}
 
-			if ($found !== TRUE)
-			{
-				show_error('Unable to load the requested language file: language/'.$idiom.'/'.$langfile);
-			}
+		if ($found !== TRUE)
+		{
+			show_error('Unable to load the requested language file: language/'.$idiom.'/'.$langfile);
 		}
 
 		if ( ! isset($lang) OR ! is_array($lang))
@@ -151,15 +162,16 @@ class CI_Lang {
 	 *
 	 * Fetches a single line of text from the language array
 	 *
-	 * @param	string	$line	Language line key
+	 * @param	string	$line		Language line key
+	 * @param	bool	$log_errors	Whether to log an error message if the line is not found
 	 * @return	string	Translation
 	 */
-	public function line($line = '')
+	public function line($line = '', $log_errors = TRUE)
 	{
 		$value = ($line === '' OR ! isset($this->language[$line])) ? FALSE : $this->language[$line];
 
 		// Because killer robots like unicorns!
-		if ($value === FALSE)
+		if ($value === FALSE && $log_errors === TRUE)
 		{
 			log_message('error', 'Could not find the language line "'.$line.'"');
 		}

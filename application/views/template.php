@@ -98,7 +98,7 @@
 		</header>
 
 		<div id="my-div">
-		  Search: <input type="text" />
+		  Search: <input type="text" name="search-bar"/>
 		</div>
 
 		<div id="main" role="main">

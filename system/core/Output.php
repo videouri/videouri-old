@@ -256,13 +256,46 @@ class CI_Output {
 	{
 		for ($i = 0, $c = count($this->headers); $i < $c; $i++)
 		{
-			if (sscanf($this->headers[$i][0], 'Content-Type: %s', $content_type) === 1)
+			if (sscanf($this->headers[$i][0], 'Content-Type: %[^;]', $content_type) === 1)
 			{
 				return $content_type;
 			}
 		}
 
 		return 'text/html';
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Get Header
+	 *
+	 * @param	string	$header_name
+	 * @return	string
+	 */
+	public function get_header($header)
+	{
+		// Combine headers already sent with our batched headers
+		$headers = array_merge(
+			// We only need [x][0] from our multi-dimensional array
+			array_map('array_shift', $this->headers),
+			headers_list()
+		);
+
+		if (empty($headers) OR empty($header))
+		{
+			return NULL;
+		}
+
+		for ($i = 0, $c = count($headers); $i < $c; $i++)
+		{
+			if (strncasecmp($header, $headers[$i], $l = strlen($header)) === 0)
+			{
+				return trim(substr($headers[$i], $l+1));
+			}
+		}
+
+		return NULL;
 	}
 
 	// --------------------------------------------------------------------
@@ -588,6 +621,45 @@ class CI_Output {
 		// Display the cache
 		$this->_display(substr($cache, strlen($match[0])));
 		log_message('debug', 'Cache file is current. Sending it to browser.');
+		return TRUE;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Delete cache
+	 *
+	 * @param	string	$uri	URI string
+	 * @return	bool
+	 */
+	public function delete_cache($uri = '')
+	{
+		$CI =& get_instance();
+		$cache_path = $CI->config->item('cache_path');
+		if ($cache_path === '')
+		{
+			$cache_path = APPPATH.'cache/';
+		}
+
+		if ( ! is_dir($cache_path))
+		{
+			log_message('error', 'Unable to find cache path: '.$cache_path);
+			return FALSE;
+		}
+
+		if (empty($uri))
+		{
+			$uri = $CI->uri->uri_string();
+		}
+
+		$cache_path .= md5($CI->config->item('base_url').$CI->config->item('index_page').$uri);
+
+		if ( ! @unlink($cache_path))
+		{
+			log_message('error', 'Unable to delete cache file for '.$uri);
+			return FALSE;
+		}
+
 		return TRUE;
 	}
 

@@ -79,7 +79,7 @@ $autoload['packages'] = array();
 |	$autoload['libraries'] = array('database', 'email', 'xmlrpc');
 */
 
-$autoload['libraries'] = array('OAuth2/OAuth2', 'session', 'template');
+$autoload['libraries'] = array('OAuth2/OAuth2', 'template');
 
 
 /*
@@ -95,7 +95,7 @@ $autoload['libraries'] = array('OAuth2/OAuth2', 'session', 'template');
 |	$autoload['drivers'] = array('session', 'cache');
 */
 
-$autoload['drivers'] = array();
+$autoload['drivers'] = array('session');
 
 
 /*

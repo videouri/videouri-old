@@ -2,12 +2,6 @@
 
     <div class="container" data-easytabs="true">
 
-        <ul class="tabNavigation">
-            <!--<li><a href="#popular"><?#=lang('popular_videos');?></a></li>-->
-            <li class="selected1" data-method="top_rated"><a href="#top_rated"><?=lang('toprated_videos');?></a></li>
-            <li><a href="#most_viewed" data-method="most_viewed"><?=lang('mostviewed_videos');?></a></li>
-        </ul>
-
         <div id="left-block">
             <div id="categories-block">
                 <h2 class="title">Categories</h2>
@@ -21,6 +15,12 @@
         </div>
 
         <div id="right-block">
+
+            <ul class="tabNavigation">
+                <!--<li><a href="#popular"><?#=lang('popular_videos');?></a></li>-->
+                <li class="selected1" data-method="top_rated"><a href="#top_rated"><?=lang('toprated_videos');?></a></li>
+                <li><a href="#most_viewed" data-method="most_viewed"><?=lang('mostviewed_videos');?></a></li>
+            </ul>
 
             <div id="options-block">
                 <nav id="sources-block">
@@ -127,10 +127,6 @@
     <div class="clearfix"></div>
 
 </section>
-
-<div id="introduction">
-    <?=lang('what_is');?>
-</div>
 
 <script>
     $(function(){
