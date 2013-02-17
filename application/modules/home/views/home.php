@@ -72,25 +72,25 @@
                     <div class="column <?=$keyApi;?>">
 
                         <div class="block">
-                            <div class="top">
-                                <?php
-                                    switch($keyApi)
-                                    {
-                                        case 'youtube':
-                                            $source = '<span style="color:white">You</span><span style="color:black">Tube</span>';
-                                        break;
-                                        case 'vimeo':
-                                            $source = 'Vimeo';
-                                        break;
-                                        case 'dailymotion':
-                                            $source = 'Dailymotion';
-                                        break;
-                                        case 'metacafe':
-                                            $source = 'Metacafe';
-                                        break;
-                                    }
-                                ?>
-                                <span class="<?=$keyApi;?>"><?=$source;?></span>
+                            <?php
+                                switch($keyApi)
+                                {
+                                    case 'youtube':
+                                        $source = '<span style="color:white">You</span><span style="color:black">Tube</span>';
+                                    break;
+                                    case 'vimeo':
+                                        $source = 'Vimeo';
+                                    break;
+                                    case 'dailymotion':
+                                        $source = 'Dailymotion';
+                                    break;
+                                    case 'metacafe':
+                                        $source = 'Metacafe';
+                                    break;
+                                }
+                            ?>
+                            <div class="top <?=$keyApi;?>">
+                                <span class="left"><?=$source;?></span>
                                 <span class="right">
                                     <ul class="categories">
                                         <?php foreach($api['category'] as $category): ?>
