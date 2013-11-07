@@ -39,13 +39,6 @@ require dirname(__FILE__).'/Base.php';
 class MX_Controller 
 {
 	public $autoload = array();
-
-	/**
-	* Initialized $_debug array to contain debuging information
-	*
-	* @var array
-	*/
-	protected $_debug = array();
 	
 	public function __construct() 
 	{
@@ -61,8 +54,7 @@ class MX_Controller
 		$this->load->_autoloader($this->autoload);
 	}
 	
-	public function __get($class)
-	{
+	public function __get($class) {
 		return CI::$APP->$class;
 	}
 }

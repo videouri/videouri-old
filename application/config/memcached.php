@@ -16,12 +16,12 @@
  * through the world wide web, please send an email to
  * licensing@ellislab.com so we can send you a copy immediately.
  *
- * @package		CodeIgniter
- * @author		EllisLab Dev Team
- * @copyright	Copyright (c) 2008 - 2012, EllisLab, Inc. (http://ellislab.com/)
- * @license		http://opensource.org/licenses/AFL-3.0 Academic Free License (AFL 3.0)
- * @link		http://codeigniter.com
- * @since		Version 2.0
+ * @package     CodeIgniter
+ * @author      EllisLab Dev Team
+ * @copyright   Copyright (c) 2008 - 2013, EllisLab, Inc. (http://ellislab.com/)
+ * @license     http://opensource.org/licenses/AFL-3.0 Academic Free License (AFL 3.0)
+ * @link        http://codeigniter.com
+ * @since       Version 2.0
  * @filesource
  */
 
@@ -31,15 +31,15 @@
 | -------------------------------------------------------------------------
 | Your Memcached servers can be specified below.
 |
-|	See: http://codeigniter.com/user_guide/libraries/caching.html#memcached
+|   See: http://codeigniter.com/user_guide/libraries/caching.html#memcached
 |
 */
 $config = array(
-	'default' => array(
-		'hostname' => '127.0.0.1',
-		'port'     => '11211',
-		'weight'   => '1',
-	),
+    'default' => array(
+        'hostname' => '127.0.0.1',
+        'port'     => '11211',
+        'weight'   => '1',
+    ),
 );
 
 /* End of file memcached.php */
