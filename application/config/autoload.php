@@ -95,7 +95,7 @@ $autoload['libraries'] = array('OAuth2/OAuth2', 'template');
 |	$autoload['drivers'] = array('session', 'cache');
 */
 
-$autoload['drivers'] = array('session');
+$autoload['drivers'] = array('session', 'cache');
 
 
 /*

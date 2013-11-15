@@ -1,7 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-    if ( ! function_exists('prePrint'))
-    {
+    if ( ! function_exists('prePrint')) {
         function prePrint($data, $message = '')
         {
             if (!empty($message)) echo '<br/>'.$message.'<br/>';
@@ -11,13 +10,22 @@
         }
     }
     
-    if( !function_exists('preDump'))
-    {
+    if ( ! function_exists('preDump')) {
         function preDump($data)
         {
             echo '<pre>';
             var_dump($data);
             echo '</pre>';
+        }
+    }
+    
+    if ( ! function_exists('dd')) {
+        function dd($data)
+        {
+            echo '<pre>';
+            var_dump($data);
+            echo '</pre>';
+            die;
         }
     }
 

@@ -78,6 +78,7 @@ class MX_Router extends CI_Router
 		/* check modules */
 		foreach (Modules::$locations as $location => $offset) {
 		
+
 			/* module exists? */
 			if (is_dir($source = $location.$module.'/controllers/')) {
 				
@@ -88,6 +89,8 @@ class MX_Router extends CI_Router
 				if($directory AND is_file($source.$directory.$ext)) {
 					return array_slice($segments, 1);
 				}
+
+				#echo($source.$directory.'/');
 					
 				/* module sub-directory exists? */
 				if($directory AND is_dir($source.$directory.'/')) {
@@ -107,23 +110,23 @@ class MX_Router extends CI_Router
 				}
 				
 				/* module controller exists? */			
-				if(is_file($source.$module.$ext)) {
+				if(is_file($source.ucfirst($module).$ext)) {
 					return $segments;
 				}
 			}
 		}
-		
+
 		/* application controller exists? */			
-		if (is_file(APPPATH.'controllers/'.$module.$ext)) {
+		if (is_file(APPPATH.'controllers/'.ucfirst($module).$ext)) {
 			return $segments;
 		}
-		
+
 		/* application sub-directory controller exists? */
 		if($directory AND is_file(APPPATH.'controllers/'.$module.'/'.$directory.$ext)) {
 			$this->directory = $module.'/';
 			return array_slice($segments, 1);
 		}
-		
+
 		/* application sub-directory default controller exists? */
 		if (is_file(APPPATH.'controllers/'.$module.'/'.$this->default_controller.$ext)) {
 			$this->directory = $module.'/';

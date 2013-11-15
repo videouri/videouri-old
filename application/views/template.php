@@ -39,10 +39,8 @@
 		<meta name="msvalidate.01" content="48B0A933360DDEC6CF1775D7C7E28FD3" />
 
 		<link href='http://fonts.googleapis.com/css?family=Lobster|Ubuntu:300|Cabin|Raleway&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-		<link rel="stylesheet" href="<?=base_url();?>assets/css/reset.css">
-		<link rel="stylesheet/less" href="<?=base_url();?>assets/css/style.less">
-		<link rel="stylesheet" href="<?=base_url();?>assets/css/jquery-sticklr-1.4-light-color.css">
-		<link rel="stylesheet" href="<?=base_url();?>assets/css/jquery-ui-1.8.17.custom.css">
+		<link rel="stylesheet" href="<?=base_url();?>assets/stylesheets/css/jquery-sticklr-1.4-light-color.css">
+		<link rel="stylesheet" href="<?=base_url();?>assets/stylesheets/css/main.css">
 		<?=$this->template->stylesheet;?>
 		<!--[if gte IE 9]><style type="text/css">.gradient{filter:none;}</style><![endif]-->
 
@@ -54,54 +52,23 @@
 		<?php endif; ?>
 
 		<script src="<?=base_url();?>assets/js/libs/modernizr.js"></script>
-
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-		<script>window.jQuery || document.write('<script src="<?=base_url();?>assets/js/libs/jquery.min.js"><\/script>')</script>
-
-		<!--<script src="<?=base_url();?>assets/js/libs/jquery-ui-1.8.17.custom.min.js"></script>-->
-		<script src="<?=base_url();?>assets/js/libs/less-1.3.0.min.js"></script>
-
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 	</head>
 
 	<body>
-
-		<!-- Prompt IE 6 users to install Chrome Frame. Remove this if you support IE 6.
-		chromium.org/developers/how-tos/chrome-frame-getting-started -->
-		<!--[if lt IE 7]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
-
 		<header>
-
 			<div id="header_content">
-
-				<div id="top_menu" class="gradient">
-					<ul>
-						<li class="left"><a href="<?=base_url();?>">Home</a></li>
-						<li class="right"><a href="<?=site_url('login')?>">Login</a></li>
-					</ul>
-				</div>
-
-				<div class="clearfix"></div>
-
 				<div class="top_header">
 					<a href="<?=site_url();?>"><img src="<?=base_url();?>assets/imgs/logo.png" alt="Videouri"></a>
-					<?=form_open('results', 'id="search_form" class="form_wrapp" method="get" autocomplete="off"'); ?>
+					<?=form_open('results', 'id="search_form" class="form_wrapp hidden" method="get" autocomplete="off"'); ?>
 						<input class="inputbox" type="text" name="search_query" />
 						<button class="button" type="submit"><span class="button-content"></span></button>
 					<?=form_close(); ?>
 				</div>
-
 			</div>
-
-			<div class="clearfix"></div>
-			<hr/>
-
 		</header>
 
-		<div id="my-div">
-		  Search: <input type="text" name="search-bar"/>
-		</div>
-
-		<div id="main" role="main">
+		<div class="container">
 			<?=$this->template->content;?>
     	</div>
     	
@@ -125,11 +92,16 @@
 
         <?=$this->template->javascript; ?>
 
-        <script src="<?=base_url();?>assets/js/libs/jquery.cookie.js"></script>
+        <script src="<?=base_url();?>assets/scripts/vendor/jquery.cookie.js"></script>
         <script> $.query = { spaces: false }; </script>
-        <script src="<?=base_url();?>assets/js/libs/jquery.query.js"></script>
-        <script src="<?=base_url();?>assets/js/libs/jquery-sticklr-1.4.min.js"></script>
-        <script src="<?=base_url();?>assets/js/script.js"></script>
+        <script src="<?=base_url();?>assets/scripts/vendor/jquery.query.js"></script>
+        <script src="<?=base_url();?>assets/scripts/vendor/jquery-sticklr-1.4.min.js"></script>
+        <script src="<?=base_url();?>assets/scripts/script.js"></script>
+
+        <script type="text/javascript">
+            $("select[name='video-category']").css('border', '1px solid red');
+            $("select[name='video-category']").selectpicker({style: 'btn-primary', menuStyle: 'dropdown-inverse'});
+        </script>
 
         <script>
         
@@ -137,9 +109,6 @@
             (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
             g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
             s.parentNode.insertBefore(g,s)}(document,'script'));
-
-        	localStorage.clear()
-	        console.log(window.localStorage);
 
         </script>
 

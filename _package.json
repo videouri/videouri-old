@@ -1,0 +1,16 @@
+{
+    "devDependencies": {
+        "grunt": "*",
+        "grunt-notify": "*",
+        "grunt-contrib-clean"     : "*",
+        "grunt-contrib-compress"  : "*",
+        "grunt-contrib-concat"    : "*",
+        "grunt-contrib-copy"      : "*",
+        "grunt-contrib-cssmin"    : "*",
+        "grunt-contrib-jshint"    : "*",
+        "grunt-contrib-less"      : "*",
+        "grunt-contrib-nodeunit"  : "*",
+        "grunt-contrib-uglify"    : "*",
+        "grunt-contrib-watch"     : "*"
+    }
+}

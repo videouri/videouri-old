@@ -1,11 +1,18 @@
+# Config
 */config/development
 
+# Stuff
 folder-files/
 test.*
 
+# Logs
 */logs/log-*.php
 */logs/!index.html
 
+# Cache
 */cache/*
 */cache/!index.html
 
+# Grunt
+#node_modules/grunt*
+#Gruntfile.js

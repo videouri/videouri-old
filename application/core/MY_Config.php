@@ -19,7 +19,7 @@ class MY_Config extends MX_Config
      * @param   string  the URI string
      * @return  string
      */
-    function site_url($uri = '')
+    function site_url($uri = '',  $protocol = NULL)
     {
         if (function_exists('get_instance'))
         {

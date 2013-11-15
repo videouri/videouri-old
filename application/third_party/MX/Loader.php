@@ -167,6 +167,8 @@ class MX_Loader extends CI_Loader
 			
 			$this->_ci_classes[$class] = $_alias;
 		}
+
+		$_alias = strtolower($_alias);
 		
 		return CI::$APP->$_alias;
     }

@@ -84,7 +84,7 @@ $route['^(en|es|ro)/tag/(:any)']  = "fetch/results?search_query=$1&search=tag";
 $route['^(en|es|ro)/(.+)$']       = "$2";
 
 // '/en', '/de', '/fr' and '/nl' URIs -> use default controller
-$route['^(en|es|ro)$'] = $route['default_controller'];
+#$route['^(en|es|ro)$'] = $route['default_controller'];
 
 $route['404_override']  = '';
 $route['translate_uri_dashes'] = FALSE;

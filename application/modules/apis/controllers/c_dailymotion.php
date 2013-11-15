@@ -6,11 +6,9 @@ class C_Dailymotion extends MX_Controller
     function __construct()
     {
         parent::__construct();
-
-        $this->load->library('caching');
         $this->load->library('API/dailymotion');
 
-        $this->_debug['on']  = false;
+        #$this->_debug['on']  = true;
         $this->cache_timeout = $this->config->item('cache_timeout');
         
         $this->cookie = ($this->input->cookie('ff') == "off" ? false : true);
@@ -88,7 +86,7 @@ class C_Dailymotion extends MX_Controller
 
         // Get Data from Cache
         $cache_variable = "dailymotion_".$dynamic_variable."_cached";
-        $result = $this->caching->get($cache_variable);
+        $result = $this->cache->get($cache_variable);
 
         if ( ! $result) {
 
@@ -172,7 +170,7 @@ class C_Dailymotion extends MX_Controller
 
             }
 
-            $this->caching->save($cache_variable, $result, $this->cache_timeout);
+            $this->cache->save($cache_variable, $result, $this->cache_timeout);
 
         }
 
@@ -195,7 +193,7 @@ class C_Dailymotion extends MX_Controller
     function related($id)
     {
         // Get Data from Cache
-        $result = $this->caching->get("dailymotion_relatedTo-{$id}_cached");
+        $result = $this->cache->get("dailymotion_relatedTo-{$id}_cached");
 
         if( ! $result) {
 
@@ -209,7 +207,7 @@ class C_Dailymotion extends MX_Controller
                 )
             );
 
-            $this->caching->save("dailymotion_relatedTo-{$id}_cached", $result, $this->cache_timeout);
+            $this->cache->save("dailymotion_relatedTo-{$id}_cached", $result, $this->cache_timeout);
         }
 
         if($this->_debug['on']) {
