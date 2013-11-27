@@ -14,5 +14,4 @@ test.*
 */cache/!index.html
 
 # Grunt
-#node_modules/grunt*
-#Gruntfile.js
+node_modules/grunt*

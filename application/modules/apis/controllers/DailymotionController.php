@@ -1,7 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class C_Dailymotion extends MX_Controller
-{
+class DailymotionController extends MX_Controller {
 
     function __construct()
     {

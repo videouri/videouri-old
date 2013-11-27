@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class C_Youtube extends MX_Controller
-{   
+class YouTubeController extends MX_Controller {
+    
     function __construct()
     {
         parent::__construct();
@@ -18,65 +18,61 @@ class C_Youtube extends MX_Controller
     * @param array $parameters containing the data to be sent when querying the api
     * @return the json_decoded or rss response from YouTube.
     */
-    function data(array $parameters = array())
+    public function data(array $parameters = array())
     {
         $this->page = isset($parameters['page']) ? 1 + ($parameters['page']-1) * 10 : 1;
 
-        if((isset($parameters['sort'])) && ($parameters['sort'] == 'views'))
+        if ((isset($parameters['sort'])) && ($parameters['sort'] == 'views'))
             $parameters['sort'] = 'viewCount';
 
-        switch ($parameters['period'])
-        {
+
+        switch ((isset($parameters['period']) ? $parameters['period'] : '')) {
             case 'today':
                 $period = 'this_day';
-            break;
+                break;
             
             case 'week':
                 $period = 'this_week';
-            break;
+                break;
 
             case 'month':
                 $period = 'this_month';
-            break;
+                break;
 
             case 'ever':
             default:
                 $period = 'all_time';
-            break;
+                break;
         }
+    
 
-        if(isset($parameters['query']))
-        {
+        if (isset($parameters['query'])) {
             $characters = array("-", "@");
             $query      = str_replace($characters, '', $parameters['query']);
+
             if(isset($parameters['page']))
-            {
                 $dynamic_variable = "query_{$query}_page$this->page";
-            }
             else
-            {
                 $dynamic_variable = "query_{$query}";
-            }            
         }
-        elseif(isset($parameters['id']))
-        {
-            $dynamic_variable = "video_{$id}";
+
+        elseif (isset($parameters['id'])) {
+            $dynamic_variable = "video_{$parameters['id']}";
         }
+
         else
-        {
             $dynamic_variable = "{$parameters['content']}";
-        }
 
         // Get Data from Cache
         $cache_variable = "youtube_{$dynamic_variable}_cached";
         $result         = $this->cache->get($cache_variable);
+        
 
-        if ( ! $result)
-        {
+        if ( ! $result) {
             $this->_debug['inside-if'] = 'yes, I\'m inside `if( !$result)` of function data()';
+            #dd($parameters);
 
-            switch ($parameters['content'])
-            {
+            switch ($parameters['content']) {
                 /* Home content */
                 case 'newest':
                     $result = json_decode($this->youtube->getMostRecentVideoFeed(
@@ -87,7 +83,8 @@ class C_Youtube extends MX_Controller
                             )
                         )
                     ,TRUE);
-                break;
+                    break;
+
                 case 'top_rated':
                     $result = json_decode($this->youtube->getTopRatedVideoFeed(
                         array(
@@ -98,7 +95,8 @@ class C_Youtube extends MX_Controller
                             )
                         )
                     ,TRUE);
-                break;
+                    break;
+
                 case 'most_viewed':
                     $result= json_decode($this->youtube->getMostPopularVideoFeed(
                         array(
@@ -109,7 +107,7 @@ class C_Youtube extends MX_Controller
                             )
                         )
                     ,TRUE);
-                break;
+                    break;
 
                 /* Search and tags content */
                 case 'search':
@@ -124,7 +122,8 @@ class C_Youtube extends MX_Controller
                             )
                         )
                     ,TRUE);
-                break;
+                    break;
+
                 case 'tag':
                     $tag = json_decode($this->youtube->getKeywordVideoFeed(
                         $query,
@@ -137,20 +136,21 @@ class C_Youtube extends MX_Controller
                             )
                         )
                     ,TRUE);
-                break;
+                    break;
 
                 /* Video page with video data and related videos */
                 case 'getVideoEntry':
                     $result = $this->youtube->getVideoEntry($parameters['id'], false, array('alt'=>'rss'));
-                break;
+                    break;
             }
             
             $this->cache->save($cache_variable, $result, $this->cache_timeout);
 
         }
 
-        if ($this->_debug['on'])
-        {
+        #dd($result);
+
+        if ($this->_debug['on']) {
             $this->_debug['cache-name']   = "youtube_{$dynamic_variable}_cached";
             $this->_debug['dynamic-name'] = $dynamic_variable;
             $this->_debug['time-out']     = $this->cache_timeout;
@@ -159,16 +159,12 @@ class C_Youtube extends MX_Controller
             prePrint($this->_debug);
             exit;
         }
-        else
-        {
-            if($parameters['content']=="getVideoEntry")
-            {
+
+        else {
+            if ($parameters['content'] === "getVideoEntry")
                 return simplexml_load_string($result);
-            }
             else
-            {
                 return $result;
-            }
         }
     }
 

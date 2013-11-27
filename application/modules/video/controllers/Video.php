@@ -14,6 +14,10 @@ class Video extends MX_Controller
     {
         parent::__construct();
         $this->lang->load('error');
+
+        $this->load->driver('cache',
+            array('adapter' => 'apc', 'backup' => 'file', 'key_prefix' => 'videouri_')
+        );
     }
 
     /**
@@ -31,52 +35,55 @@ class Video extends MX_Controller
         switch ($api)
         {
             case 'd':
-                $api = 'dailymotion';
-            break;
+                $api = 'Dailymotion';
+                break;
+
             case 'v':
-                $api = 'vimeo';
-            break;
+                $api = 'Vimeo';
+                break;
+
             case 'y':
-                $api = 'youtube';
-            break;
+                $api = 'YouTube';
+                break;
+
             case 'M':
-                $api = 'metacafe';
+                $api = 'Metacafe';
                 $long_id  = $id.'/'.$extra;
-            break;
+                break;
+
             default:
                 show_error(lang('video_id',$custom_id));
-            break;
+                break;
         }
 
         $parameters = array(
-                        'action' => 'getVideoEntry',
-                        'api'    => $api,
-                        'id'     => ($api=="metacafe") ? $long_id : $id
+                        'content' => 'getVideoEntry',
+                        'api'     => $api,
+                        'id'      => ($api === "metacafe") ? $long_id : $id
                     );
 
         $data['api']           = $api;
         $data['custom_id']     = $custom_id;
 
-        try
-        {
-            $result = modules::run("apis/c_$api/data", $parameters);
+        try {
+            $result = modules::run("apis/{$api}Controller/data", $parameters);
+            #dd($result);
             #if(!$result){ throw new Exception("Video deleted or censored", 404); }
         }
-        catch(ParameterException $e)
-        {
+
+        catch (ParameterException $e) {
             //prePrint($e);
             //show_error($e->getMessage());
         }
-        catch(Exception $e)
-        {
+
+        catch (Exception $e) {
             #prePrint($e);
             $code = $e->getCode() ? $e->getCode() : 404;
             //prePrint($e);
             show_error($e->getMessage(),$code);
         }
 
-        if ($api == "dailymotion")
-        {
+        if ($api == "dailymotion") {
             $data['data']['swf']['url']  = $result['swf_url'].'&enableApi=1&playerapiid=dmplayer';
             $data['data']['swf']['api']  = 'dmapiplayer';
             $data['data']['title']       = $result['title'];
@@ -86,8 +93,8 @@ class Video extends MX_Controller
             $data['data']['tags']        = $result['tags'];
             $data['data']['related']     = $this->_relatedVideos(array('api'=>$api,'id'=>$id));
         }
-        elseif ($api == "metacafe")
-        {
+
+        elseif ($api == "metacafe") {
             $data['data']['title']      = $result->title;
             if(preg_match('/http:\/\/[w\.]*metacafe\.com\/fplayer\/(.*).swf/is', $result['embed'], $match))
             {
@@ -247,15 +254,14 @@ class Video extends MX_Controller
             }
             return $related;
         }
-        if(!empty($tags['tags']))
-        {
-            $parameters['api'] = $tags['api'];
-            $parameters['action'] = 'tag';
+
+        if (!empty($tags['tags'])) {
+            $parameters['api']     = $tags['api'];
+            $parameters['content'] = 'tag';
             $vt = array();
             $i = 0;
 
-            foreach($tags['tags'] as $tag)
-            {
+            foreach($tags['tags'] as $tag) {
                 $vt[] = $tag;
                 if($i == 5){break;}
                 $i++;

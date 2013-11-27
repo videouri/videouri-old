@@ -1,4 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
 /**
  * CodeIgniter
  *
@@ -95,7 +96,7 @@ $autoload['libraries'] = array('OAuth2/OAuth2', 'template');
 |	$autoload['drivers'] = array('session', 'cache');
 */
 
-$autoload['drivers'] = array('session', 'cache');
+$autoload['drivers'] = array('session');
 
 
 /*

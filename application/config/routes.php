@@ -76,6 +76,8 @@
 
 $route['default_controller'] = 'home';
 
+$route['^(font)/(.+)$'] = "assets/getFont/$2";
+
 // URI like '/en/about' -> use controller 'about'
 //$route['^(en|es|ro)/home']        = "home/default_content";
 $route['^(en|es|ro)/video/(.+)$'] = "video/id/$2";

@@ -1,139 +1,136 @@
 /**
+ * http://plugins.jquery.com/project/query-object
  * jQuery.query - Query String Modification and Creation for jQuery
  * Written by Blair Mitchelmore (blair DOT mitchelmore AT gmail DOT com)
  * Licensed under the WTFPL (http://sam.zoy.org/wtfpl/).
  * Date: 2009/8/13
  *
  * @author Blair Mitchelmore
- * @version 2.1.6
+ * @version 2.1.7
  *
  **/
-new function(settings) { 
-  // Various Settings
-  var $separator = settings.separator || '&';
-  var $spaces = settings.spaces === false ? false : true;
-  var $suffix = settings.suffix === false ? '' : '[]';
-  var $prefix = settings.prefix === false ? false : true;
-  var $hash = $prefix ? settings.hash === true ? "#" : "?" : "";
-  var $numbers = settings.numbers === false ? false : true;
+new function(settings) {
+    // Various Settings
+    var $separator = settings.separator || '&';
+    var $spaces = settings.spaces === false ? false : true;
+    var $suffix = settings.suffix === false ? '' : '[]';
+    var $prefix = settings.prefix === false ? false : true;
+    var $hash = $prefix ? settings.hash === true ? "#" : "?" : "";
+    var $numbers = settings.numbers === false ? false : true;
   
-  jQuery.query = new function() {
-    var is = function(o, t) {
-      return o != undefined && o !== null && (!!t ? o.constructor == t : true);
-    };
-    var parse = function(path) {
-      var m, rx = /\[([^[]*)\]/g, match = /^([^[]+?)(\[.*\])?$/.exec(path), base = match[1], tokens = [];
-      while (m = rx.exec(match[2])) tokens.push(m[1]);
-      return [base, tokens];
-    };
-    var set = function(target, tokens, value) {
-      var o, token = tokens.shift();
-      if (typeof target != 'object') target = null;
-      if (token === "") {
-        if (!target) target = [];
-        if (is(target, Array)) {
-          target.push(tokens.length == 0 ? value : set(null, tokens.slice(0), value));
-        } else if (is(target, Object)) {
-          var i = 0;
-          while (target[i++] != null);
-          target[--i] = tokens.length == 0 ? value : set(target[i], tokens.slice(0), value);
-        } else {
-          target = [];
-          target.push(tokens.length == 0 ? value : set(null, tokens.slice(0), value));
-        }
-      } else if (token && token.match(/^\s*[0-9]+\s*$/)) {
-        var index = parseInt(token, 10);
-        if (!target) target = [];
-        target[index] = tokens.length == 0 ? value : set(target[index], tokens.slice(0), value);
-      } else if (token) {
-        alert('neagh');
-        var index = token.replace(/^\s*|\s*$/g, "");
-        if (!target) target = {};
-        if (is(target, Array)) {
-          var temp = {};
-          for (var i = 0; i < target.length; ++i) {
-            temp[i] = target[i];
-          }
-          target = temp;
-        }
-        target[index] = tokens.length == 0 ? value : set(target[index], tokens.slice(0), value);
-      } else {
-        console.log(value);
-        return value;
-      }
-      console.log(target);
-      return target;
+    jQuery.query = new function() {
+        var is = function(o, t) {
+            return o != undefined && o !== null && (!!t ? o.constructor == t : true);
+        };
+        var parse = function(path) {
+            var m, rx = /\[([^[]*)\]/g, match = /^([^[]+)(\[.*\])?$/.exec(path), base = match[1], tokens = [];
+            while (m = rx.exec(match[2])) tokens.push(m[1]);
+            return [base, tokens];
+        };
+        var set = function(target, tokens, value) {
+            var o, token = tokens.shift();
+            if (typeof target != 'object') target = null;
+            if (token === "") {
+                if (!target) target = [];
+                if (is(target, Array)) {
+                    target.push(tokens.length == 0 ? value : set(null, tokens.slice(0), value));
+                } else if (is(target, Object)) {
+                    var i = 0;
+                    while (target[i++] != null);
+                    target[--i] = tokens.length == 0 ? value : set(target[i], tokens.slice(0), value);
+                } else {
+                    target = [];
+                    target.push(tokens.length == 0 ? value : set(null, tokens.slice(0), value));
+                }
+            } else if (token && token.match(/^\s*[0-9]+\s*$/)) {
+                var index = parseInt(token, 10);
+                if (!target) target = [];
+                target[index] = tokens.length == 0 ? value : set(target[index], tokens.slice(0), value);
+            } else if (token) {
+                var index = token.replace(/^\s*|\s*$/g, "");
+                if (!target) target = {};
+                if (is(target, Array)) {
+                    var temp = {};
+                    for (var i = 0; i < target.length; ++i) {
+                        temp[i] = target[i];
+                    }
+                    target = temp;
+                }
+                target[index] = tokens.length == 0 ? value : set(target[index], tokens.slice(0), value);
+            } else {
+                return value;
+            }
+        return target;
     };
     
     var queryObject = function(a) {
-      var self = this;
-      self.keys = {};
+        var self = this;
+        self.keys = {};
       
-      if (a.queryObject) {
-        jQuery.each(a.get(), function(key, val) {
-          self.SET(key, val);
-        });
-      } else {
-        jQuery.each(arguments, function() {
-          var q = "" + this;
-          q = q.replace(/^[?#]/,''); // remove any leading ? || #
-          q = q.replace(/[;&]$/,''); // remove any trailing & || ;
-          if ($spaces) q = q.replace(/[+]/g,' '); // replace +'s with spaces
+        if (a.queryObject) {
+            jQuery.each(a.get(), function(key, val) {
+                self.SET(key, val);
+            });
+        } else {
+            jQuery.each(arguments, function() {
+                var q = "" + this;
+                q = q.replace(/^[?#]/,''); // remove any leading ? || #
+                q = q.replace(/[;&]$/,''); // remove any trailing & || ;
+                if ($spaces) q = q.replace(/[+]/g,' '); // replace +'s with spaces
           
-          jQuery.each(q.split(/[&;]/), function(){
-            var key = decodeURIComponent(this.split('=')[0] || "");
-            var val = decodeURIComponent(this.split('=')[1] || "");
+                jQuery.each(q.split(/[&;]/), function(){
+                    var key = decodeURIComponent(this.split('=')[0] || "");
+                    var val = decodeURIComponent(this.split('=')[1] || "");
+                
+                    if (!key) return;
             
-            if (!key) return;
+                    if ($numbers) {
+                        if (/^[+-]?[0-9]+\.[0-9]*$/.test(val)) // simple float regex
+                            val = parseFloat(val);
+                        else if (/^[+-]?[0-9]+$/.test(val)) // simple int regex
+                            val = parseInt(val, 10);
+                    }
             
-            if ($numbers) {
-              if (/^[+-]?[0-9]+\.[0-9]*$/.test(val)) // simple float regex
-                val = parseFloat(val);
-              else if (/^[+-]?[0-9]+$/.test(val)) // simple int regex
-                val = parseInt(val, 10);
-            }
+                    val = (!val && val !== 0) ? true : val;
             
-            val = (!val && val !== 0) ? true : val;
+                    if (val !== false && val !== true && typeof val != 'number')
+                        val = val;
             
-            if (val !== false && val !== true && typeof val != 'number')
-              val = val;
-            
-            self.SET(key, val);
-          });
-        });
-      }
-      return self;
+                    self.SET(key, val);
+                });
+            });
+        }
+        return self;
     };
     
     queryObject.prototype = {
-      queryObject: true,
-      has: function(key, type) {
-        var value = this.get(key);
-        return is(value, type);
-      },
-      GET: function(key) {
-        if (!is(key)) return this.keys;
-        var parsed = parse(key), base = parsed[0], tokens = parsed[1];
-        var target = this.keys[base];
-        while (target != null && tokens.length != 0) {
-          target = target[tokens.shift()];
-        }
-        return typeof target == 'number' ? target : target || "";
-      },
-      get: function(key) {
-        var target = this.GET(key);
-        if (is(target, Object))
-          return jQuery.extend(true, {}, target);
-        else if (is(target, Array))
-          return target.slice(0);
-        return target;
+        queryObject: true,
+        has: function(key, type) {
+            var value = this.get(key);
+            return is(value, type);
+        },
+        GET: function(key) {
+            if (!is(key)) return this.keys;
+            var parsed = parse(key), base = parsed[0], tokens = parsed[1];
+            var target = this.keys[base];
+            while (target != null && tokens.length != 0) {
+                target = target[tokens.shift()];
+            }
+            return typeof target == 'number' ? target : target || "";
+        },
+        get: function(key) {
+            var target = this.GET(key);
+            if (is(target, Object))
+                return jQuery.extend(true, {}, target);
+            else if (is(target, Array))
+                return target.slice(0);
+            return target;
       },
       SET: function(key, val) {
         var value = !is(val) ? null : val;
         var parsed = parse(key), base = parsed[0], tokens = parsed[1];
         var target = this.keys[base];
         this.keys[base] = set(target, tokens.slice(0), value);
-        console.log(this.keys[base]);
         return this;
       },
       set: function(key, val) {

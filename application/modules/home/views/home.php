@@ -59,51 +59,34 @@
     </div>
 
     <div class="row">
-        <?php foreach($data as $keySection => $valueSection): ?>
+        <?php foreach ($data as $keySection => $valueSection): ?>
         <div class="videos-list <?=  $keySection ?>">
 
-            <?php foreach($valueSection as $keyApi=>$valueApi): ?>            
+            <?php foreach ($valueSection as $keyApi => $valueApi): ?>            
             <div class="<?= $keyApi ?>">
 
-                <?php foreach($valueApi as $api): ?>
+                <?php foreach ($valueApi as $api): ?>
                 <div class="col-md-3 <?= $keyApi ?>">
 
                     <div class="tile">
-                        <?php
-                            switch($keyApi)
-                            {
-                                case 'youtube':
-                                    $source = '<span style="color:white">You</span><span style="color:black">Tube</span>';
-                                break;
-                                case 'vimeo':
-                                    $source = 'Vimeo';
-                                break;
-                                case 'dailymotion':
-                                    $source = 'Dailymotion';
-                                break;
-                                case 'metacafe':
-                                    $source = 'Metacafe';
-                                break;
-                            }
-                        ?>
-                        <div class="tile-title <?= $keyApi ?>">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <?= $source ?>
-                                </div>
-                                <div class="col-md-6">
-                                    <select name="video-category">
-                                        <?php foreach($api['category'] as $category): ?>
-                                        <option value="<?= $category ?>"> <?= $category ?> </option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                            </div>
+                        <div class="tile-image">
+                            <i class="fa fa-spinner fa-3x fa-spin" data-src="<?= $api['img'] ?>"></i>
+                            <a href="<?= $api['url'] ?>" title="<?= $api['title'] ?>" class="hidden">
+                                <img data-src="<?= $api['img'] ?>" class="tile-image" />
+                            </a>
                         </div>
-                        <a href="<?= $api['url'] ?>" title="<?= $api['title'] ?>">
-                            <img src="<?= $api['img'] ?>" alt="<?= $api['title'] ?>" class="tile-image img-thumbnail">
-                        </a>
-                        <h2 class="title">
+                        <div class="tile-title <?= $keyApi ?>">
+                            <span>
+                                <?= $keyApi ?>
+                            </span>
+                            <select class="video-category">
+                                <?php foreach($api['category'] as $category): ?>
+                                <option value="<?= $category ?>"> <?= $category ?> </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <div class="clearfix"></div>
+                        </div>
+                        <h2 class="title" style="font-size: 12px">
                             <a href="<?= $api['url'] ?>" title="<?= $api['title'] ?>"><?= $api['title'] ?></a>
                         </h2>
                         <p><?= $api['description'] ?></p>
@@ -122,47 +105,3 @@
     </div>
 
 </section>
-
-<script>
-    $(function(){
-
-        if($.cookie('source-list')==null) {
-            $('a.button[data-source=all]').addClass('selected-title');
-        }
-
-        if($.cookie('period-list')==null) {
-            $('a.button[data-period=ever]').addClass('selected-title');
-        }
-
-        $('#sources-list li').click(function() {
-            var method = $('.tabNavigation').find('.selected2').data('method');
-            var source = $(this).find('a').data('source');
-            var period = $('#periods-list .selected-title').data('period');
-            console.log(method + ' ' + period + ' ' + source);
-            //$.post('')
-        });
-
-        $('#periods-list li').click(function() {
-            var method = $('.tabNavigation').find('.selected2').data('method');
-            var source = $('#sources-list .selected-title').data('source');
-            var period = $(this).find('a').data('period');
-            console.log(method + ' ' + period + ' ' + source);
-            //$.post('')
-        });
-
-
-        $('.categories').filter(function() {
-            if($(this).children("li").length > 1) {
-                $(this).each(function(){
-                    $('li:eq(0)', this).addClass('first-category');
-                    $('li:gt(0)', this).wrapAll('<ul class="submenu" />');
-                });
-                $('.submenu').hide();
-                $(this).hover(function(){
-                    $(this).find('.submenu').toggle();
-                });
-            }
-        });
-
-    });
-</script>

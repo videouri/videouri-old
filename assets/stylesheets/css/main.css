@@ -1,4 +1,5 @@
 @import '../../../bower_components/twitter/dist/css/bootstrap.css';
+@import '../css/font-awesome.css';
 @import '../css/flat-ui.css';
 /* Background Size */
 /* Border Radius */
@@ -26,6 +27,27 @@ body {
   margin: 0 auto;
   font: 12px/20px 'Cabin', Helvetica, Arial, sans-serif;
   text-rendering: optimizeLegibility;
+}
+.tile {
+  padding: 0;
+}
+.tile .tile-image {
+  margin: 0;
+  height: 100px;
+  width: 100%;
+}
+.tile .tile-title {
+  line-height: 25px;
+  padding: 5px;
+  color: #ffffff;
+  background-color: #48c9b0;
+  border-color: #48c9b0;
+}
+.tile .tile-title span {
+  float: left;
+}
+.tile .tile-title select.video-category {
+  float: right;
 }
 #right-block {
   float: right;
