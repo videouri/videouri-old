@@ -4,12 +4,18 @@ var vendorScripts = [
         './bower_components/jquery/jquery.js',
         '/jquery-ui-1.10.3.custom.min.js',
         './assets/scripts/vendor/jquery.ui.touch-punch.min.js',
+        
         './bower_components/twitter/dist/js/bootstrap.js',
         './bower_components/jquery.lazyload/jquery.lazyload.js',
+
         './assets/scripts/vendor/bootstrap/bootstrap-select.js',
         './assets/scripts/vendor/bootstrap/bootstrap-switch.js',
+        //'./assets/scripts/vendor/bootstrap/bootstrap-typeahead.js',
+
         './assets/scripts/vendor/flatui/flatui-checkbox.js',
         './assets/scripts/vendor/flatui/flatui-radio.js',
+        //'./assets/scripts/vendor/flatui/flatui-fileinput.js',
+        //
         './assets/scripts/vendor/jquery.placeholder.js',
         './assets/scripts/vendor/jquery.stackable.js',
         './assets/scripts/vendor/jquery.cookie.js',
