@@ -55,7 +55,7 @@
 	</head>
 
 	<body>
-		<header>
+		<header class="hidden">
 			<div id="header_content">
 				<div class="top_header">
 					<a href="<?= site_url() ?>"><img src="<?= base_url() ?>assets/imgs/logo.png" alt="Videouri"></a>
@@ -90,10 +90,8 @@
         </footer>
 
         <?= $this->template->javascript ?>
-
+        
         <script src="<?= base_url() ?>assets/scripts/main.js"></script>
-        <script> $.query = { spaces: false }; </script>
-        <script src="<?= base_url() ?>assets/scripts/vendor/jquery.query.js"></script>
         <script src="<?= base_url() ?>assets/scripts/script.js"></script>
 
         <script type="text/javascript">

@@ -1,7 +1,6 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Metacafe
-{
+class Metacafe {
 
     //http://www.metacafe.com/api/videos/?start-index=0&max-results=10&vq=drift&time=all_time&orderby=rating
 

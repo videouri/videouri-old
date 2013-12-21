@@ -78,9 +78,7 @@ class DailymotionController extends MX_Controller {
             $dynamic_variable = "video_{$id}";
 
         } else {
-
             $dynamic_variable = "{$parameters['content']}";
-
         }
 
         // Get Data from Cache
@@ -91,8 +89,8 @@ class DailymotionController extends MX_Controller {
 
             $this->_debug['inside-if'] = 'yes, I\'m inside';
 
-            switch ($parameters['content'])
-            {
+            switch ($parameters['content']) {
+
                 /* Home content */
                 case 'newest':
                     $result = $this->dailymotion->call(
@@ -105,6 +103,7 @@ class DailymotionController extends MX_Controller {
                         )
                     );
                 break;
+
                 case 'top_rated':
                     $result = $this->dailymotion->call(
                         '/videos',
@@ -116,6 +115,7 @@ class DailymotionController extends MX_Controller {
                         )
                     );
                 break;
+
                 case 'most_viewed':
                     $result = $this->dailymotion->call(
                         '/videos',
@@ -141,8 +141,8 @@ class DailymotionController extends MX_Controller {
                             'family_filter' => $this->cookie
                         )
                     );
-
                 break;
+                
                 case 'tag':
                     $result = $this->dailymotion->call(
                         '/videos',

@@ -1,45 +1,81 @@
-var concatScripts = [
-    './bower_components/jquery/jquery.js',
-    './assets/scripts/vendor/jquery-ui-1.10.3.custom.min.js',
-    './assets/scripts/vendor/jquery.ui.touch-punch.min.js',
-    './bower_components/twitter/dist/js/bootstrap.js',
-    './assets/scripts/vendor/bootstrap/bootstrap-select.js',
-    './assets/scripts/vendor/bootstrap/bootstrap-switch.js',
-    './assets/scripts/vendor/flatui/flatui-checkbox.js',
-    './assets/scripts/vendor/flatui/flatui-radio.js',
-    './assets/scripts/vendor/jquery.placeholder.js',
-    './assets/scripts/vendor/jquery.stackable.js',
-    './assets/scripts/vendor/jquery.cookie.js',
-];
+'use strict';
+
+var vendorScripts = [
+        './bower_components/jquery/jquery.js',
+        '/jquery-ui-1.10.3.custom.min.js',
+        './assets/scripts/vendor/jquery.ui.touch-punch.min.js',
+        './bower_components/twitter/dist/js/bootstrap.js',
+        './bower_components/jquery.lazyload/jquery.lazyload.js',
+        './assets/scripts/vendor/bootstrap/bootstrap-select.js',
+        './assets/scripts/vendor/bootstrap/bootstrap-switch.js',
+        './assets/scripts/vendor/flatui/flatui-checkbox.js',
+        './assets/scripts/vendor/flatui/flatui-radio.js',
+        './assets/scripts/vendor/jquery.placeholder.js',
+        './assets/scripts/vendor/jquery.stackable.js',
+        './assets/scripts/vendor/jquery.cookie.js',
+        './assets/scripts/vendor/jquery.query.js',
+    ],
+    appScripts = [
+        './assets/scripts/script.js'
+    ],
+    scripts = vendorScripts.concat(appScripts);
 
 /*global module:false*/
 module.exports = function(grunt) {
 
-    // Project configuration.
     grunt.initConfig({
-        // Metadata.
-        meta: {
-            version: '0.1.0'
-        },
-        banner: '/*! Videouri - v<%= meta.version %> - ' +
-            '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
-            '* http://videouri.com/\n' +
-            '* Copyright (c) <%= grunt.template.today("yyyy") %> ' +
-            'Alexandru Budurovici; Licensed MIT */\n',
 
-        bowerDir: 'bower_components',
+        pkg: grunt.file.readJSON('package.json'),
+
+        /**
+         * Set project info
+         */
+        project: {
+            assets: './assets',
+            bowerDir: './bower_components',
+            css: [
+                '<%= project.assets %>/stylesheets/css/main.css'
+            ],
+            js: [
+                '<%= project.assets %>/scripts/scripts.min.js',
+            ]
+        },
+            
+        banner: '/*!\n' +
+              ' * <%= pkg.name %>\n' +
+              ' * <%= pkg.title %>\n' +
+              ' * <%= pkg.url %>\n' +
+              ' * @author <%= pkg.author %>\n' +
+              ' * @version <%= pkg.version %>\n' +
+              ' * Copyright <%= pkg.copyright %> <%= grunt.template.today("yyyy") %>. <%= pkg.license %> licensed.\n' +
+              ' */\n',
+
 
         clean: ['assets/tmp'],
 
-        // Task configuration.
+        // Concatenate files
         concat: {
             options: {
                 banner: '<%= banner %>',
-                stripBanners: true
+                stripBanners: true,
+                nonull: true,
             },
             js: {
-                src: concatScripts,
+                src: scripts,
+                //dest: '<%= project.js %>'
                 dest: './assets/scripts/main.js'
+            }
+        },
+
+        // Minify and such, for production
+        uglify: {
+            options: {
+                banner: '<%= banner %>'
+            },
+            dist: {
+                files: {
+                    '<%= project.js %>': [scripts]
+                }
             }
         },
 
@@ -48,7 +84,7 @@ module.exports = function(grunt) {
             development: {
                 options: {
                     paths: ["./assets/stylesheets/less"],
-                    yuicompress: false,
+                    yuicompress: true,
                     ieCompat: true
                 },
                 files: {
@@ -57,52 +93,59 @@ module.exports = function(grunt) {
             }
         },
 
-        uglify: {
+        jshint: {
+            files: [
+                '<%= project.assets %>/scripts/script.js',
+                'Gruntfile.js'
+            ],
             options: {
-                banner: '<%= banner %>'
-            },
-            dist: {
-                src: './assets/tmp/concat.js',
-                dest: './assets/scripts/main.js'
+                "node": true,
+                "browser": true,
+                "es5": true,
+                "esnext": true,
+                "bitwise": true,
+                "camelcase": true,
+                "curly": true,
+                "eqeqeq": true,
+                "immed": true,
+                "indent": 4,
+                "latedef": true,
+                "newcap": true,
+                "noarg": true,
+                "quotmark": "mixed",
+                "regexp": true,
+                "undef": true,
+                "unused": true,
+                "strict": true,
+                "trailing": false,
+                "smarttabs": true,
+                "globals" : {
+                    "jQuery": true,
+                    "Modernizr": true
+                }
             }
         },
 
-        jshint: {
-            options: {
-                curly: true,
-                eqeqeq: true,
-                immed: true,
-                latedef: true,
-                newcap: true,
-                noarg: true,
-                sub: true,
-                undef: true,
-                unused: true,
-                boss: true,
-                eqnull: true,
-                browser: true,
-                globals: {
-                    jQuery: true
-                }
-            },
-              gruntfile: {
-                src: 'Gruntfile.js'
-            }
-        },
         watch: {
-            options: {
-                livereload: true,
-            },
             concat: {
-                files: []
-            },
-            gruntfile: {
-                files: '<%= jshint.gruntfile.src %>',
-                tasks: ['jshint:gruntfile']
+                files: '<%= project.assets %>/scripts/{,*/}*.js',
+                tasks: ['concat:js']
             },
             less: {
-                files: "./assets/stylesheets/less/*",
+                files: "./assets/stylesheets/less/**/*.less",
                 tasks: ["less"]
+            },
+            livereload: {
+                options: {
+                    livereload: true
+                },
+                files: [
+                    //'<%= project.assets %>/css/*.css',
+                    '<%= project.css %>',
+                    //'<%= project.assets %>/js/{,*/}*.js',
+                    '<%= project.js %>',
+                    //'<%= project.assets %>/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+                ]
             }
         }
     });
@@ -119,7 +162,9 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-notify');
 
     // Defining Tasks
-    grunt.registerTask('default', ['less', 'jshint', 'concat']);
-    grunt.registerTask('production', ['less', 'jshint', 'concat', 'uglify']);
+    //grunt.registerTask('default', ['less', 'jshint', 'concat']);
+    grunt.registerTask('default', ['less', 'concat']);
+    //grunt.registerTask('production', ['less', 'jshint', 'concat', 'uglify']);
+    grunt.registerTask('production', ['less', 'concat', 'uglify']);
 
 };

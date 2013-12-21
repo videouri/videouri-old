@@ -1,4 +1,12 @@
 {
+    "name"           : "Videouri",
+    "title"          : "Video search engine",
+    "url"            : "http://videouri.com",
+    "author"         : "Alexandru Budurovici <contact@videouri.com>",
+    "version"        : "0.0.1",
+    "copyright"      : "&copy; Videouri.com",
+    "license"        : "Attribution-NonCommercial-NoDerivs",
+    "dependencies"   : {},
     "devDependencies": {
         "grunt": "*",
         "grunt-notify": "*",

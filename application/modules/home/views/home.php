@@ -1,3 +1,100 @@
+<header id="home-header" class="row">
+    <!-- content to be placed inside <body>…</body> -->
+    <div class='row row-hexagon'>
+        <div class='hexagon'></div>
+    </div>
+    <div class='row row-hexagon'>
+        <div class='hexagon content ribbon' data-content='This is a test!!! 9/10'></div>
+        <div class='hexagon content ribbon' data-content='Some longer text here. Bla bla'></div>
+    </div>
+    <div class='row row-hexagon'>
+        <div class='hexagon logo'></div>
+    </div>
+
+    <div id="top-hex-menu" class="hidden">
+        <div class="col-xs-6">
+            <div class="hex hex-1 hex-gap">
+                <div class="inner">
+                        <h4>HOME</h4>
+                        <hr>
+                        <p>Home Sweet Home</p>
+                </div>
+                <a href="#"></a>
+                <div class="corner-1"></div>
+                <div class="corner-2"></div>
+            </div>
+
+            <div class="hex hex-2">
+                <div class="inner">
+                        <h4>HOME</h4>
+                        <hr>
+                        <p>Home Sweet Home</p>
+                </div>
+                <a href="#"></a>
+                <div class="corner-1"></div>
+                <div class="corner-2"></div>
+            </div>
+
+            <div class="hex hex-3">
+                <div class="inner">
+                        <h4>HOME</h4>
+                        <hr>
+                        <p>Home Sweet Home</p>
+                </div>
+                <a href="#"></a>
+                <div class="corner-1"></div>
+                <div class="corner-2"></div>
+            </div>
+
+            <div class="hex hex-3">
+                <div class="inner">
+                        <h4>HOME</h4>
+                        <hr>
+                        <p>Home Sweet Home</p>
+                </div>
+                <a href="#"></a>
+                <div class="corner-1"></div>
+                <div class="corner-2"></div>
+            </div>
+            
+            <div class="hex hex-3">
+                <div class="inner">
+                        <h4>HOME</h4>
+                        <hr>
+                        <p>Home Sweet Home</p>
+                </div>
+                <a href="#"></a>
+                <div class="corner-1"></div>
+                <div class="corner-2"></div>
+            </div>
+            
+            <div class="hex hex-3 hex-gap">
+                <div class="inner">
+                        <h4>HOME</h4>
+                        <hr>
+                        <p>Home Sweet Home</p>
+                </div>
+                <a href="#"></a>
+                <div class="corner-1"></div>
+                <div class="corner-2"></div>
+            </div>
+
+            <div class="hex hex-3">
+                <div class="inner">
+                        <h4>HOME</h4>
+                        <hr>
+                        <p>Home Sweet Home</p>
+                </div>
+                <a href="#"></a>
+                <div class="corner-1"></div>
+                <div class="corner-2"></div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="clearfix"></div>
+
 <section id="home">
 
         <div id="left-block" style="display:none;">
@@ -63,39 +160,44 @@
         <div class="videos-list <?=  $keySection ?>">
 
             <?php foreach ($valueSection as $keyApi => $valueApi): ?>            
-            <div class="<?= $keyApi ?>">
-
-                <?php foreach ($valueApi as $api): ?>
+                <?php foreach ($valueApi as $video): ?>
                 <div class="col-md-3 <?= $keyApi ?>">
 
                     <div class="tile">
                         <div class="tile-image">
-                            <i class="fa fa-spinner fa-3x fa-spin" data-src="<?= $api['img'] ?>"></i>
-                            <a href="<?= $api['url'] ?>" title="<?= $api['title'] ?>" class="hidden">
-                                <img data-src="<?= $api['img'] ?>" class="tile-image" />
-                            </a>
+                            <div class="image-sidebar hidden">
+                                <ul class="list-unstyled" style="position: relative;">
+                                    <li>
+                                        <a href="#categories" class="dropdown-toggle" data-toggle="dropdown">
+                                            <span class="fui-list"></span>
+                                        </a>
+                                        <span class="dropdown-arrow" style=""></span>
+                                        <ul class="dropdown-menu">
+                                            <?php foreach($video['category'] as $category): ?>
+                                            <li>
+                                                <a href="/category/<?= $category ?>"> <?= $category ?> </a>
+                                            </li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                            <img data-original="<?= $video['img'] ?>" alt="<?= $video['title'] ?>" class="lazy-image" />
+                            <span class="fui-play" style="position: absolute; top: 40%; color: #fff; font-size: 30px; text-shadow: 0px 0px 20px #000, 1px -3px 0px #45c8a9" data-url="<?= $video['url'] ?>"></span>
                         </div>
                         <div class="tile-title <?= $keyApi ?>">
-                            <span>
-                                <?= $keyApi ?>
-                            </span>
-                            <select class="video-category">
-                                <?php foreach($api['category'] as $category): ?>
-                                <option value="<?= $category ?>"> <?= $category ?> </option>
-                                <?php endforeach; ?>
-                            </select>
-                            <div class="clearfix"></div>
+                            <h2 class="title" style="font-size: 12px; margin: 0">
+                                <a href="<?= $video['url'] ?>" title="<?= $video['title'] ?>">
+                                    <?= $video['title'] ?>
+                                </a>
+                            </h2>
                         </div>
-                        <h2 class="title" style="font-size: 12px">
-                            <a href="<?= $api['url'] ?>" title="<?= $api['title'] ?>"><?= $api['title'] ?></a>
-                        </h2>
-                        <p><?= $api['description'] ?></p>
+                        <p class="hidden"><?= $video['description'] ?></p>
                     </div>
+                    <br/>
 
                 </div>
-                <?php endforeach; //$api ?>
-
-            </div>
+                <?php endforeach; //$video ?>
             <?php endforeach;  //$keyApi, $valueApi ?>
 
         </div>

@@ -23,7 +23,7 @@ class Home extends MX_Controller {
      *
      * @var array
      */
-    var $valid_periods = array('ever', 'today', 'week', 'month');
+    private $_validPeriods = array('ever', 'today', 'week', 'month');
 
     /**
      * Variable to contain the period of videos to load
@@ -65,7 +65,8 @@ class Home extends MX_Controller {
                         $i = 0;
                         $test_data = array();
 
-                        foreach($value['feed']['entry'] as $video) {
+                        foreach ($value['feed']['entry'] as $video) {
+                            #var_dump($video);
                             $origid = substr($video['id']['$t'], strrpos($video['id']['$t'], '/') + 1);
                             $id     = substr($origid,0,1).'y'.substr($origid,1);
 
@@ -150,7 +151,7 @@ class Home extends MX_Controller {
         }
 
         else {
-            if (! in_array($this->period, $this->valid_periods)) {
+            if (! in_array($this->period, $this->_validPeriods)) {
                 $this->output->set_status_header(403, 'Operation not allowed');
                 exit;
             }
