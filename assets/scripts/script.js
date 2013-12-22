@@ -6,9 +6,9 @@
 
         $(document).scroll(function() {
             if ($(this).scrollTop() >= 140 ) {
-                $('#my-div').show(200);
+                $('header.navbar').removeClass('hidden');
             } else {
-                $('#my-div').hide(200);
+                $('header.navbar').addClass('hidden');
             }
         });
 

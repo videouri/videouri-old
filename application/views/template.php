@@ -67,6 +67,123 @@
 			</div>
 		</header>
 
+        <header class="navbar navbar-default navbar-embossed navbar-fixed-top hidden">
+            <div class="row">
+                <div class="div-lg-1 col-md-1 div-col-xs-2">
+                    <a class="navbar-brand"> Videouri </a>
+                </div>
+                <div class="col-md-6 col-md-offset-2">
+                    <form class="navbar-form" action="#" role="search">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input class="form-control" type="search" placeholder="Search">
+                                <span class="input-group-btn">
+                                    <button type="submit" class="btn"><span class="fui-search"></span></button>
+                                </span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </header>
+
+        <header id="home-header" class="row">
+    <!-- content to be placed inside <body>…</body> -->
+    <div class='row row-hexagon'>
+        <div class='hexagon'></div>
+    </div>
+    <div class='row row-hexagon'>
+        <div class='hexagon content ribbon' data-content='This is a test!!! 9/10'></div>
+        <div class='hexagon content ribbon' data-content='Some longer text here. Bla bla'></div>
+    </div>
+    <div class='row row-hexagon'>
+        <div class='hexagon logo'></div>
+    </div>
+
+    <div id="top-hex-menu" class="hidden">
+        <div class="col-xs-6">
+            <div class="hex hex-1 hex-gap">
+                <div class="inner">
+                        <h4>HOME</h4>
+                        <hr>
+                        <p>Home Sweet Home</p>
+                </div>
+                <a href="#"></a>
+                <div class="corner-1"></div>
+                <div class="corner-2"></div>
+            </div>
+
+            <div class="hex hex-2">
+                <div class="inner">
+                        <h4>HOME</h4>
+                        <hr>
+                        <p>Home Sweet Home</p>
+                </div>
+                <a href="#"></a>
+                <div class="corner-1"></div>
+                <div class="corner-2"></div>
+            </div>
+
+            <div class="hex hex-3">
+                <div class="inner">
+                        <h4>HOME</h4>
+                        <hr>
+                        <p>Home Sweet Home</p>
+                </div>
+                <a href="#"></a>
+                <div class="corner-1"></div>
+                <div class="corner-2"></div>
+            </div>
+
+            <div class="hex hex-3">
+                <div class="inner">
+                        <h4>HOME</h4>
+                        <hr>
+                        <p>Home Sweet Home</p>
+                </div>
+                <a href="#"></a>
+                <div class="corner-1"></div>
+                <div class="corner-2"></div>
+            </div>
+            
+            <div class="hex hex-3">
+                <div class="inner">
+                        <h4>HOME</h4>
+                        <hr>
+                        <p>Home Sweet Home</p>
+                </div>
+                <a href="#"></a>
+                <div class="corner-1"></div>
+                <div class="corner-2"></div>
+            </div>
+            
+            <div class="hex hex-3 hex-gap">
+                <div class="inner">
+                        <h4>HOME</h4>
+                        <hr>
+                        <p>Home Sweet Home</p>
+                </div>
+                <a href="#"></a>
+                <div class="corner-1"></div>
+                <div class="corner-2"></div>
+            </div>
+
+            <div class="hex hex-3">
+                <div class="inner">
+                        <h4>HOME</h4>
+                        <hr>
+                        <p>Home Sweet Home</p>
+                </div>
+                <a href="#"></a>
+                <div class="corner-1"></div>
+                <div class="corner-2"></div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="clearfix"></div>
+
 		<div class="container">
 			<?= $this->template->content ?>
     	</div>

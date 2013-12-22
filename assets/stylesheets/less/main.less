@@ -1,9 +1,15 @@
 @import '../../../bower_components/twitter/dist/css/bootstrap.css';
 @import '../css/font-awesome.css';
-@import '../css/flat-ui.css';
-@import 'helpers';
+@import 'vendor/flat-ui/flat-ui.less';
+@import 'helpers.less';
 
-body{
+@font-face {
+    font-family: 'Sacramento';
+    src: url('/assets/fonts/Sacramento-Regular.ttf') format('truetype');
+    font-style: cursive;
+}
+
+body {
     /*background: url('../../imgs/bg.gif') repeat;*/
     background-color: #fff;
     margin: 0 auto;
@@ -11,7 +17,23 @@ body{
     text-rendering: optimizeLegibility;
 }
 
+.navbar {
+    border-radius: 0;
+
+    .navbar-brand {
+        font-family: 'Sacramento';
+        color: #27ae60;
+        /*color: #ecf0f1;*/
+        font-size: 30px;
+    }
+
+    .navbar-form {
+        border: 0;
+    }
+}
+
 @import 'module/home'; 
+
 
 #right-block {
     float: right;
