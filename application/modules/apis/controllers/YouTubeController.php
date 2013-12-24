@@ -20,9 +20,9 @@ class YouTubeController extends MX_Controller {
     */
     public function data(array $parameters = array())
     {
-        $this->page = isset($parameters['page']) ? 1 + ($parameters['page']-1) * 10 : 1;
+        $this->page = isset($parameters['page']) ? 1 + ($parameters['page'] - 1) * 10 : 1;
 
-        if ((isset($parameters['sort'])) && ($parameters['sort'] == 'views'))
+        if ((isset($parameters['sort'])) && ($parameters['sort'] === 'views'))
             $parameters['sort'] = 'viewCount';
 
 
@@ -60,8 +60,9 @@ class YouTubeController extends MX_Controller {
             $dynamic_variable = "video_{$parameters['id']}";
         }
 
-        else
+        else {
             $dynamic_variable = "{$parameters['content']}";
+        }
 
         // Get Data from Cache
         $cache_variable = "youtube_{$dynamic_variable}_cached";

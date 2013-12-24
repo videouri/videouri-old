@@ -8,6 +8,8 @@ var vendorScripts = [
         './bower_components/twitter/dist/js/bootstrap.js',
         './bower_components/jquery.lazyload/jquery.lazyload.js',
 
+        './assets/scripts/vendor/jquery-ajax-localstorage-cache.js',
+        
         './assets/scripts/vendor/bootstrap/bootstrap-select.js',
         './assets/scripts/vendor/bootstrap/bootstrap-switch.js',
         //'./assets/scripts/vendor/bootstrap/bootstrap-typeahead.js',
@@ -15,7 +17,7 @@ var vendorScripts = [
         './assets/scripts/vendor/flatui/flatui-checkbox.js',
         './assets/scripts/vendor/flatui/flatui-radio.js',
         //'./assets/scripts/vendor/flatui/flatui-fileinput.js',
-        //
+        
         './assets/scripts/vendor/jquery.placeholder.js',
         './assets/scripts/vendor/jquery.stackable.js',
         './assets/scripts/vendor/jquery.cookie.js',

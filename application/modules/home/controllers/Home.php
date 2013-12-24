@@ -136,6 +136,9 @@ class Home extends MX_Controller {
                                 'this month' => 'month',
                                 'ever'       => 'ever'
                             );
+
+        $this->template->body_id = 'home';
+        $this->template->home_featured->view('featured');
         $this->template->content->view('home', $data);
         $this->template->publish();
     }

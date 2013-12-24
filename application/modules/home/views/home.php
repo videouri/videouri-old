@@ -1,16 +1,16 @@
 <section id="home">
 
-        <div id="left-block" style="display:none;">
-            <div id="categories-block">
-                <h2 class="title">Categories</h2>
-                <ul class="categories-list">
-                    <li><a data-category="news">News</a></li>
-                    <li><a data-category="comedy">Comedy</a></li>
-                    <li><a data-category="movies">Movies</a></li>
-                    <li><a data-category="sports">Sports</a></li>
-                </ul>
-            </div>
+    <div id="left-block" style="display:none;">
+        <div id="categories-block">
+            <h2 class="title">Categories</h2>
+            <ul class="categories-list">
+                <li><a data-category="news">News</a></li>
+                <li><a data-category="comedy">Comedy</a></li>
+                <li><a data-category="movies">Movies</a></li>
+                <li><a data-category="sports">Sports</a></li>
+            </ul>
         </div>
+    </div>
 
 
     <div class="row">

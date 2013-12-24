@@ -11072,6 +11072,69 @@ if (typeof jQuery === "undefined") { throw new Error("Bootstrap requires jQuery"
 
 })(jQuery, window, document);
 
+// github.com/paulirish/jquery-ajax-localstorage-cache
+// dependent on Modernizr's localStorage test
+
+$.ajaxPrefilter( function( options, originalOptions, jqXHR ) {
+
+  // Cache it ?
+  if ( !Modernizr.localstorage || !options.localCache ) return;
+
+  var hourstl = options.cacheTTL || 5;
+
+  var cacheKey = options.cacheKey || 
+                 options.url.replace( /jQuery.*/,'' ) + options.type + options.data;
+  
+  // isCacheValid is a function to validate cache
+  if ( options.isCacheValid &&  ! options.isCacheValid() ){
+    localStorage.removeItem( cacheKey );
+  }
+  // if there's a TTL that's expired, flush this item
+  var ttl = localStorage.getItem(cacheKey + 'cachettl');
+  if ( ttl && ttl < +new Date() ){
+    localStorage.removeItem( cacheKey );
+    localStorage.removeItem( cacheKey  + 'cachettl' );
+    ttl = 'expired';
+  }
+  
+  var value = localStorage.getItem( cacheKey );
+  if ( value ){
+    //In the cache? So get it, apply success callback & abort the XHR request
+    // parse back to JSON if we can.
+    if ( options.dataType.indexOf( 'json' ) === 0 ) value = JSON.parse( value );
+    options.success( value );
+    // Abort is broken on JQ 1.5 :(
+    jqXHR.abort();
+  } else {
+
+    //If it not in the cache, we change the success callback, just put data on localstorage and after that apply the initial callback
+    if ( options.success ) {
+      options.realsuccess = options.success;
+    }  
+    options.success = function( data ) {
+      var strdata = data;
+      if ( this.dataType.indexOf( 'json' ) === 0 ) strdata = JSON.stringify( data );
+
+      // Save the data to localStorage catching exceptions (possibly QUOTA_EXCEEDED_ERR)
+      try {
+        localStorage.setItem( cacheKey, strdata );
+      } catch (e) {
+        // Remove any incomplete data that may have been saved before the exception was caught
+        localStorage.removeItem( cacheKey );
+        localStorage.removeItem( cacheKey + 'cachettl' );
+        if ( options.cacheError ) options.cacheError( e, cacheKey, strdata );
+      }
+
+      if ( options.realsuccess ) options.realsuccess( data );
+    };
+
+    // store timestamp
+    if ( ! ttl || ttl === 'expired' ) {
+      localStorage.setItem( cacheKey  + 'cachettl', +new Date() + 1000 * 60 * 60 * hourstl );
+    }
+    
+  }
+});
 !function($) {
     var Selectpicker = function(element, options, e) {
         if (e ) {
@@ -12390,11 +12453,11 @@ new function(settings) {
     $(function () {
 
         $(document).scroll(function() {
-            if ($(this).scrollTop() >= 140 ) {
+            /*if ($(this).scrollTop() >= 140 ) {
                 $('header.navbar').removeClass('hidden');
             } else {
                 $('header.navbar').addClass('hidden');
-            }
+            }*/
         });
 
         /*function smartColumns() {
@@ -12411,6 +12474,60 @@ new function(settings) {
         $(window).resize(function () {
             smartColumns();
         });*/
+
+        var amount = Math.floor($(document).width() / 186) + 2;
+        /*$('#home-page-featured .featured-list').each(function(){
+            for (var i = 0; i < amount; i++) {
+                $(this).append(
+                    '<li>'
+                        +'<a href="<?= SRC_URL ?>"><img width="186" height="186" src="<?=  SRC_URL; ?>/assets/img/blank.jpg" /></a>'
+                    +'</li>'
+                );
+            }
+        });*/
+
+        $.ajax({
+            url          : '/api/videos',
+            data         : {
+                //'amount': (amount * 2),
+                'sort'  : 'top-rated',
+                'period': 'today',
+                'source': 'all'
+            },
+            type         : 'GET',
+            dataType     : 'json',
+
+            localCache   : true,
+            cacheTTL     : 12,
+
+            success: function(reply, textStatus, jqXHR) {
+                var projects = [];
+                var container = $('ul.featured-list');
+                $.each(reply, function(index, value) {
+                    if(value.gallery)
+                    {
+                        image = value.gallery;
+                        //  data-categories="'+value['categories']+'"
+                        projects.push(
+                            '<a href="<?= SRC_URL ?>/project/'+value['id']+'" class="project-pan" title="'+value['name']+'" data-description="'+value['description']+'">'
+                                +'<img width="186" height="186" src="<?= SRC_URL ?>/data/images/'+image.name+'" />'
+                            +'</a>'
+                        );
+                    }
+                });
+
+                $('ul.featured-list').each(function() {  
+                    $(this).find('li').each(function() {
+                        $(this).addClass('project').html(projects.shift());
+                    });
+                });
+            },
+            fail: function(jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR);
+                console.log(textStatus);
+                console.log(errorThrown);
+            }
+        });
 
         if (($.query.get('page').length === 0) || ($.query.get('page') === 1)) {
             $('.previous').hide();  
