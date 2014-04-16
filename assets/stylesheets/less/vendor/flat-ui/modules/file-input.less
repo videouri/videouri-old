@@ -13,8 +13,7 @@
     left: 0;
     bottom: 0;
     margin: 0;
-    opacity: 0;
-    filter: alpha(opacity=0);
+    .opacity(0);
     font-size: 23px;
     direction: ltr;
     cursor: pointer;
@@ -27,7 +26,7 @@
   display: block;
   
   .fileinput-filename {
-	  font-size: @component-font-size-base;	  
+    font-size: @component-font-size-base;   
   }
   .uneditable-input {
     display: inline-block;
@@ -37,24 +36,15 @@
     .text-overflow();  
     
     [class^="fui-"] {
-	    margin-right: .3em;
+      margin-right: .3em;
     }
   }
   .fileinput-preview {
-	  cursor: pointer;
+    cursor: pointer;
   }
   .thumbnail {
     overflow: hidden;
     display: inline-block;
-    margin-bottom: 5px;
-    vertical-align: middle;
-    text-align: center;
-    border-radius: @border-radius-large;
-    border: 2px solid @gray-light;
-    
-    > img {
-      max-height: 100%;
-    }
   }
 }
 .fileinput-exists .fileinput-new,

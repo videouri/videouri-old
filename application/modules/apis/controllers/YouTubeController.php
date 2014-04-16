@@ -1,4 +1,4 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php if (  ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class YouTubeController extends MX_Controller {
     
@@ -8,8 +8,11 @@ class YouTubeController extends MX_Controller {
         
         $this->load->library('API/youtube');
 
-        $this->_debug['on']  = false;
-        $this->cache_timeout = $this->config->item('cache_timeout');
+        if (!class_exists('CI_CACHE')) {
+            $this->load->driver('cache', array('adapter' => 'apc', 'backup' => 'file', 'key_prefix' => 'videouri_'));
+        }
+
+        #$this->_debug['on'] = true;
     }
 
     /**
@@ -18,17 +21,17 @@ class YouTubeController extends MX_Controller {
     * @param array $parameters containing the data to be sent when querying the api
     * @return the json_decoded or rss response from YouTube.
     */
-    public function data(array $parameters = array())
+    public function data($parameters = array())
     {
         $this->page = isset($parameters['page']) ? 1 + ($parameters['page'] - 1) * 10 : 1;
 
-        if ((isset($parameters['sort'])) && ($parameters['sort'] === 'views'))
+        if ((isset($parameters['sort'])) && ($parameters['sort'] === 'views')) {
             $parameters['sort'] = 'viewCount';
-
+        }
 
         switch ((isset($parameters['period']) ? $parameters['period'] : '')) {
             case 'today':
-                $period = 'this_day';
+                $period = 'today';
                 break;
             
             case 'week':
@@ -44,20 +47,25 @@ class YouTubeController extends MX_Controller {
                 $period = 'all_time';
                 break;
         }
-    
 
         if (isset($parameters['query'])) {
             $characters = array("-", "@");
             $query      = str_replace($characters, '', $parameters['query']);
 
-            if(isset($parameters['page']))
-                $dynamic_variable = "query_{$query}_page$this->page";
-            else
+            if (isset($parameters['page'])) {
+                $dynamic_variable = "query_{$query}_page{$this->page}";
+            }
+            else {
                 $dynamic_variable = "query_{$query}";
+            }
         }
 
         elseif (isset($parameters['id'])) {
             $dynamic_variable = "video_{$parameters['id']}";
+        }
+
+        elseif (isset($parameters['maxResults'])) {
+            $dynamic_variable = "{$parameters['maxResults']}_results";
         }
 
         else {
@@ -65,21 +73,20 @@ class YouTubeController extends MX_Controller {
         }
 
         // Get Data from Cache
-        $cache_variable = "youtube_{$dynamic_variable}_cached";
+        $cache_variable = "youtube_{$dynamic_variable}_{$period}_cached";
         $result         = $this->cache->get($cache_variable);
-        
 
         if ( ! $result) {
             $this->_debug['inside-if'] = 'yes, I\'m inside `if( !$result)` of function data()';
-            #dd($parameters);
 
             switch ($parameters['content']) {
                 /* Home content */
                 case 'newest':
                     $result = json_decode($this->youtube->getMostRecentVideoFeed(
                         array(
-                            'max-results' => 10,
-                            'fields'      => 'entry(id,title,author,content,published,media:group(media:thumbnail(@url),yt:duration(@seconds)))',
+                            'max-results' => $parameters['maxResults'],
+                            'fields'      => 'entry(id,title,author,gd:rating,yt:rating,yt:statistics,media:group(media:category(),media:description(),media:thumbnail(@url),yt:duration(@seconds)))',
+                            'time'        => $period,
                             'alt'         => 'json'
                             )
                         )
@@ -89,9 +96,10 @@ class YouTubeController extends MX_Controller {
                 case 'top_rated':
                     $result = json_decode($this->youtube->getTopRatedVideoFeed(
                         array(
-                            'max-results' => 10,
+                            'max-results' => $parameters['maxResults'],
                             //'fields'       => '*',
-                            'fields'      => 'entry(id,published,title,author,media:group(media:category(),media:description(),media:thumbnail(@url),yt:duration(@seconds)))',
+                            'fields'      => 'entry(id,published,title,author,gd:rating,yt:rating,yt:statistics,media:group(media:category(),media:description(),media:thumbnail(@url),yt:duration(@seconds)))',
+                            'time'        => $period,
                             'alt'         => 'json'
                             )
                         )
@@ -101,8 +109,8 @@ class YouTubeController extends MX_Controller {
                 case 'most_viewed':
                     $result= json_decode($this->youtube->getMostPopularVideoFeed(
                         array(
-                            'max-results' => 10,
-                            'fields'      => "entry(id,published,title,author,media:group(media:category(),media:description(),media:thumbnail(@url),yt:duration(@seconds)))",
+                            'max-results' => $parameters['maxResults'],
+                            'fields'      => "entry(id,published,title,author,gd:rating,yt:rating,yt:statistics,media:group(media:category(),media:description(),media:thumbnail(@url),yt:duration(@seconds)))",
                             'time'        => $period,
                             'alt'         => 'json'
                             )
@@ -115,10 +123,10 @@ class YouTubeController extends MX_Controller {
                     $result = json_decode($this->youtube->getKeywordVideoFeed(
                         $query,
                         array(
-                            'max-results' => 10,
+                            'max-results' => $parameters['maxResults'],
                             'start-index' => $this->page,
                             'orderby'     => $parameters['sort'],
-                            'fields'      => "entry(id,title,author,gd:rating,media:group(media:thumbnail(@url),yt:duration(@seconds)))",
+                            'fields'      => "entry(id,title,author,gd:rating,yt:rating,yt:statistics,media:group(media:category(),media:thumbnail(@url),yt:duration(@seconds)))",
                             'alt'         => 'json'
                             )
                         )
@@ -129,10 +137,10 @@ class YouTubeController extends MX_Controller {
                     $tag = json_decode($this->youtube->getKeywordVideoFeed(
                         $query,
                         array(
-                            'max-results' => 10,
+                            'max-results' => $parameters['maxResults'],
                             'start-index' => $this->page,
                             'orderby'     => $parameters['sort'],
-                            'fields'      => "entry(id,title,media:group(media:thumbnail(@url),yt:duration(@seconds)))",
+                            'fields'      => "entry(id,title,media:group(media:category(),media:thumbnail(@url),yt:duration(@seconds)))",
                             'alt'         => 'json'
                             )
                         )
@@ -181,7 +189,7 @@ class YouTubeController extends MX_Controller {
             $result =   json_decode($this->youtube->getRelatedVideoFeed(
                             $id,
                             array(
-                                'max-results' => 10,
+                                'max-results' => $parameters['maxResults'],
                                 'start-index' => $this->page,
                                 'fields'      => "entry(id,title,media:group(media:thumbnail(@url),yt:duration(@seconds)))",
                                 'alt'         => 'json'

@@ -76,19 +76,16 @@
 
 $route['default_controller'] = 'home';
 
-$route['api/videos']['get'] = "resources/api/getVideos";
+$route['api/videos']['get']  = "resources/api/getVideos";
 
 // URI like '/en/about' -> use controller 'about'
 //$route['^(en|es|ro)/home']        = "home/default_content";
-$route['^(en|es|ro)/video/(.+)$']['get'] = "video/id/$2";
-$route['^(en|es|ro)/results$']['get']    = "fetch/results$2";
-$route['^(en|es|ro)/tag/(:any)']['get']  = "fetch/results?search_query=$1&search=tag";
-$route['^(en|es|ro)/(.+)$']['get']       = "$2";
+$route['video/(.+)$']['get'] = "video/id/$1";
+$route['results$']['get']    = "fetch/results$1";
+$route['tag/(:any)']['get']  = "fetch/results?search_query=$1&search=tag";
+#$route['(.+)$']['get']       = "$2";
 
-// '/en', '/de', '/fr' and '/nl' URIs -> use default controller
-#$route['^(en|es|ro)$'] = $route['default_controller'];
-
-$route['404_override']  = '';
+$route['404_override']         = '';
 $route['translate_uri_dashes'] = FALSE;
 
 /* End of file routes.php */

@@ -2,7 +2,7 @@
 
 /* Caching settings */
 $config['adapter'] = 'apc';
-$config['backup'] = 'file';
+$config['backup']  = 'file';
 
 
 /* End of file app_settings.php */

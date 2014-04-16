@@ -75,6 +75,8 @@
 
             // Removes the headers from the output
             curl_setopt($ch, CURLOPT_HEADER, 0);
+            
+            #curl_setopt($ch, CURLOPT_VERBOSE, true);
 
             // Return the output instead of displaying it directly
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -87,9 +89,12 @@
 
             // Return headers
             $headers = curl_getinfo($ch);
-            
+
             // Close the curl session
             curl_close($ch);
+            
+            var_dump($headers);
+            var_dump($output);
 
             return $output;
         }

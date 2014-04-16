@@ -1,9 +1,9 @@
 <?php
 /**
- * @name		CodeIgniter Template Library
- * @author		Jens Segers
- * @link		http://www.jenssegers.be
- * @license		MIT License Copyright (c) 2012 Jens Segers
+ * @name        CodeIgniter Template Library
+ * @author      Jens Segers
+ * @link        http://www.jenssegers.be
+ * @license     MIT License Copyright (c) 2012 Jens Segers
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,12 +27,12 @@
 if (!defined("BASEPATH"))
     exit("No direct script access allowed");
 
-class Template {
+class CI_Template {
     
     /* default values */
-    private $_template = 'template';
-    private $_parser = FALSE;
-    private $_cache_ttl = 0;
+    private $_template    = 'template';
+    private $_parser      = FALSE;
+    private $_cache_ttl   = 0;
     private $_widget_path = '';
     
     private $_ci;
@@ -44,6 +44,9 @@ class Template {
      */
     public function __construct($config = array()) {
         $this->_ci = & get_instance();
+        
+        // set the default widget path with APPPATH
+        $this->_widget_path = APPPATH . 'widgets/';
         
         if (!empty($config)) {
             $this->initialize($config);
@@ -189,19 +192,19 @@ class Template {
         
         // new widget
         if(!class_exists($class)) {
-	        // try both lowercase and capitalized versions
-	        foreach (array(ucfirst($class), strtolower($class)) as $class) {
-	        	if (file_exists($path . $class . '.php')) {
-	        		include_once ($path . $class . '.php');
-	        		
-	        		// found the file, stop looking
-	        		break;
-	        	}
-	        }
+            // try both lowercase and capitalized versions
+            foreach (array(ucfirst($class), strtolower($class)) as $class) {
+                if (file_exists($path . $class . '.php')) {
+                    include_once ($path . $class . '.php');
+                    
+                    // found the file, stop looking
+                    break;
+                }
+            }
         }
         
         if (!class_exists($class)) {
-        	show_error("Widget '" . $class . "' was not found.");
+            show_error("Widget '" . $class . "' was not found.");
         }
         
         return new $class($class, $data);
@@ -220,19 +223,18 @@ class Template {
         $this->_cache_ttl = $ttl;
     }
     
-    // ---- TRIGGERS -----------------------------------------------------------------------------------------------------
-    
+    // ---- TRIGGERS -----------------------------------------------------------------
 
     /**
      * Stylesheet trigger
      * @param string $source
      */
-    public function trigger_stylesheet($url, $media = FALSE) {
+    public function trigger_stylesheet($url, $attributes = FALSE) {
         // array support
         if (is_array($url)) {
             $return = '';
             foreach ($url as $u) {
-                $return .= $this->trigger_stylesheet($u, $media);
+                $return .= $this->trigger_stylesheet($u, $attributes);
             }
             return $return;
         }
@@ -241,10 +243,21 @@ class Template {
             $url = $this->_ci->config->item('base_url') . $url;
         }
         
-        if ($media) {
-            return '<link rel="stylesheet" href="' . htmlspecialchars(strip_tags($url)) . '" media="' . $media . '" />' . "\n\t";
+        // legacy support for media
+        if (is_string($attributes)) {
+            $attributes = array('media' => $attributes);
+        }
+        
+        if (is_array($attributes)) {
+            $attributeString = "";
+            
+            foreach ($attributes as $key => $value) {
+                $attributeString .= $key . '="' . $value . '" ';
+            }
+            
+            return '<link rel="stylesheet" href="' . htmlspecialchars(strip_tags($url)) . '" ' . $attributeString . '>' . "\n\t";
         } else {
-            return '<link rel="stylesheet" href="' . htmlspecialchars(strip_tags($url)) . '" />' . "\n\t";
+            return '<link rel="stylesheet" href="' . htmlspecialchars(strip_tags($url)) . '">' . "\n\t";
         }
     }
     
@@ -285,13 +298,10 @@ class Template {
         
         switch ($type) {
             case 'meta' :
-                $content = '<meta name="' . $name . '" content="' . $value . '" />' . "\n\t";
-                break;
-            case 'og' :
-                $content = '<meta property="og:' . $name . '" content="' . $value . '" />' . "\n\t";
+                $content = '<meta name="' . $name . '" content="' . $value . '">' . "\n\t";
                 break;
             case 'link' :
-                $content = '<link rel="' . $name . '" href="' . $value . '" />' . "\n\t";
+                $content = '<link rel="' . $name . '" href="' . $value . '">' . "\n\t";
                 break;
         }
         
@@ -579,7 +589,8 @@ class Partial {
                 
                 $this->_trigger = array($obj, $func);
             } else {
-                $this->_trigger = reset(func_get_args());
+                $args = func_get_args();
+                $this->_trigger = reset($args);
             }
         } else {
             $this->_trigger = FALSE;
@@ -590,8 +601,8 @@ class Partial {
 class Widget extends Partial {
     
     /* (non-PHPdoc)
-	 * @see Partial::content()
-	 */
+     * @see Partial::content()
+     */
     public function content() {
         if (!$this->_cached) {
             if (method_exists($this, 'display')) {

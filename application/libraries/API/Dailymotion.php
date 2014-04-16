@@ -1,4 +1,4 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
 /**
  * Provides access to the Dailymotion API.
@@ -82,6 +82,22 @@ class Dailymotion
         $session = null,
         $storeSession = true;
 
+    /**
+     * List of query parameters that get automatically dropped when rebuilding
+     * the current URL.
+     * @var array
+    */
+    protected static $DROP_QUERY_PARAMS = array(
+        'code',
+        'scope',
+        'error',
+        'error_description',
+        'error_uri',
+        'state',
+        'uid',
+        'sig'
+    );
+
     private $CI = null;
 
     // w0rldart construct function to autoset setGrantType()
@@ -90,48 +106,40 @@ class Dailymotion
         $this->CI =& get_instance();
         $this->CI->config->load('app_libraries');
         
-        $dm_config        = $this->CI->config->item('dailymotion');
-        $this->api_key    = $dm_config['api_key'];
-        $this->api_secret = $dm_config['api_secret'];
+        $dm_config = $this->CI->config->item('dailymotion');
+
+        #$this->setGrantType(self::GRANT_TYPE_CLIENT_CREDENTIALS, $dm_config['api_key'], $dm_config['api_secret']);
     }
 
+
     /**
-* Change the default grant type.
-*
-* To create an API key/secret pair, go to: http://www.dailymotion.com/profile/developer
-*
-* @param $type Integer can be one of Dailymotion::GRANT_TYPE_AUTHORIZATION, Dailymotion::GRANT_TYPE_CLIENT_CREDENTIALS
-* or Dailymotion::GRANT_TYPE_PASSWORD.
-* @param $apiKey the API key
-* @param $apiSecret the API secret
-* @param $scope mixed the permission scope requested (can be none or any of 'read', 'write', 'delete').
-* To requested several scope keys, use an array or separate keys by whitespaces.
-* @param $info Array info associated to the chosen grant type
-*
-* Info Keys:
-* - redirect_uri: if $type is Dailymotion::GRANT_TYPE_AUTHORIZATION, this key can be provided. If omited,
-* the current URL will be used. Make sure this value have to stay the same before
-* the user is redirect to the authorization page and after the authorization page
-* redirected to this provided URI (the token server will change this).
-* - username:
-* - password: if $type is Dailymotion::GRANT_TYPE_PASSWORD, are used to define end-user credentials.
-* If those argument as not provided, the DailymotionAuthRequiredException exception will
-* be thrown if no valid session is available.
-*
-* @throws InvalidArgumentException if grant type is not supported or grant info is missing with required
-*/
-    public function setGrantType($type, $apiKey = null, $apiSecret = null, Array $scope = null, Array $info = null)
+     * Change the default grant type.
+     *
+     * To create an API key/secret pair, go to: http://www.dailymotion.com/profile/developer
+     *
+     * @param $type Integer can be one of Dailymotion::GRANT_TYPE_AUTHORIZATION, Dailymotion::GRANT_TYPE_CLIENT_CREDENTIALS
+     *                      or Dailymotion::GRANT_TYPE_PASSWORD.
+     * @param $apiKey the API key
+     * @param $apiSecret the API secret
+     * @param $scope mixed the permission scope requested (see http://www.dailymotion.com/doc/api/authentication.html#requesting-extended-permissions
+     *                     for a list of available permissions).
+     *                     To requested several scope keys, use an array or separate keys by whitespaces.
+     * @param $info Array info associated to the chosen grant type
+     *
+     * Info Keys:
+     * - redirect_uri: if $type is Dailymotion::GRANT_TYPE_AUTHORIZATION, this key can be provided. If omited,
+     *                 the current URL will be used. Make sure this value have to stay the same before
+     *                 the user is redirect to the authorization page and after the authorization page
+     *                 redirected to this provided URI (the token server will change this).
+     * - username:
+     * - password: if $type is Dailymotion::GRANT_TYPE_PASSWORD, are used to define end-user credentials.
+     *             If those argument as not provided, the DailymotionAuthRequiredException exception will
+     *             be thrown if no valid session is available.
+     *
+     * @throws InvalidArgumentException if grant type is not supported or grant info is missing with required
+     */
+    public function setGrantType($type, $apiKey, $apiSecret, Array $scope = null, Array $info = null)
     {
-        if ( ! $apiKey)
-        {
-            $apiKey = $this->api_key;
-        }
-
-        if ( ! $apiSecret)
-        {
-            $apiSecret = $this->api_secret;
-        }
-
         if ($type === null)
         {
             $this->grantType = null;
@@ -178,10 +186,11 @@ class Dailymotion
      * Get an authorization URL for use with redirects. By default, full page redirect is assumed.
      * If you are using a generated URL with a window.open() call in Javascript, you can pass in display=popup.
      *
-     * @param $scope Array a list of requested scope (allowed: create, read, update, delete)
+     * @param $scope Array a list of requested scope (see http://www.dailymotion.com/doc/api/authentication.html#requesting-extended-permissions
+     *                     for a list of available permissions)
      * @param $display String can be "page" (default, full page), "popup" or "mobile"
      */
-    public function getAuthorizationUrl($redirectUri = null, $scope = array(), $display = 'page')
+    public function getAuthorizationUrl($display = 'page')
     {
         if ($this->grantType !== self::GRANT_TYPE_AUTHORIZATION)
         {
@@ -193,7 +202,7 @@ class Dailymotion
             'response_type' => 'code',
             'client_id' => $this->grantInfo['key'],
             'redirect_uri' => $this->grantInfo['redirect_uri'],
-            'scope' => is_array($scope) ? implode(' ', $scope) : $scope,
+            'scope' => is_array($scope = $this->grantInfo['scope']) ? implode(' ', $scope) : $scope,
             'display' => $display,
         ), null, '&');
     }
@@ -207,7 +216,8 @@ class Dailymotion
      */
     public function uploadFile($filePath)
     {
-        $result = $this->call('file.upload');
+        $result = $this->get('/file/upload');
+
         $timeout = $this->timeout;
         $this->timeout = null;
         $result = json_decode($this->httpRequest($result['upload_url'], array('file' => '@' . $filePath)), true);
@@ -509,13 +519,6 @@ class Dailymotion
      */
     protected function storeSession(Array $session = null)
     {
-        if ($session['grant_type'] != self::GRANT_TYPE_CLIENT_CREDENTIALS)
-        {
-            // Do not store session for grant type client_credentials as it would allow the end-user to perform
-            // API calls on behalf of the API key user.
-            return;
-        }
-
         if (headers_sent())
         {
             if (php_sapi_name() !== 'cli')
@@ -556,7 +559,7 @@ class Dailymotion
      */
     protected function oauthTokenRequest(Array $args)
     {
-        $result = json_decode($response = $this->httpRequest($this->oauthTokenEndpointUrl, $args, null, $status_code, $response_headers), true);
+        $result = json_decode($response = $this->httpRequest($this->oauthTokenEndpointUrl, $args, null, $status_code, $response_headers, true), true);
 
         if (!isset($result))
         {
@@ -645,8 +648,10 @@ class Dailymotion
      *
      * @throws DailymotionTransportException if an error occurs during request.
      */
-    protected function httpRequest($url, $payload, $headers = null, &$status_code = null, &$response_headers = null)
+    protected function httpRequest($url, $payload, $headers = null, &$status_code = null, &$response_headers = null, $encode_payload=false)
     {
+        $payload = (is_array($payload) && true === $encode_payload) ? http_build_query($payload) : $payload;
+
         $ch = curl_init();
 
         // Force removal of the Exept: 100-continue header automatically added by curl
@@ -666,9 +671,16 @@ class Dailymotion
                 CURLOPT_URL => $url,
                 CURLOPT_HTTPHEADER => $headers,
                 CURLOPT_POSTFIELDS => $payload,
-                CURLOPT_VERBOSE => $this->debug,
+                CURLOPT_NOPROGRESS => !($this->debug && is_array($payload) && array_key_exists('file', $payload)),
             )
         );
+
+        if ($this->debug)
+        {
+            print ">>> [$url] >>>\n";
+            $message = print_r(($json = json_decode($payload)) == NULL ? $payload : $json, true);
+            print $message . (strpos($message, "\n") ? '' : "\n");
+        }
 
         $response = curl_exec($ch);
 
@@ -701,13 +713,16 @@ class Dailymotion
 
         // Try not rely on header_size if Content-Length header is present
         $body_offset = (isset($headers['content-length']) && ($length = $headers['content-length']) && is_numeric($length)) ? -$length : $info['header_size'];
+        $payload = substr($response, $body_offset);
 
         if ($this->debug)
         {
-            error_log(substr($response, $body_offset));
+            print "<<< [$url] <<<\n";
+            print_r(($json = json_decode($payload)) == NULL ? $payload : $json);
+            print "\n";
         }
 
-        return substr($response, $body_offset);
+        return $payload;
     }
 
     /**
@@ -740,7 +755,7 @@ class Dailymotion
         if ($parts['query'] !== '')
         {
             parse_str($parts['query'], $params);
-            foreach(array('code', 'scope', 'error', 'error_description', 'error_uri', 'state') as $name)
+            foreach(self::$DROP_QUERY_PARAMS as $name)
             {
                 unset($params[$name]);
             }

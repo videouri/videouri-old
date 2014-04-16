@@ -12,7 +12,7 @@ class Response
 	public function __construct()
 	{
 		$CI =& get_instance();
-		$CI->load->library('output');
+		#$CI->load->library('Output');
 	}
 
 	/**

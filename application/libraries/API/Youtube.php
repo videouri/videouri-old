@@ -441,7 +441,7 @@ class Youtube
     {
         if($this->_access !== false)
         {
-            $header = "POST {$uri} HTTP/".self::HTTP_1.self::LINE_END;
+            $header = "{$method} {$uri} HTTP/".self::HTTP_1.self::LINE_END;
             $url = self::URI_BASE.substr($uri, 1);
             $encoding = "UTF-8";
             $extra = "Content-Type: application/atom+xml; charset={$encoding}".self::LINE_END;
@@ -532,6 +532,36 @@ class Youtube
             return $output;
         }
         return false;
+    }
+    
+    /**
+        * Make a video either public or hidden
+        * Uses the yt:accessControl 'list' action with permission 'allowed' or 'denied'
+        * Need to include the media group info in order for data to not be overwritten/reset
+        *
+        * @param string $videoId The video you want to change.
+        * @param string $title The video's title.
+        * @param string $description The video's description.
+        * @param string $keywords The keywords you want to tag the video with
+        * @param string $category The category you want to put the video in
+        * @param string $permission Needs to be either 'allowed' or 'denied'
+        * @param string (optional) $user The user name whose account this video will go to. Defaults to the authenticated user.
+        * @param string (optional) $method Defaults to 'PUT'.
+     **/
+    public function videoUpdate($videoId, $title, $description, $keywords, $category, $permission, $user = 'default', $method = 'PUT')
+    {
+        $uri        = "/feeds/api/users/{$user}/uploads/{$videoId}";
+        $xml        = '<?xml version="1.0"?>';
+        $xml        .= '<entry xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:yt="http://gdata.youtube.com/schemas/2007">';
+        $xml        .= '<media:group>';
+        $xml        .= '<media:title type="plain">'.$title.'</media:title>';
+        $xml        .= '<media:description type="plain">'.$description.'</media:description>';
+        $xml        .= '<media:category scheme="http://gdata.youtube.com/schemas/2007/categories.cat">'.$category.'</media:category>';
+        $xml        .= '<media:keywords>'.$keywords.'</media:keywords>';
+        $xml        .= '</media:group>';
+        $xml        .= '<yt:accessControl action="list" permission="'.$permission.'"/>';
+        $xml        .= '</entry>';
+        return $this->_data_request($uri, $xml, $method);
     }
 
     /**

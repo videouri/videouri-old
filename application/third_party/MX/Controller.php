@@ -1,4 +1,4 @@
-<?php (defined('BASEPATH')) OR exit('No direct script access allowed');
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /** load the CI class for Modular Extensions **/
 require dirname(__FILE__).'/Base.php';
@@ -40,12 +40,10 @@ class MX_Controller
 {
 	public $autoload = array();
 
-	protected $_debug = array();
+	protected $_debug, $cache_timeout;
 	
 	public function __construct() 
 	{
-		$this->_debug['on'] = false;
-
 		$class = str_replace(CI::$APP->config->item('controller_suffix'), '', get_class($this));
 		log_message('debug', $class." MX_Controller Initialized");
 		Modules::$registry[strtolower($class)] = $this;	
@@ -56,6 +54,16 @@ class MX_Controller
 		
 		/* autoload module items */
 		$this->load->_autoloader($this->autoload);
+        
+		$this->_debug['on'] = false;
+		$this->cache_timeout = $this->config->item('cache_timeout');
+
+        if ($_SERVER['SERVER_ADDR'] !== $_SERVER['REMOTE_ADDR']) {
+            $this->output->set_status_header(400, 'No Remote Access Allowed');
+            exit;
+        }
+
+        #$this->output->enable_profiler(TRUE);
 	}
 	
 	public function __get($class) {

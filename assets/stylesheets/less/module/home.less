@@ -78,47 +78,34 @@
 
 body#home .tile {
     padding: 0;
-    -webkit-box-shadow: 1px 1px 12px -6px #000;
-       -moz-box-shadow: 1px 1px 12px -6px #000;
-            box-shadow: 1px 1px 12px -6px #000;
+    -webkit-box-shadow: 6px 6px 0 rgba(58,133,148, 0.2);
+       -moz-box-shadow: 6px 6px 0 rgba(58,133,148, 0.2);
+            box-shadow: 6px 6px 0 rgba(58,133,148, 0.2);
 
     .tile-image  {
         margin: 0;
         height: 100%;
 
-        .image-sidebar {
-            position: absolute;
-            height: 150px;
-            padding: 10px;
-            background: #48c9b0;
-
-             /* top-left corner */
-            -webkit-border-top-left-radius: 5px;
-                -moz-border-radius-topleft: 5px;
-                    border-top-left-radius: 5px;
-        }
-
         img {
             margin: 0;
             height: 150px;
             width: 100%;
-
-             /* top-left corner */
-            -webkit-border-top-left-radius: 6px;
-                -moz-border-radius-topleft: 6px;
-                    border-top-left-radius: 6px;
-
-             /* top-right corner */
-            -webkit-border-top-right-radius: 6px;
-                -moz-border-radius-topright: 6px;
-                    border-top-right-radius: 6px;
         }
+    }
+
+    .tile-sidebar {
+        position: absolute;
+        height: 150px;
+        padding: 10px;
+        background: rgb(236,240,241);
+        z-index: 100;
     }
 
     .tile-title {
         line-height: 25px;
         padding: 5px;
         color: #ffffff;
+        background-color: #fefefe;
 
         &.YouTube {
         }

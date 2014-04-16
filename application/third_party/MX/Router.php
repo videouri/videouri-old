@@ -39,12 +39,13 @@ class MX_Router extends CI_Router
 {
 	protected $module;
 	
-	public function fetch_module() {
+	public function fetch_module()
+	{
 		return $this->module;
 	}
 	
-	public function _validate_request($segments) {
-
+	public function _validate_request($segments)
+	{
 		if (count($segments) == 0) return $segments;
 		
 		/* locate module controller */
@@ -61,8 +62,8 @@ class MX_Router extends CI_Router
 	}
 	
 	/** Locate the controller **/
-	public function locate($segments) {		
-		
+	public function locate($segments)
+	{
 		$this->module = '';
 		$this->directory = '';
 		$ext = $this->config->item('controller_suffix').EXT;
@@ -134,7 +135,8 @@ class MX_Router extends CI_Router
 		}
 	}
 
-	public function set_class($class) {
+	public function set_class($class)
+	{
 		$this->class = $class.$this->config->item('controller_suffix');
 	}
 }

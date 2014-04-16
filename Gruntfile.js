@@ -1,32 +1,33 @@
 'use strict';
 
-var vendorScripts = [
-        './bower_components/jquery/jquery.js',
-        '/jquery-ui-1.10.3.custom.min.js',
-        './assets/scripts/vendor/jquery.ui.touch-punch.min.js',
+// var vendorScripts = [
+//         './bower_components/jquery/dist/jquery.js',
+//         '/jquery-ui-1.10.3.custom.min.js',
+//         './assets/scripts/vendor/jquery.ui.touch-punch.min.js',
         
-        './bower_components/twitter/dist/js/bootstrap.js',
-        './bower_components/jquery.lazyload/jquery.lazyload.js',
+//         './bower_components/bootstrap/dist/js/bootstrap.js',
+//         './bower_components/jquery.lazyload/jquery.lazyload.js',
 
-        './assets/scripts/vendor/jquery-ajax-localstorage-cache.js',
+//         './assets/scripts/vendor/jquery-ajax-localstorage-cache.js',
         
-        './assets/scripts/vendor/bootstrap/bootstrap-select.js',
-        './assets/scripts/vendor/bootstrap/bootstrap-switch.js',
-        //'./assets/scripts/vendor/bootstrap/bootstrap-typeahead.js',
+//         './assets/scripts/vendor/bootstrap/bootstrap-select.js',
+//         './assets/scripts/vendor/bootstrap/bootstrap-switch.js',
+//         //'./assets/scripts/vendor/typeahead.js',
 
-        './assets/scripts/vendor/flatui/flatui-checkbox.js',
-        './assets/scripts/vendor/flatui/flatui-radio.js',
-        //'./assets/scripts/vendor/flatui/flatui-fileinput.js',
+//         './assets/scripts/vendor/flatui/flatui-checkbox.js',
+//         './assets/scripts/vendor/flatui/flatui-radio.js',
+//         //'./assets/scripts/vendor/flatui/flatui-fileinput.js',
         
-        './assets/scripts/vendor/jquery.placeholder.js',
-        './assets/scripts/vendor/jquery.stackable.js',
-        './assets/scripts/vendor/jquery.cookie.js',
-        './assets/scripts/vendor/jquery.query.js',
-    ],
-    appScripts = [
-        './assets/scripts/script.js'
-    ],
-    scripts = vendorScripts.concat(appScripts);
+//         './assets/scripts/vendor/swfobject.js',
+//         './assets/scripts/vendor/jquery.tagsinput.js',
+//         './assets/scripts/vendor/jquery.placeholder.js',
+//         './assets/scripts/vendor/jquery.cookie.js',
+//         './assets/scripts/vendor/jquery.query.js',
+//     ],
+//     appScripts = [
+//         './assets/scripts/script.js'
+//     ],
+//     scripts = vendorScripts.concat(appScripts);
 
 /*global module:false*/
 module.exports = function(grunt) {
@@ -35,20 +36,23 @@ module.exports = function(grunt) {
 
         pkg: grunt.file.readJSON('package.json'),
 
-        /**
-         * Set project info
-         */
+
+        // Set variables to be used inside Grunt
         project: {
-            assets: './assets',
-            bowerDir: './bower_components',
+            assets:      './assets',
+            stylesheets: './assets/stylesheets',
+            scripts:     './assets/scripts',
+            bowerDir:    './bower_components',
             css: [
-                '<%= project.assets %>/stylesheets/css/main.css'
+                '<%= project.stylesheets %>/css/main.css'
             ],
             js: [
-                '<%= project.assets %>/scripts/scripts.min.js',
+                '<%= project.scripts %>/scripts.min.js',
             ]
         },
-            
+
+
+        // Banner for generated files
         banner: '/*!\n' +
               ' * <%= pkg.name %>\n' +
               ' * <%= pkg.title %>\n' +
@@ -58,31 +62,30 @@ module.exports = function(grunt) {
               ' * Copyright <%= pkg.copyright %> <%= grunt.template.today("yyyy") %>. <%= pkg.license %> licensed.\n' +
               ' */\n',
 
+        /**
+         * 
+         */
+        //clean: ['assets'],
+        
 
-        clean: ['assets/tmp'],
-
-        // Concatenate files
-        concat: {
+        // pretty clear what this is
+        requirejs: {
             options: {
-                banner: '<%= banner %>',
-                stripBanners: true,
-                nonull: true,
+                baseUrl: "./",
+                mainConfigFile: "<%= project.scripts %>/requirejs.js",
+                name: "<%= project.bowerDir %>/almond/almond",
+                out: "<%= project.scripts %>/videouri.js"
             },
-            js: {
-                src: scripts,
-                //dest: '<%= project.js %>'
-                dest: './assets/scripts/main.js'
-            }
-        },
 
-        // Minify and such, for production
-        uglify: {
-            options: {
-                banner: '<%= banner %>'
+            debug: {
+                options: {
+                    optimize: 'none'
+                }
             },
-            dist: {
-                files: {
-                    '<%= project.js %>': [scripts]
+
+            production: {
+                options: {
+                    optimize: 'uglify2'
                 }
             }
         },
@@ -91,19 +94,54 @@ module.exports = function(grunt) {
         less: {
             development: {
                 options: {
-                    paths: ["./assets/stylesheets/less"],
-                    yuicompress: true,
+                    paths: ["<%= project.stylesheets %>/less"],
+                    //compress: true,
+                    //cleancss: true,
                     ieCompat: true
                 },
                 files: {
-                    "./assets/stylesheets/css/main.css": "./assets/stylesheets/less/main.less"
+                    "<%= project.stylesheets %>/css/main.css": "<%= project.stylesheets %>/less/main.less"
                 }
             }
         },
 
+
+        // Concatenate files
+        concat: {
+            options: {
+                banner: '<%= banner %>',
+                stripBanners: true,
+                nonull: true,
+            },
+            /*js: {
+                src: scripts,
+                dest: '<%= project.scripts %>/main.js'
+            },*/
+            css: {
+                src: [
+                        '<%= project.bowerDir %>/bootstrap/dist/css/bootstrapa.css', 
+                        '<%= project.stylesheets %>/css/font-awesome.css',
+                        '<%= project.stylesheets %>/css/main.css'
+                     ],
+                dest: '<%= project.stylesheets %>/css/main.css',
+            }
+        },
+
+        // Minify and such, for production
+        /*uglify: {
+            options: {
+                banner: '<%= banner %>'
+            },
+            dist: {
+                files: {
+                    '<%= project.js %>': [scripts]
+                }
+            }
+        },*/
+
         jshint: {
             files: [
-                '<%= project.assets %>/scripts/script.js',
+                '<%= project.scripts %>/script.js',
                 'Gruntfile.js'
             ],
             options: {
@@ -135,30 +173,41 @@ module.exports = function(grunt) {
         },
 
         watch: {
+            options: {
+                livereload: true
+            },
             concat: {
-                files: '<%= project.assets %>/scripts/{,*/}*.js',
-                tasks: ['concat:js']
+                files: '<%= project.assets %>/',
+                //tasks: ['concat:js', 'concat:css']
+                tasks: ['concat:css']
             },
             less: {
-                files: "./assets/stylesheets/less/**/*.less",
+                files: '<%= project.stylesheets %>/less/**/*.less',
                 tasks: ["less"]
             },
-            livereload: {
-                options: {
-                    livereload: true
-                },
+            requirejs: {
                 files: [
-                    //'<%= project.assets %>/css/*.css',
-                    '<%= project.css %>',
-                    //'<%= project.assets %>/js/{,*/}*.js',
-                    '<%= project.js %>',
-                    //'<%= project.assets %>/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
-                ]
+                        '<%= project.scripts %>/vendor/{,*/}*.js',
+                        '<%= project.scripts %>/module/{,*/}*.js',
+                        '<%= project.scripts %>/requirejs.js',
+                        '<%= project.scripts %>/app.js'
+                        ],
+                tasks: ['requirejs:debug']
             }
+            // livereload: {
+            //     files: [
+            //         //'<%= project.assets %>/css/*.css',
+            //         '<%= project.css %>',
+            //         //'<%= project.assets %>/js/{,*/}*.js',
+            //         '<%= project.js %>',
+            //         //'<%= project.assets %>/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+            //     ]
+            // }
         }
     });
 
     // These plugins provide necessary tasks.
+    grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-compress');
     grunt.loadNpmTasks('grunt-contrib-concat');
@@ -170,9 +219,10 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-notify');
 
     // Defining Tasks
-    //grunt.registerTask('default', ['less', 'jshint', 'concat']);
-    grunt.registerTask('default', ['less', 'concat']);
+    //grunt.registerTask('default', ['less', 'concat']);
+    grunt.registerTask('work', ['watch']);
     //grunt.registerTask('production', ['less', 'jshint', 'concat', 'uglify']);
     grunt.registerTask('production', ['less', 'concat', 'uglify']);
+    grunt.registerTask('default', ['work']);
 
 };

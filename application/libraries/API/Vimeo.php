@@ -17,12 +17,11 @@ class Vimeo
     private $_token_secret = false;
     private $_upload_md5s = array();
 
-    private $CI = null;
 
     public function __construct($token = null, $token_secret = null)
     {
-        $this->CI =& get_instance();
-        $this->CI->config->load('app_libraries');
+        $CI =& get_instance();
+        $CI->config->load('app_libraries');
 
         $vm_config              = $CI->config->item('vimeo');
         

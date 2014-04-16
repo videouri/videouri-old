@@ -1,4 +1,4 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php if (! defined('BASEPATH')) exit('No direct script access allowed');
 
 class MetacafeController extends MX_Controller {
 
@@ -8,8 +8,11 @@ class MetacafeController extends MX_Controller {
 
         $this->load->library('API/metacafe');
 
-        $this->_debug['on']  = false;
-        $this->cache_timeout = $this->config->item('cache_timeout');
+        if (!class_exists('CI_CACHE')) {
+            $this->load->driver('cache', array('adapter' => 'apc', 'backup' => 'file', 'key_prefix' => 'videouri_'));
+        }
+
+        #$this->_debug['on'] = true;
     }
 
     /**
@@ -22,82 +25,82 @@ class MetacafeController extends MX_Controller {
     {
         $page = isset($parameters['page']) ? 1 + ($parameters['page']-1) * 10 : 1;
 
-        switch($parameters['sort'])
-        {
+        /*switch ($parameters['sort']) {
             case 'relevance':
                 $parameters['sort'] = 'rating';
-            break;
+                break;
+
             case 'published':
                 $parameters['sort'] = 'updated';
-            break;
+                break;
+
             case 'views':
                 $parameters['sort'] = 'viewCount';
-            break;
-        }
+                break;
+        }*/
 
-        if(isset($parameters['query']))
-        {
+        if (isset($parameters['query'])) {
             $query = $parameters['query'];
-            if(isset($parameters['page']))
-            {
+            
+            if (isset($parameters['page'])) {
                 $dynamic_variable = "query_{$query}_page{$page}";
             }
-            else
-            {
+            else {
                 $dynamic_variable = "query_{$query}";
             }
         }
-        elseif(isset($parameters['id']))
-        {
+
+        elseif (isset($parameters['id'])) {
             $id = explode('/', $parameters['id']);
             $dynamic_variable = "video_{$id['0']}";
-
         }
-        else
-        {
+
+        elseif (isset($parameters['maxResults'])) {
+            $dynamic_variable = "{$parameters['maxResults']}_results";
+        }
+
+        else {
             $dynamic_variable = "{$parameters['content']}";
         }
 
         // Get Data from Cache
-        $cache_variable = "metacafe_".$dynamic_variable."_cached";
-        $result = $this->cache->get($cache_variable);
-        
-        if( ! $result)
-        {
+        $cache_variable = "metacafe_{$dynamic_variable}_{$parameters['period']}_cached";
+        $result         = $this->cache->get($cache_variable);
+
+        if( ! $result) {
             $this->_debug['inside-if'] = 'yes, I\'m inside';
 
-            switch ($parameters['content'])
-            {
+            switch ($parameters['content']) {
                 /* Home content */
                 case 'newest':
-                    $result = $this->metacafe->getMostRecentVideoFeed();
-                break;
+                    $result = $this->metacafe->getMostRecentVideoFeed($parameters['period']);
+                    break;
+
                 case 'top_rated':
-                    $result = $this->metacafe->getTopRatedVideoFeed();
-                break;
+                    $result = $this->metacafe->getTopRatedVideoFeed($parameters['period']);
+                    break;
+
                 case 'most_viewed':
-                    $result = $this->metacafe->getMostViewedVideoFeed();
-                break;
+                    $result = $this->metacafe->getMostViewedVideoFeed($parameters['period']);
+                    break;
 
                 /* Search and tags content */
                 case 'search':
                     $result = $this->metacafe->getKeywordVideoFeed($parameters['query'], array('start-index'=>$page, 'max-results' => 10));
-                break;
+                    break;
                 case 'tag':
                     $result = $this->metacafe->getTagVideosFeed($parameters['query']);
-                break;
+                    break;
 
                 /* Video page with data and related videos */
                 case 'getVideoEntry':
                     $result = $this->metacafe->getItemData($id[0]);
-                break;
+                    break;
             }
-
         }
 
 
-        if($this->_debug['on']=='data')
-        {
+        if ($this->_debug['on'] === 'data') {
             $this->_debug['cache-name']   = $cache_variable;
             $this->_debug['dynamic-name'] = $dynamic_variable;
             $this->_debug['time-out']     = $this->cache_timeout;
@@ -106,24 +109,21 @@ class MetacafeController extends MX_Controller {
             prePrint($this->_debug);
             exit;
         }
-        else
-        {
+
+        else {
             $this->cache->save($cache_variable, $result, $this->cache_timeout);
 
-            if ($parameters['content'] == "getVideoEntry")
-            {
+            if ($parameters['content'] == "getVideoEntry") {
                 $result = simplexml_load_string($result);
                 $result = $result->channel->item;
                 $result['embed'] = $this->metacafe->getEmbedData($parameters['id']);
                 return $result;
             }
-            else
-            {
+
+            else {
                 return simplexml_load_string($result);
             }
-
         }
-
     }
 
     function related($id)

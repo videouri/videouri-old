@@ -8,8 +8,11 @@ class VimeoController extends MX_Controller {
         
         $this->load->library('API/vimeo');
 
-        $this->_debug['on']  = false;
-        $this->cache_timeout = $this->config->item('cache_timeout');
+        if (!class_exists('CI_CACHE')) {
+            $this->load->driver('cache', array('adapter' => 'apc', 'backup' => 'file', 'key_prefix' => 'videouri_'));
+        }
+
+        #$this->_debug['on'] = true;
     }
 
     /**
@@ -22,43 +25,47 @@ class VimeoController extends MX_Controller {
     {
         $this->vimeo->enableCache(Vimeo::CACHE_FILE, APPPATH.'cache', $this->cache_timeout);
         
-        if(isset($parameters['sort'])) {
+        if (isset($parameters['sort'])) {
 
-            switch($parameters['sort'])
-            {
+            switch($parameters['sort']) {
                 case 'relevance':
                     $sort = 'relevant';
-                break;
+                    break;
+
                 case 'published':
                     $sort = 'newest';
-                break;
+                    break;
+
                 case 'views':
                     $sort = 'most_played';
-                break;
+                    break;
+
                 case 'rating':
                     $sort = 'most_liked';
-                break;
+                    break;
             }
 
         }
 
-        if(isset($parameters['query'])) {
+        if (isset($parameters['query'])) {
             
             $query = $parameters['query'];
-            if(isset($parameters['page'])) {
+            if (isset($parameters['page'])) {
                 $dynamic_variable = "query_{$query}_page{$parameters['page']}";
             } else {
                 $dynamic_variable = "query_{$query}";
             }
 
-        } elseif(isset($parameters['id'])) {
-
+        } elseif (isset($parameters['id'])) {
             $dynamic_variable = "video_{$id}";
+        }
 
-        } else {
+        elseif (isset($parameters['maxResults'])) {
+            $dynamic_variable = "{$parameters['maxResults']}_results}";
+        }
 
+        else {
             $dynamic_variable = "{$parameters['content']}";
-
         }
 
         // Get Data from Cache
@@ -69,15 +76,15 @@ class VimeoController extends MX_Controller {
         {            
             $this->_debug['inside-if'] = 'yes, I\'m inside';
 
-            switch ($parameters['content'])
-            {
+            switch ($parameters['content']) {
                 /* Search and tags content */
                 case 'search':
                     $result = $this->vimeo->call('videos.search', array('full_response' => TRUE, 'page' => $parameters['page'], 'per_page' => 10, 'sort' => $sort, 'query' => $parameters['query']));
-                break;
+                    break;
+
                 case 'tag':
                     $result = $this->vimeo->call('videos.getByTag', array('full_response' => TRUE, 'page' => $parameters['page'], 'per_page' => 10, 'sort' => $sort, 'tag' => $parameters['query']));
-                break;
+                    break;
 
                 /* Video page with video data and related videos */
                 case 'getVideoEntry':
@@ -86,11 +93,11 @@ class VimeoController extends MX_Controller {
                     /*$video_url           = 'http://vimeo.com/'.$id;
                     $json_url            = 'http://vimeo.com/api/oembed.json?url=' . rawurlencode($video_url) . '&width=640';
                     $vimeo_data['videoCode'] =   json_decode(curl_get($json_url));*/
-                break;
+                    break;
+
                 case 'related':
                     $result = $this->vimeo->call('videos.getByTag', array('full_response' => TRUE, 'page' => $parameters['page'], 'per_page' => 20, 'sort' => $sort, 'tag' => $parameters['query']));
-                break;
-
+                    break;
             }
 
             $this->cache->save($cache_variable, $result, $this->cache_timeout);
@@ -106,8 +113,9 @@ class VimeoController extends MX_Controller {
 
             prePrint($this->_debug);
             exit;
+        }
 
-        } else {
+        else {
             return $result;
         }
 

@@ -16,12 +16,12 @@
  * through the world wide web, please send an email to
  * licensing@ellislab.com so we can send you a copy immediately.
  *
- * @package     CodeIgniter
- * @author      EllisLab Dev Team
- * @copyright   Copyright (c) 2008 - 2013, EllisLab, Inc. (http://ellislab.com/)
- * @license     http://opensource.org/licenses/AFL-3.0 Academic Free License (AFL 3.0)
- * @link        http://codeigniter.com
- * @since       Version 1.0
+ * @package		CodeIgniter
+ * @author		EllisLab Dev Team
+ * @copyright	Copyright (c) 2008 - 2013, EllisLab, Inc. (http://ellislab.com/)
+ * @license		http://opensource.org/licenses/AFL-3.0 Academic Free License (AFL 3.0)
+ * @link		http://codeigniter.com
+ * @since		Version 1.0
  * @filesource
  */
 
@@ -35,7 +35,7 @@
 | and disable it back when you're done.
 |
 */
-$config['migration_enabled'] = TRUE;
+$config['migration_enabled'] = FALSE;
 
 /*
 |--------------------------------------------------------------------------
@@ -105,7 +105,7 @@ $config['migration_version'] = 0;
 | Also, writing permission is required within the migrations path.
 |
 */
-$config['migration_path'] = APPPATH . 'migrations/';
+$config['migration_path'] = APPPATH.'migrations/';
 
 /* End of file migration.php */
 /* Location: ./application/config/migration.php */
