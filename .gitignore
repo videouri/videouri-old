@@ -1,17 +1,17 @@
 # Config
-*/config/development
+application/config/development
 
 # Stuff
-folder-files/
+/folder-files/
 test.*
 
-# Logs
-*/logs/log-*.php
-*/logs/!index.html
+application/cache/*
+!application/cache/index.html
+!application/cache/.htaccess
 
-# Cache
-*/cache/*
-*/cache/!index.html
+application/logs/*
+!application/logs/index.html
+!application/logs/.htaccess
 
 # Grunt
 node_modules/grunt*

@@ -18,7 +18,7 @@
  *
  * @package		CodeIgniter
  * @author		EllisLab Dev Team
- * @copyright	Copyright (c) 2008 - 2013, EllisLab, Inc. (http://ellislab.com/)
+ * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
  * @license		http://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * @link		http://codeigniter.com
  * @since		Version 1.0
@@ -120,7 +120,7 @@ class CI_Output {
 	 */
 	public function __construct()
 	{
-		$this->_zlib_oc = (bool) @ini_get('zlib.output_compression');
+		$this->_zlib_oc = (bool) ini_get('zlib.output_compression');
 		$this->_compress_output = (
 			$this->_zlib_oc === FALSE
 			&& config_item('compress_output') === TRUE
@@ -175,15 +175,7 @@ class CI_Output {
 	 */
 	public function append_output($output)
 	{
-		if (empty($this->final_output))
-		{
-			$this->final_output = $output;
-		}
-		else
-		{
-			$this->final_output .= $output;
-		}
-
+		$this->final_output .= $output;
 		return $this;
 	}
 
@@ -251,7 +243,7 @@ class CI_Output {
 		}
 
 		$header = 'Content-Type: '.$mime_type
-			.(empty($charset) ? NULL : '; charset='.$charset);
+			.(empty($charset) ? '' : '; charset='.$charset);
 
 		$this->headers[] = array($header, TRUE);
 		return $this;
@@ -401,10 +393,11 @@ class CI_Output {
 	 */
 	public function _display($output = '')
 	{
-		// Note:  We use globals because we can't use $CI =& get_instance()
+		// Note:  We use load_class() because we can't use $CI =& get_instance()
 		// since this function is sometimes called by the caching mechanism,
 		// which happens before the CI super object is available.
-		global $BM, $CFG;
+		$BM =& load_class('Benchmark', 'core');
+		$CFG =& load_class('Config', 'core');
 
 		// Grab the super object if we can.
 		if (class_exists('CI_Controller', FALSE))
@@ -562,7 +555,7 @@ class CI_Output {
 
 		$cache_path .= md5($uri);
 
-		if ( ! $fp = @fopen($cache_path, FOPEN_WRITE_CREATE_DESTRUCTIVE))
+		if ( ! $fp = @fopen($cache_path, 'w+b'))
 		{
 			log_message('error', 'Unable to write cache file: '.$cache_path);
 			return;
@@ -613,7 +606,7 @@ class CI_Output {
 
 		if (is_int($result))
 		{
-			@chmod($cache_path, FILE_WRITE_MODE);
+			@chmod($cache_path, 0666);
 			log_message('debug', 'Cache file written: '.$cache_path);
 
 			// Send HTTP cache-control headers to browser to match file cache settings.
@@ -646,7 +639,7 @@ class CI_Output {
 		$uri =	$CFG->item('base_url').$CFG->item('index_page').$URI->uri_string;
 		$filepath = $cache_path.md5($uri);
 
-		if ( ! @file_exists($filepath) OR ! $fp = @fopen($filepath, FOPEN_READ))
+		if ( ! file_exists($filepath) OR ! $fp = @fopen($filepath, 'rb'))
 		{
 			return FALSE;
 		}

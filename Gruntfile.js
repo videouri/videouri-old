@@ -72,7 +72,7 @@ module.exports = function(grunt) {
         requirejs: {
             options: {
                 baseUrl: "./",
-                mainConfigFile: "<%= project.scripts %>/requirejs.js",
+                mainConfigFile: "<%= project.scripts %>/build.js",
                 name: "<%= project.bowerDir %>/almond/almond",
                 out: "<%= project.scripts %>/videouri.js"
             },
@@ -119,7 +119,7 @@ module.exports = function(grunt) {
             },*/
             css: {
                 src: [
-                        '<%= project.bowerDir %>/bootstrap/dist/css/bootstrapa.css', 
+                        '<%= project.bowerDir %>/bootstrap/dist/css/bootstrap.css', 
                         '<%= project.stylesheets %>/css/font-awesome.css',
                         '<%= project.stylesheets %>/css/main.css'
                      ],
@@ -176,21 +176,35 @@ module.exports = function(grunt) {
             options: {
                 livereload: true
             },
-            concat: {
-                files: '<%= project.assets %>/',
-                //tasks: ['concat:js', 'concat:css']
-                tasks: ['concat:css']
+
+            grunt: {
+                files: ['Gruntfile.js']
             },
+
+
+            //////
+            /// STYLES
+            //////
             less: {
                 files: '<%= project.stylesheets %>/less/**/*.less',
                 tasks: ["less"]
             },
+            concat: {
+                files: '<%= project.stylesheets %>/css/**/*.css',
+                //tasks: ['concat:js', 'concat:css']
+                tasks: ['concat:css']
+            },
+
+
+            //////
+            /// SCRIPTS
+            //////
             requirejs: {
                 files: [
                         '<%= project.scripts %>/vendor/{,*/}*.js',
                         '<%= project.scripts %>/module/{,*/}*.js',
-                        '<%= project.scripts %>/requirejs.js',
-                        '<%= project.scripts %>/app.js'
+                        '<%= project.scripts %>/build.js',
+                        '<%= project.scripts %>/main.js'
                         ],
                 tasks: ['requirejs:debug']
             }

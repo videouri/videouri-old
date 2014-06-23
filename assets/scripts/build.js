@@ -2,10 +2,11 @@ requirejs.config({
     baseUrl: "/",
 
     // automatically require on page load in debug mode
-    deps: ['assets/scripts/app'],
+    // deps: ['assets/scripts/main'],
+    // deps: ['main'],
 
     // automatically require this for production build
-    insertRequire: ['assets/scripts/app'],
+    // insertRequire: ['assets/scripts/main'],
 
     paths: {
         "bower" : "../../../bower_components",
@@ -30,8 +31,23 @@ requirejs.config({
         "placeholder"          : "assets/scripts/vendor/jquery.placeholder",
         "cookie"               : "assets/scripts/vendor/jquery.cookie",
         "query"                : "assets/scripts/vendor/jquery.query",
+    },
+    shim: {
+        'jquery.ui':             ['jquery'],
+        'jquery.ui.touch-punch': ['jquery'],
+        'bootstrap':             ['jquery'],
+        'lazyload':              ['jquery'],
+        'ajax-cache':            ['jquery'],
+        'bootstrap-switch':      ['bootstrap'],
+        'bootstrap-select':      ['bootstrap'],
+        'flatui-checkbox':       ['jquery'],
+        'flatui-radio':          ['jquery'],
+        'tagsinput':             ['jquery'],
+        'placeholder':           ['jquery'],
+        'cookie':                ['jquery'],
+        'query':                 ['jquery'],
     }
-});
+}).call(this);
 
 // Load the main app module to start the app
-requirejs(["app", "module/home"]);
+// requirejs(["app", "module/home"]);

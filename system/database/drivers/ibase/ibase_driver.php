@@ -18,7 +18,7 @@
  *
  * @package		CodeIgniter
  * @author		EllisLab Dev Team
- * @copyright	Copyright (c) 2008 - 2013, EllisLab, Inc. (http://ellislab.com/)
+ * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
  * @license		http://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * @link		http://codeigniter.com
  * @since		Version 3.0
@@ -69,23 +69,14 @@ class CI_DB_ibase_driver extends CI_DB {
 	/**
 	 * Non-persistent database connection
 	 *
+	 * @param	bool	$persistent
 	 * @return	resource
 	 */
-	public function db_connect()
+	public function db_connect($persistent = FALSE)
 	{
-		return @ibase_connect($this->hostname.':'.$this->database, $this->username, $this->password, $this->char_set);
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Persistent database connection
-	 *
-	 * @return	resource
-	 */
-	public function db_pconnect()
-	{
-		return @ibase_pconnect($this->hostname.':'.$this->database, $this->username, $this->password, $this->char_set);
+		return ($persistent === TRUE)
+			? ibase_pconnect($this->hostname.':'.$this->database, $this->username, $this->password, $this->char_set)
+			: ibase_connect($this->hostname.':'.$this->database, $this->username, $this->password, $this->char_set);
 	}
 
 	// --------------------------------------------------------------------
@@ -124,7 +115,7 @@ class CI_DB_ibase_driver extends CI_DB {
 	 */
 	protected function _execute($sql)
 	{
-		return @ibase_query($this->conn_id, $sql);
+		return ibase_query($this->conn_id, $sql);
 	}
 
 	// --------------------------------------------------------------------
@@ -148,7 +139,7 @@ class CI_DB_ibase_driver extends CI_DB {
 		// even if the queries produce a successful result.
 		$this->_trans_failure = ($test_mode === TRUE);
 
-		$this->_ibase_trans = @ibase_trans($this->conn_id);
+		$this->_ibase_trans = ibase_trans($this->conn_id);
 
 		return TRUE;
 	}
@@ -168,7 +159,7 @@ class CI_DB_ibase_driver extends CI_DB {
 			return TRUE;
 		}
 
-		return @ibase_commit($this->_ibase_trans);
+		return ibase_commit($this->_ibase_trans);
 	}
 
 	// --------------------------------------------------------------------
@@ -186,7 +177,7 @@ class CI_DB_ibase_driver extends CI_DB {
 			return TRUE;
 		}
 
-		return @ibase_rollback($this->_ibase_trans);
+		return ibase_rollback($this->_ibase_trans);
 	}
 
 	// --------------------------------------------------------------------
@@ -198,7 +189,7 @@ class CI_DB_ibase_driver extends CI_DB {
 	 */
 	public function affected_rows()
 	{
-		return @ibase_affected_rows($this->conn_id);
+		return ibase_affected_rows($this->conn_id);
 	}
 
 	// --------------------------------------------------------------------
@@ -401,7 +392,7 @@ class CI_DB_ibase_driver extends CI_DB {
 	 */
 	protected function _close()
 	{
-		@ibase_close($this->conn_id);
+		ibase_close($this->conn_id);
 	}
 
 }

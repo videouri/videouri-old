@@ -18,7 +18,7 @@
  *
  * @package		CodeIgniter
  * @author		EllisLab Dev Team
- * @copyright	Copyright (c) 2008 - 2013, EllisLab, Inc. (http://ellislab.com/)
+ * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
  * @license		http://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * @link		http://codeigniter.com
  * @since		Version 1.0
@@ -78,9 +78,9 @@ class CI_Config {
 		{
 			if (isset($_SERVER['HTTP_HOST']))
 			{
-				$base_url = is_https() ? 'https' : 'http';
-				$base_url .= '://'.$_SERVER['HTTP_HOST']
-					.str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
+				$base_url = (is_https() ? 'https' : 'http')
+					.'://'.$_SERVER['HTTP_HOST']
+					.substr($_SERVER['SCRIPT_NAME'], 0, -strlen(basename($_SERVER['SCRIPT_NAME'])));
 			}
 			else
 			{

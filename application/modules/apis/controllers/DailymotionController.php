@@ -1,4 +1,4 @@
-<?php if (! defined('BASEPATH')) exit('No direct script access allowed');
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
 
 class DailymotionController extends MX_Controller {
 
@@ -86,8 +86,8 @@ class DailymotionController extends MX_Controller {
             $cache_variable = "dailymotion_{$dynamic_variable}_cached";
         }
 
-        #$result = $this->cache->get($cache_variable);
-        $result = null;
+        $result = $this->cache->get($cache_variable);
+        #$result = null;
         
         $commonFields = array('id', 'duration', 'url', 'title', 'description', 'thumbnail_medium_url', 'rating', 'views_total');
 

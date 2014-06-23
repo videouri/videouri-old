@@ -18,7 +18,7 @@
  *
  * @package		CodeIgniter
  * @author		EllisLab Dev Team
- * @copyright	Copyright (c) 2008 - 2013, EllisLab, Inc. (http://ellislab.com/)
+ * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
  * @license		http://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * @link		http://codeigniter.com
  * @since		Version 1.0
@@ -127,7 +127,7 @@ class CI_Hooks {
 			return FALSE;
 		}
 
-		if (isset($this->hooks[$which][0]) && is_array($this->hooks[$which][0]))
+		if (is_array($this->hooks[$which]))
 		{
 			foreach ($this->hooks[$which] as $val)
 			{
@@ -154,7 +154,16 @@ class CI_Hooks {
 	 */
 	protected function _run_hook($data)
 	{
-		if ( ! is_array($data))
+		// Closures/lambda functions and array($object, 'method') callables
+		if (is_callable($data))
+		{
+			is_array($data)
+				? $data[0]->{$data[1]}()
+				: $data();
+
+			return TRUE;
+		}
+		elseif ( ! is_array($data))
 		{
 			return FALSE;
 		}

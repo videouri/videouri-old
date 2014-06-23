@@ -111,13 +111,15 @@
             </ul>
         </footer>
 
-        <script src="<?= base_url() ?>assets/scripts/videouri.js"></script>
+        <script data-main="/assets/scripts/build" src="/assets/scripts/vendor/require.js"></script>
+        <!--<script data-main="/assets/scripts/videouri" src="/assets/scripts/vendor/require.js"></script> -->
 
         <?= $this->template->javascript ?>
 
         <script type="text/javascript">
-            $("select[name='video-category']").css('border', '1px solid red');
-            $("select[name='video-category']").selectpicker({style: 'btn-primary', menuStyle: 'dropdown-inverse'});
+            // $("select[name='video-category']").css('border', '1px solid red');
+            // $("select[name='video-category']").selectpicker({style: 'btn-primary', menuStyle: 'dropdown-inverse'});
+            requirejs(["main", "module/home"]);
         </script>
 
         <script>

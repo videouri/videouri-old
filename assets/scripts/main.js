@@ -10,7 +10,7 @@ define([
 
     $(function () {
 
-        alert("wtf");
+        alert('main.');
 
         // Custom Selects
         $("select[name='huge']").selectpicker({style: 'btn-hg btn-primary', menuStyle: 'dropdown-inverse'});

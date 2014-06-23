@@ -1,5 +1,7 @@
 $(document).ready(function() {
 
+    alert('wtf?');
+
     var amount = Math.floor($(document).width() / 186) + 2;
     /*$('#home-page-featured .featured-list').each(function(){
         for (var i = 0; i < amount; i++) {

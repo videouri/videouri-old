@@ -1,4 +1,4 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
 /**
  * CodeIgniter
  *
@@ -242,7 +242,7 @@ $config['log_threshold'] = 2;
 |--------------------------------------------------------------------------
 |
 | Leave this BLANK unless you would like to set something other than the default
-| application/logs/ folder. Use a full server path with trailing slash.
+| application/logs/ directory. Use a full server path with trailing slash.
 |
 */
 $config['log_path'] = '';
@@ -260,11 +260,22 @@ $config['log_date_format'] = 'Y-m-d H:i:s';
 
 /*
 |--------------------------------------------------------------------------
+| Error Views Directory Path
+|--------------------------------------------------------------------------
+|
+| Leave this BLANK unless you would like to set something other than the default
+| application/views/errors/ folder.  Use a full server path with trailing slash.
+|
+*/
+$config['error_views_path'] = '';
+
+/*
+|--------------------------------------------------------------------------
 | Cache Directory Path
 |--------------------------------------------------------------------------
 |
 | Leave this BLANK unless you would like to set something other than the default
-| system/cache/ folder.  Use a full server path with trailing slash.
+| system/cache/ directory.  Use a full server path with trailing slash.
 |
 */
 $config['cache_path'] = '';
@@ -346,7 +357,7 @@ $config['cookie_httponly'] 	= FALSE;
 | (usually \n) and Windows (\r\n).
 |
 */
-$config['standardize_newlines'] = TRUE;
+$config['standardize_newlines'] = FALSE;
 
 /*
 |--------------------------------------------------------------------------

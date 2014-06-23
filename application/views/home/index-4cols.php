@@ -1,6 +1,6 @@
-<section id="home">
+<section>
 
-    <div id="left-block">
+    <div id="left-block" class="hidden">
         <div id="categories-block">
             <h2 class="title">Categories</h2>
             <ul class="categories-list">
@@ -13,51 +13,37 @@
     </div>
 
 
-    <div class="row">
-        <ul class="tabNavigation">
-            <!--<li><a href="#popular"><?#=lang('popular_videos') ?></a></li>-->
-            <li class="selected1" data-method="top_rated"><a href="#top_rated"><?= lang('toprated_videos') ?></a></li>
-            <li><a href="#most_viewed" data-method="most_viewed"><?= lang('mostviewed_videos') ?></a></li>
-        </ul>
-    </div>
+    <div id="options" class="row">
+        <div class="container">
+            <div class="col-xs-7">
+                <select name="source" class="mbn">
+                    <option>Select source</option>
+                    <option value="all">All</option>
 
-    <div class="row">
-        <div id="options-block">
-            <nav id="sources-block">
-                <h2 class="title">Select source</h2>
-                <ul id="sources-list">
-                    <li>
-                        <a class="button" data-source="all">
-                            <span class="margin-button"></span>
-                            All
-                        </a>
-                    </li>
                     <?php foreach($apis as $api): ?>
-                    <li>
-                        <a class="button" data-source="<?= $api ?>">
-                            <span class="margin-button"></span>
-                            <?= $api ?>
-                        </a>
-                    </li>
+                    <option value="<?= strtolower($api) ?>"><?= $api ?></option>
                     <?php endforeach; ?>
-                </ul>
-            </nav>
-            <nav id="periods-block">
-                <h2 class="title">Select When</h2>
-                <ul id="periods-list">
+
+                </select>
+            </div>
+            <div class="col-xs-5 text-right" id="options-block">
+                <select>
+                    <option value="popular"> <?= lang('popular_videos') ?> </option>
+                    <option value="top_rated"> <?= lang('toprated_videos') ?> </option>
+                    <option value="most_viewed"> <?= lang('mostviewed_videos') ?> </option>
+                </select>
+                <select>
+                    <option>Select When</option>
+                    
                     <?php foreach($time as $name => $attr): ?>
-                    <li>
-                        <a class="button" data-period="<?= $attr ?>">
-                            <span class="margin-button"></span>
-                            <?= ucfirst($name) ?>
-                        </a>
-                    </li>
+                        <option value="<?= $attr ?>"> <?= ucfirst($name) ?> </option>
                     <?php endforeach; ?>
-                </ul>
-            </nav>
-        </div> <!-- Options block -->
+                </select>
+            </div> <!-- Options block -->
+        </div>
     </div>
 
+    <div id="video-list">
     <?php foreach ($data as $sort => $sortData): ?>
         <?php foreach ($sortData as $api => $apiData): ?>
             <?php $videosCount = count($apiData); $i = 1; foreach ($apiData as $video): ?>
@@ -118,6 +104,6 @@
             <?php $i++; endforeach; //$video ?>
         <?php endforeach;  //$api, $apiData ?>
     <?php endforeach; //$sort, $sortData ?>
-
+    </div>
 
 </section>

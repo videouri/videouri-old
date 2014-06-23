@@ -18,7 +18,7 @@
  *
  * @package		CodeIgniter
  * @author		EllisLab Dev Team
- * @copyright	Copyright (c) 2008 - 2013, EllisLab, Inc. (http://ellislab.com/)
+ * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
  * @license		http://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * @link		http://codeigniter.com
  * @since		Version 1.0
@@ -98,8 +98,8 @@ class CI_DB_mssql_driver extends CI_DB {
 	public function db_connect($persistent = FALSE)
 	{
 		$this->conn_id = ($persistent)
-				? @mssql_pconnect($this->hostname, $this->username, $this->password)
-				: @mssql_connect($this->hostname, $this->username, $this->password);
+				? mssql_pconnect($this->hostname, $this->username, $this->password)
+				: mssql_connect($this->hostname, $this->username, $this->password);
 
 		if ( ! $this->conn_id)
 		{
@@ -130,18 +130,6 @@ class CI_DB_mssql_driver extends CI_DB {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Persistent database connection
-	 *
-	 * @return	resource
-	 */
-	public function db_pconnect()
-	{
-		return $this->db_connect(TRUE);
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
 	 * Select the database
 	 *
 	 * @param	string	$database
@@ -154,9 +142,9 @@ class CI_DB_mssql_driver extends CI_DB {
 			$database = $this->database;
 		}
 
-		// Note: The brackets are required in the event that the DB name
+		// Note: Escaping is required in the event that the DB name
 		// contains reserved characters
-		if (@mssql_select_db($this->escape_identifiers($database), $this->conn_id))
+		if (mssql_select_db($this->escape_identifiers($database), $this->conn_id))
 		{
 			$this->database = $database;
 			return TRUE;
@@ -175,7 +163,7 @@ class CI_DB_mssql_driver extends CI_DB {
 	 */
 	protected function _execute($sql)
 	{
-		return @mssql_query($sql, $this->conn_id);
+		return mssql_query($sql, $this->conn_id);
 	}
 
 	// --------------------------------------------------------------------
@@ -247,7 +235,7 @@ class CI_DB_mssql_driver extends CI_DB {
 	 */
 	public function affected_rows()
 	{
-		return @mssql_rows_affected($this->conn_id);
+		return mssql_rows_affected($this->conn_id);
 	}
 
 	// --------------------------------------------------------------------
@@ -280,7 +268,7 @@ class CI_DB_mssql_driver extends CI_DB {
 	 */
 	protected function _db_set_charset($charset)
 	{
-		return (@ini_set('mssql.charset', $charset) !== FALSE);
+		return (ini_set('mssql.charset', $charset) !== FALSE);
 	}
 
 	// --------------------------------------------------------------------
@@ -531,7 +519,7 @@ class CI_DB_mssql_driver extends CI_DB {
 	 */
 	protected function _close()
 	{
-		@mssql_close($this->conn_id);
+		mssql_close($this->conn_id);
 	}
 
 }

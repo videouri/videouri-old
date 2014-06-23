@@ -18,7 +18,7 @@
  *
  * @package		CodeIgniter
  * @author		EllisLab Dev Team
- * @copyright	Copyright (c) 2008 - 2013, EllisLab, Inc. (http://ellislab.com/)
+ * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
  * @license		http://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * @link		http://codeigniter.com
  * @since		Version 1.0
@@ -47,13 +47,6 @@ class CI_Input {
 	public $ip_address = FALSE;
 
 	/**
-	 * User agent string
-	 *
-	 * @var	string
-	 */
-	public $user_agent = FALSE;
-
-	/**
 	 * Allow GET array flag
 	 *
 	 * If set to FALSE, then $_GET will be set to an empty array.
@@ -69,7 +62,7 @@ class CI_Input {
 	 *
 	 * @var	bool
 	 */
-	protected $_standardize_newlines = TRUE;
+	protected $_standardize_newlines;
 
 	/**
 	 * Enable XSS flag
@@ -124,16 +117,14 @@ class CI_Input {
 		$this->_allow_get_array		= (config_item('allow_get_array') === TRUE);
 		$this->_enable_xss		= (config_item('global_xss_filtering') === TRUE);
 		$this->_enable_csrf		= (config_item('csrf_protection') === TRUE);
-		$this->_sandardize_newlines	= (bool) config_item('standardize_newlines');
+		$this->_standardize_newlines	= (bool) config_item('standardize_newlines');
 
-		global $SEC;
-		$this->security =& $SEC;
+		$this->security =& load_class('Security', 'core');
 
 		// Do we need the UTF-8 class?
 		if (UTF8_ENABLED === TRUE)
 		{
-			global $UNI;
-			$this->uni =& $UNI;
+			$this->uni =& load_class('Utf8', 'core');
 		}
 
 		// Sanitize global arrays
@@ -304,8 +295,8 @@ class CI_Input {
 	 */
 	public function input_stream($index = NULL, $xss_clean = NULL)
 	{
-		// The input stream can only be read once, so we'll need to check
-		// if we have already done that first.
+		// Prior to PHP 5.6, the input stream can only be read once,
+		// so we'll need to check if we have already done that first.
 		if ( ! is_array($this->_input_stream))
 		{
 			parse_str(file_get_contents('php://input'), $this->_input_stream);
@@ -555,14 +546,9 @@ class CI_Input {
 	 *
 	 * @return	string|null	User Agent string or NULL if it doesn't exist
 	 */
-	public function user_agent()
+	public function user_agent($xss_clean = NULL)
 	{
-		if ($this->user_agent !== FALSE)
-		{
-			return $this->user_agent;
-		}
-
-		return $this->user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : NULL;
+		return $this->_fetch_from_array($_SERVER, 'HTTP_USER_AGENT', $xss_clean);
 	}
 
 	// --------------------------------------------------------------------
@@ -572,8 +558,7 @@ class CI_Input {
 	 *
 	 * Internal method serving for the following purposes:
 	 *
-	 *	- Unsets $_GET data (if query strings are not enabled)
-	 *	- Unsets all globals if register_globals is enabled
+	 *	- Unsets $_GET data, if query strings are not enabled
 	 *	- Cleans POST, COOKIE and SERVER data
 	 * 	- Standardizes newline characters to PHP_EOL
 	 *
@@ -581,54 +566,6 @@ class CI_Input {
 	 */
 	protected function _sanitize_globals()
 	{
-		// It would be "wrong" to unset any of these GLOBALS.
-		$protected = array(
-			'_SERVER',
-			'_GET',
-			'_POST',
-			'_FILES',
-			'_REQUEST',
-			'_SESSION',
-			'_ENV',
-			'GLOBALS',
-			'HTTP_RAW_POST_DATA',
-			'system_folder',
-			'application_folder',
-			'BM',
-			'EXT',
-			'CFG',
-			'URI',
-			'RTR',
-			'OUT',
-			'IN'
-		);
-
-		// Unset globals for security.
-		// This is effectively the same as register_globals = off
-		// PHP 5.4 no longer has the register_globals functionality.
-		if ( ! is_php('5.4'))
-		{
-			foreach (array($_GET, $_POST, $_COOKIE) as $global)
-			{
-				if (is_array($global))
-				{
-					foreach ($global as $key => $val)
-					{
-						if ( ! in_array($key, $protected))
-						{
-							global $$key;
-							$$key = NULL;
-						}
-					}
-				}
-				elseif ( ! in_array($global, $protected))
-				{
-					global $$global;
-					$$global = NULL;
-				}
-			}
-		}
-
 		// Is $_GET data allowed? If not we'll set the $_GET to an empty array
 		if ($this->_allow_get_array === FALSE)
 		{
@@ -768,7 +705,7 @@ class CI_Input {
 			{
 				set_status_header(503);
 				echo 'Disallowed Key Characters.';
-				exit(EXIT_USER_INPUT);
+				exit(7); // EXIT_USER_INPUT
 			}
 		}
 

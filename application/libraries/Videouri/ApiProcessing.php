@@ -1,4 +1,4 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
  * ApiProcessing Class
@@ -240,7 +240,7 @@ class ApiProcessing
 
         }
 
-        if ($sort = $this->sortForParser) {
+        if (isset($results['Metacafe']) && $sort = $this->sortForParser) {
             $results[$sort]['Metacafe'] = $results['Metacafe'];
             unset($results['Metacafe']);
         }

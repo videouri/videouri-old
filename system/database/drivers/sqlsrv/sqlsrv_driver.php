@@ -18,7 +18,7 @@
  *
  * @package		CodeIgniter
  * @author		EllisLab Dev Team
- * @copyright	Copyright (c) 2008 - 2013, EllisLab, Inc. (http://ellislab.com/)
+ * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
  * @license		http://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * @link		http://codeigniter.com
  * @since		Version 2.0.3
@@ -139,18 +139,6 @@ class CI_DB_sqlsrv_driver extends CI_DB {
 		$this->_escape_char = ($this->_quoted_identifier) ? '"' : array('[', ']');
 
 		return $this->conn_id;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Persistent database connection
-	 *
-	 * @return	resource
-	 */
-	public function db_pconnect()
-	{
-		return $this->db_connect(TRUE);
 	}
 
 	// --------------------------------------------------------------------
@@ -568,7 +556,7 @@ class CI_DB_sqlsrv_driver extends CI_DB {
 	 */
 	protected function _close()
 	{
-		@sqlsrv_close($this->conn_id);
+		sqlsrv_close($this->conn_id);
 	}
 
 }

@@ -18,7 +18,7 @@
  *
  * @package		CodeIgniter
  * @author		EllisLab Dev Team
- * @copyright	Copyright (c) 2008 - 2013, EllisLab, Inc. (http://ellislab.com/)
+ * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
  * @license		http://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * @link		http://codeigniter.com
  * @since		Version 1.0
@@ -261,6 +261,15 @@ abstract class CI_DB_driver {
 	protected $_trans_status	= TRUE;
 
 	/**
+	 * Transaction failure flag
+	 *
+	 * Used with transactions to determine if a transaction has failed.
+	 *
+	 * @var	bool
+	 */
+	protected $_trans_failure	= FALSE;
+
+	/**
 	 * Cache On flag
 	 *
 	 * @var	bool
@@ -387,7 +396,7 @@ abstract class CI_DB_driver {
 		// ----------------------------------------------------------------
 
 		// Connect to the database and set the connection ID
-		$this->conn_id = ($this->pconnect === FALSE) ? $this->db_connect() : $this->db_pconnect();
+		$this->conn_id = $this->db_connect($this->pconnect);
 
 		// No connection resource? Check if there is a failover else throw an error
 		if ( ! $this->conn_id)
@@ -405,7 +414,7 @@ abstract class CI_DB_driver {
 					}
 
 					// Try to connect
-					$this->conn_id = ($this->pconnect === FALSE) ? $this->db_connect() : $this->db_pconnect();
+					$this->conn_id = $this->db_connect($this->pconnect);
 
 					// If a connection is made break the foreach loop
 					if ($this->conn_id)
@@ -424,12 +433,25 @@ abstract class CI_DB_driver {
 				{
 					$this->display_error('db_unable_to_connect');
 				}
+
 				return FALSE;
 			}
 		}
 
 		// Now we set the character set and that's all
 		return $this->db_set_charset($this->char_set);
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Persistent database connection
+	 *
+	 * @return	resource
+	 */
+	public function db_pconnect()
+	{
+		return $this->db_connect(TRUE);
 	}
 
 	// --------------------------------------------------------------------
@@ -523,8 +545,7 @@ abstract class CI_DB_driver {
 			return ($this->db_debug) ? $this->display_error('db_unsupported_function') : FALSE;
 		}
 
-		$query = $this->query($sql);
-		$query = $query->row();
+		$query = $this->query($sql)->row();
 		return $this->data_cache['version'] = $query->ver;
 	}
 
@@ -664,12 +685,6 @@ abstract class CI_DB_driver {
 			return TRUE;
 		}
 
-		// Return TRUE if we don't need to create a result object
-		if ($return_object !== TRUE)
-		{
-			return TRUE;
-		}
-
 		// Load and instantiate the result driver
 		$driver		= $this->load_rdriver();
 		$RES		= new $driver($this);
@@ -712,8 +727,8 @@ abstract class CI_DB_driver {
 
 		if ( ! class_exists($driver, FALSE))
 		{
-			include_once(BASEPATH.'database/DB_result.php');
-			include_once(BASEPATH.'database/drivers/'.$this->dbdriver.'/'.$this->dbdriver.'_result.php');
+			require_once(BASEPATH.'database/DB_result.php');
+			require_once(BASEPATH.'database/drivers/'.$this->dbdriver.'/'.$this->dbdriver.'_result.php');
 		}
 
 		return $driver;
@@ -1019,9 +1034,11 @@ abstract class CI_DB_driver {
 		// escape LIKE condition wildcards
 		if ($like === TRUE)
 		{
-			return str_replace(array($this->_like_escape_chr, '%', '_'),
-						array($this->_like_escape_chr.$this->_like_escape_chr, $this->_like_escape_chr.'%', $this->_like_escape_chr.'_'),
-						$str);
+			return str_replace(
+				array($this->_like_escape_chr, '%', '_'),
+				array($this->_like_escape_chr.$this->_like_escape_chr, $this->_like_escape_chr.'%', $this->_like_escape_chr.'_'),
+				$str
+			);
 		}
 
 		return $str;
@@ -1296,9 +1313,11 @@ abstract class CI_DB_driver {
 			if (is_array($this->_escape_char))
 			{
 				$preg_ec = array(
-						preg_quote($this->_escape_char[0], '/'), preg_quote($this->_escape_char[1], '/'),
-						$this->_escape_char[0], $this->_escape_char[1]
-						);
+					preg_quote($this->_escape_char[0], '/'),
+					preg_quote($this->_escape_char[1], '/'),
+					$this->_escape_char[0],
+					$this->_escape_char[1]
+				);
 			}
 			else
 			{
@@ -1537,7 +1556,7 @@ abstract class CI_DB_driver {
 	 */
 	public function cache_delete($segment_one = '', $segment_two = '')
 	{
-		return ($this->_cache_init())
+		return $this->_cache_init()
 			? $this->CACHE->delete($segment_one, $segment_two)
 			: FALSE;
 	}
@@ -1551,7 +1570,7 @@ abstract class CI_DB_driver {
 	 */
 	public function cache_delete_all()
 	{
-		return ($this->_cache_init())
+		return $this->_cache_init()
 			? $this->CACHE->delete_all()
 			: FALSE;
 	}
@@ -1565,16 +1584,13 @@ abstract class CI_DB_driver {
 	 */
 	protected function _cache_init()
 	{
-		if (class_exists('CI_DB_Cache', FALSE))
+		if ( ! class_exists('CI_DB_Cache', FALSE))
 		{
-			if (is_object($this->CACHE))
-			{
-				return TRUE;
-			}
+			require_once(BASEPATH.'database/DB_cache.php');
 		}
-		elseif ( ! @include_once(BASEPATH.'database/DB_cache.php'))
+		elseif (is_object($this->CACHE))
 		{
-			return $this->cache_off();
+			return TRUE;
 		}
 
 		$this->CACHE = new CI_DB_Cache($this); // pass db object to support multiple db connections and returned db objects
@@ -1663,7 +1679,7 @@ abstract class CI_DB_driver {
 
 		$error =& load_class('Exceptions', 'core');
 		echo $error->show_error($heading, $message, 'error_db');
-		exit(EXIT_DATABASE);
+		exit(8); // EXIT_DATABASE
 	}
 
 	// --------------------------------------------------------------------
@@ -1732,15 +1748,15 @@ abstract class CI_DB_driver {
 		if ($offset = strripos($item, ' AS '))
 		{
 			$alias = ($protect_identifiers)
-					? substr($item, $offset, 4).$this->escape_identifiers(substr($item, $offset + 4))
-					: substr($item, $offset);
+				? substr($item, $offset, 4).$this->escape_identifiers(substr($item, $offset + 4))
+				: substr($item, $offset);
 			$item = substr($item, 0, $offset);
 		}
 		elseif ($offset = strrpos($item, ' '))
 		{
 			$alias = ($protect_identifiers)
-					? ' '.$this->escape_identifiers(substr($item, $offset + 1))
-					: substr($item, $offset);
+				? ' '.$this->escape_identifiers(substr($item, $offset + 1))
+				: substr($item, $offset);
 			$item = substr($item, 0, $offset);
 		}
 		else
