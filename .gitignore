@@ -13,5 +13,6 @@ application/logs/*
 !application/logs/index.html
 !application/logs/.htaccess
 
-# Grunt
-node_modules/grunt*
+# Boilerplate files
+boilerplate/bower_components
+boilerplate/node_modules
