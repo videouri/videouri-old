@@ -53,8 +53,8 @@ class Cache
     {
         $this->_contents = NULL;
         $this->_filename = NULL;
-        $this->_expires = NULL;
-        $this->_created = NULL;
+        $this->_expires  = NULL;
+        $this->_created  = NULL;
         $this->_dependencies = array();
     }
 
@@ -67,7 +67,8 @@ class Cache
      */
     public function library($library, $method, $arguments = array(), $expires = NULL)
     {
-        if ( ! class_exists(ucfirst($library)))
+        #if (!class_exists(ucfirst($library)))
+        if (!in_array(ucfirst($library), $this->_ci->load->_ci_classes))
         {
             $this->_ci->load->library($library);
         }
@@ -83,7 +84,8 @@ class Cache
      */
     public function model($model, $method, $arguments = array(), $expires = NULL)
     {
-        if ( ! class_exists(ucfirst($model)))
+        #if (!class_exists(ucfirst($model)))
+        if (!in_array(ucfirst($model), $this->_ci->load->_ci_classes))
         {
             $this->_ci->load->model($model);
         }
@@ -96,7 +98,7 @@ class Cache
     {
         $this->_ci->load->helper('security');
 
-        if ( !  is_array($arguments))
+        if (!is_array($arguments))
         {
             $arguments = (array) $arguments;
         }
@@ -107,7 +109,7 @@ class Cache
         $cache_file = $property.DIRECTORY_SEPARATOR.do_hash($method.serialize($arguments), 'sha1');
 
         // See if we have this cached or delete if $expires is negative
-        if($expires >= 0)
+        if ($expires >= 0)
         {
             $cached_response = $this->get($cache_file);
         }
@@ -118,7 +120,7 @@ class Cache
         }
 
         // Not FALSE? Return it
-        if($cached_response !== FALSE && $cached_response !== NULL)
+        if ($cached_response !== FALSE && $cached_response !== NULL)
         {
             return $cached_response;
         }
@@ -139,28 +141,22 @@ class Cache
     function set_dependencies($dependencies)
     {
         if (is_array($dependencies))
-        {
             $this->_dependencies = $dependencies;
-        }
         else
-        {
             $this->_dependencies = array($dependencies);
-        }
 
+        // Return $this to support chaining
         return $this;
     }
 
     function add_dependencies($dependencies)
     {
         if (is_array($dependencies))
-        {
             $this->_dependencies = array_merge($this->_dependencies, $dependencies);
-        }
         else
-        {
             $this->_dependencies[] = $dependencies;
-        }
 
+        // Return $this to support chaining
         return $this;
     }
 
@@ -235,7 +231,7 @@ class Cache
         }
 
         // Check Cache dependencies
-        if(isset($this->_contents['__cache_dependencies']))
+        if (isset($this->_contents['__cache_dependencies']))
         {
             foreach ($this->_contents['__cache_dependencies'] as $dep)
             {

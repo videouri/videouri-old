@@ -1,6 +1,5 @@
 <div id="home-page-featured">
     <ul class="featured-list"></ul>
-    <ul class="featured-list"></ul>
     <ul>
         <li><a href="http://demo.astoundify.com/fundify/campaigns/the-bread-bar/"><img width="186" height="186" src="http://demo.astoundify.com/fundify/wp-content/uploads/sites/6/2013/02/6958893813_d0fcb944f4_o-186x186.jpg" class="attachment-post-thumbnail wp-post-image" alt="6958893813_d0fcb944f4_o"></a></li>
         <li><a href="http://demo.astoundify.com/fundify/campaigns/ballet-art/"><img width="186" height="186" src="http://demo.astoundify.com/fundify/wp-content/uploads/sites/6/2013/02/8075894670_72fe4a07e6_o-186x186.jpg" class="attachment-post-thumbnail wp-post-image" alt="Interlude4U"></a></li>
@@ -19,9 +18,5 @@
         <li><a href="http://demo.astoundify.com/fundify/campaigns/organic-fruit-farm/"><img width="186" height="186" src="http://demo.astoundify.com/fundify/wp-content/uploads/sites/6/2013/02/74503975_c7b6761132_o-186x186.jpg" class="attachment-post-thumbnail wp-post-image" alt="74503975_c7b6761132_o"></a></li>
         <li><a href="http://demo.astoundify.com/fundify/campaigns/muskoka-brewery/"><img width="186" height="186" src="http://demo.astoundify.com/fundify/wp-content/uploads/sites/6/2013/02/4000350345_5d0999ed3d_o-186x186.jpg" class="attachment-post-thumbnail wp-post-image" alt="4000350345_5d0999ed3d_o"></a></li>
     </ul>
-            
-    <h1>
-        <span>The first Crowdfunding WordPress theme</span><br><span>We help you fund your campaigns using WordPress</span><br><span>Start funding your campaign today</span>
-    </h1>
 <!-- / container -->
 </div>

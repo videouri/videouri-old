@@ -39,9 +39,9 @@ module.exports = function(grunt) {
 
         // Set variables to be used inside Grunt
         project: {
-            assets:      './assets',
-            stylesheets: './assets/stylesheets',
-            scripts:     './assets/scripts',
+            dist:        '../assets/dist',
+            stylesheets: './stylesheets',
+            scripts:     './scripts',
             bowerDir:    './bower_components',
             css: [
                 '<%= project.stylesheets %>/css/main.css'
@@ -62,29 +62,46 @@ module.exports = function(grunt) {
               ' * Copyright <%= pkg.copyright %> <%= grunt.template.today("yyyy") %>. <%= pkg.license %> licensed.\n' +
               ' */\n',
 
-        /**
-         * 
-         */
-        //clean: ['assets'],
-        
+        // Clean dev assets
+        clean: {
+            js: {
+                src: [
+                    '<%= project.dist %>/videouri.js'
+                ]
+            },
+
+            css: {
+                src: [
+                    '<%= project.dist %>/videouri.css',
+                ]
+            }
+        },
+
 
         // pretty clear what this is
         requirejs: {
-            options: {
-                baseUrl: "./",
-                mainConfigFile: "<%= project.scripts %>/build.js",
-                name: "<%= project.bowerDir %>/almond/almond",
-                out: "<%= project.scripts %>/videouri.js"
-            },
-
-            debug: {
+            dev: {
                 options: {
+                    baseUrl:            '<%= project.scripts %>',
+                    mainConfigFile:     '<%= project.scripts %>/build.js',
+                    //name:               '<%= project.bowerDir %>/almond/almond',
+                    name:               'main',
+                    include:            ['build'],
+                    out:                '<%= project.dist %>/videouri.js',
+                    generateSourceMaps: true,
                     optimize: 'none'
                 }
             },
 
-            production: {
+            dist: {
                 options: {
+                    baseUrl:            '<%= project.scripts %>',
+                    mainConfigFile:     '<%= project.scripts %>/build.js',
+                    //name:               '<%= project.bowerDir %>/almond/almond',
+                    name:               'main',
+                    include:            ['build'],
+                    out:                '<%= project.dist %>/videouri.min.js',
+                    generateSourceMaps: true,
                     optimize: 'uglify2'
                 }
             }
@@ -100,7 +117,7 @@ module.exports = function(grunt) {
                     ieCompat: true
                 },
                 files: {
-                    "<%= project.stylesheets %>/css/main.css": "<%= project.stylesheets %>/less/main.less"
+                    "<%= project.dist %>/videouri.css": "<%= project.stylesheets %>/less/boilerplate.less"
                 }
             }
         },
@@ -120,10 +137,10 @@ module.exports = function(grunt) {
             css: {
                 src: [
                         '<%= project.bowerDir %>/bootstrap/dist/css/bootstrap.css', 
-                        '<%= project.stylesheets %>/css/font-awesome.css',
-                        '<%= project.stylesheets %>/css/main.css'
+                        '<%= project.bowerDir %>/font-awesome/css/font-awesome.css',
+                        '<%= project.dist %>/videouri.css'
                      ],
-                dest: '<%= project.stylesheets %>/css/main.css',
+                dest: '<%= project.dist %>/videouri.css',
             }
         },
 
@@ -187,7 +204,7 @@ module.exports = function(grunt) {
             //////
             less: {
                 files: '<%= project.stylesheets %>/less/**/*.less',
-                tasks: ["less"]
+                tasks: ['less', 'concat:css']
             },
             concat: {
                 files: '<%= project.stylesheets %>/css/**/*.css',
@@ -206,7 +223,7 @@ module.exports = function(grunt) {
                         '<%= project.scripts %>/build.js',
                         '<%= project.scripts %>/main.js'
                         ],
-                tasks: ['requirejs:debug']
+                tasks: ['requirejs:dev']
             }
             // livereload: {
             //     files: [

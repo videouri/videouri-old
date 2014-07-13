@@ -2,27 +2,35 @@
 
 class Home extends MX_Controller {
 
-    function __construct()
+    /**
+     * Default parameters for homepage 
+     * 
+     * @var array
+     */
+    private $parameters = [
+        'apis'       => ['YouTube', 'Dailymotion'],
+        // 'content'    => ['top_rated', 'most_viewed'],
+        'content'    => ['most_viewed'],
+        'period'     => 'today',
+        'maxResults' => 8,
+    ];
+
+    public function __construct()
     {
+        $this->parametersHash = md5(serialize($this->parameters));
     }
 
+    /**
+     * [index description]
+     * @return [type] [description]
+     */
     public function index()
     {
-        //$this->period = $this->input->post('time', true);
+        $content = self::runAPIs();
 
-        #$this->apiprocessing->apis       = ['YouTube', 'Dailymotion', 'Metacafe'];
-        $parameters = [
-            'apis'       => ['YouTube', 'Dailymotion'],
-            'content'    => ['top_rated', 'most_viewed'],
-            'period'     => 'month',
-            'maxResults' => 4,
-        ];
-
-        $data = self::runAPIs($parameters);
-
-        $data['apis']      = $parameters['apis'];
-        $data['canonical'] = '';
-        $data['time']      = array(
+        $content['apis']      = $this->parameters['apis'];
+        $content['canonical'] = '';
+        $content['time']      = array(
                                 'today'      => 'today',
                                 'this week'  => 'week',
                                 'this month' => 'month',
@@ -31,56 +39,49 @@ class Home extends MX_Controller {
 
         $this->template->body_id = 'home';
         $this->template->home_featured->view('home/featured');
-        $this->template->content->view('home/index-4cols', $data);
+        $this->template->content->view('home/index-4cols', $content);
         $this->template->publish();
     }
 
-    private function defaultData()
-    {
-        $this->load->helper('file');
-
-        $this->load->driver('cache');
-        $cache = $this->cache->file;
-
-        if ($defaultData = $cache->get('defaultData')) {
-            $apiResults = $defaultData;
-        } else {
-
-            $apisResults = self::runAPIs($parameters);
-            $cache->save('defaultData', $apiResults, 86400);
-        }
-
-        return $apiResults;
-    }
-
-    private function runAPIs(array $parameters)
+    /**
+     * Function to process specific request for each API.
+     * @return array Content data
+     */
+    private function runAPIs()
     {
         $this->load->driver('cache');
         $this->load->library('Videouri/ApiProcessing');
-        $cache = $this->cache->file;
+        $cache = $this->cache->apc;
 
-        if ($defaultData = $cache->get('defaultData')) {
-            $apiResults = $defaultData;
-        } else {
-            foreach ($parameters as $key => $value) {
+        $period = $this->parameters['period'];
+
+        if (! $viewData = $cache->get($this->parametersHash)) {
+
+            ////
+            // Here is where, the keys and their values in $this->parameters, 
+            // are being asigned to their respective objects in the ApiProcessing class
+            ////
+            foreach ($this->parameters as $key => $value) {
                 $this->apiprocessing->{$key} = $value;
             }
 
             $apiResults = $this->apiprocessing->interogateApis();
-            
-            // Caching time
-            $cache->save('defaultData', $apiResults, 86400);
-        }
+            // dd($apiResults);
 
-        $viewData = array();
-        foreach ($apiResults as $content => $contentData) {
-            foreach ($contentData as $api => $apiData) {
-                $results = $this->apiprocessing->parseApiResult($api, $apiData, $content);
-                if (!empty($results)) {
-                    $viewData['data'][$content][$api] = $results[$content][$api];
-                }
-            } // $sortData as $api => $apiData
-        } // $api_response as $sortName => $sortData
+            $viewData = array();
+            foreach ($apiResults as $content => $contentData) {
+                foreach ($contentData as $api => $apiData) {
+                    $results = $this->apiprocessing->parseApiResult($api, $apiData, $content);
+                    if (!empty($results)) {
+                        $viewData['data'][$content][$api] = $results[$content][$api];
+                    }
+                } // $sortData as $api => $apiData
+            } // $api_response as $sortName => $sortData
+
+
+            // Caching results
+            $cache->save($this->parametersHash, $viewData, $this->_periodCachingTime[$period]);
+        }
 
         return $viewData;
     }

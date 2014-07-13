@@ -19,6 +19,6 @@
     "momentjs": "latest",
     "bootstrap": "latest",
     "requirejs": "latest",
-    "almond": "~0.2.9"
+    "almond": "latest"
   }
 }

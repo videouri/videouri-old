@@ -34,7 +34,7 @@ class Dailymotion
     /**
      * Activate debug output
      */
-    public $debug = true;
+    public $debug = false;
 
     /**
      * Maximum number of secondes allowed for each HTTP requests
@@ -98,19 +98,18 @@ class Dailymotion
         'sig'
     );
 
-    private $CI = null;
+    // private $CI = null;
 
-    // w0rldart construct function to autoset setGrantType()
-    function __construct()
-    {
-        $this->CI =& get_instance();
-        $this->CI->config->load('app_libraries');
+    // // w0rldart construct function to autoset setGrantType()
+    // function __construct()
+    // {
+    //     $this->CI =& get_instance();
+    //     $this->CI->config->load('app_libraries');
         
-        $dm_config = $this->CI->config->item('dailymotion');
+    //     $dm_config = $this->CI->config->item('dailymotion');
 
-        #$this->setGrantType(self::GRANT_TYPE_CLIENT_CREDENTIALS, $dm_config['api_key'], $dm_config['api_secret']);
-    }
-
+    //     #$this->setGrantType(self::GRANT_TYPE_CLIENT_CREDENTIALS, $dm_config['api_key'], $dm_config['api_secret']);
+    // }
 
     /**
      * Change the default grant type.
@@ -214,10 +213,13 @@ class Dailymotion
      *
      * @return String the resulting URL
      */
-    public function uploadFile($filePath)
+    public function uploadFile($filePath, $force = '')
     {
         $result = $this->get('/file/upload');
-
+        if ($force != '')
+        {
+            $result['upload_url'] = preg_replace('@://[^/]+/@', "://$force/", $result['upload_url']);
+        }
         $timeout = $this->timeout;
         $this->timeout = null;
         $result = json_decode($this->httpRequest($result['upload_url'], array('file' => '@' . $filePath)), true);

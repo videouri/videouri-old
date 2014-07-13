@@ -35,8 +35,8 @@
         <meta name="msvalidate.01" content="48B0A933360DDEC6CF1775D7C7E28FD3" />
 
         <link href='http://fonts.googleapis.com/css?family=Lobster|Ubuntu:300|Cabin|Raleway&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-        <link rel="stylesheet" href="<?= base_url() ?>assets/stylesheets/css/jquery-sticklr-1.4-light-color.css">
-        <link rel="stylesheet" href="<?= base_url() ?>assets/stylesheets/css/main.css">
+        <!-- <link rel="stylesheet" href="<?= base_url() ?>assets/stylesheets/css/jquery-sticklr-1.4-light-color.css"> -->
+        <link rel="stylesheet" href="<?= base_url() ?>assets/dist/videouri.css">
         <?= $this->template->stylesheet ?>
         <!--[if gte IE 9]><style type="text/css">.gradient{filter:none;}</style><![endif]-->
 
@@ -111,15 +111,15 @@
             </ul>
         </footer>
 
-        <script data-main="/assets/scripts/build" src="/assets/scripts/vendor/require.js"></script>
-        <!--<script data-main="/assets/scripts/videouri" src="/assets/scripts/vendor/require.js"></script> -->
+        <!-- <script data-main="/assets/scripts/build" src="/assets/scripts/vendor/require.js"></script> -->
+        <script data-main="/assets/dist/videouri" src="/assets/dist/require.js"></script> 
 
         <?= $this->template->javascript ?>
 
         <script type="text/javascript">
             // $("select[name='video-category']").css('border', '1px solid red');
             // $("select[name='video-category']").selectpicker({style: 'btn-primary', menuStyle: 'dropdown-inverse'});
-            requirejs(["main", "module/home"]);
+            requirejs(["module/home"]);
         </script>
 
         <script>

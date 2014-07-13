@@ -7,7 +7,7 @@ require dirname(__FILE__).'/Base.php';
  * Modular Extensions - HMVC
  *
  * Adapted from the CodeIgniter Core Classes
- * @link	http://codeigniter.com
+ * @link    http://codeigniter.com
  *
  * Description:
  * This library replaces the CodeIgniter Controller class
@@ -15,8 +15,8 @@ require dirname(__FILE__).'/Base.php';
  *
  * Install this file as application/third_party/MX/Controller.php
  *
- * @copyright	Copyright (c) 2011 Wiredesignz
- * @version 	5.4
+ * @copyright   Copyright (c) 2011 Wiredesignz
+ * @version     5.4
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -38,25 +38,35 @@ require dirname(__FILE__).'/Base.php';
  **/
 class MX_Controller 
 {
-	public $autoload = array();
+    public $autoload = array();
 
-	protected $_debug, $cache_timeout;
-	
-	public function __construct() 
-	{
-		$class = str_replace(CI::$APP->config->item('controller_suffix'), '', get_class($this));
-		log_message('debug', $class." MX_Controller Initialized");
-		Modules::$registry[strtolower($class)] = $this;	
-		
-		/* copy a loader instance and initialize */
-		$this->load = clone load_class('Loader');
-		$this->load->initialize($this);	
-		
-		/* autoload module items */
-		$this->load->_autoloader($this->autoload);
+    protected $_debug, $cache_timeout;
+
+    /**
+     * Default caching times in seconds, for API periods
+     * @var array
+     */
+    protected $_periodCachingTime = [
+        'today' => 86400,  // 1 Day
+        'week'  => 172800, // 2 Days
+        'month' => 259200  // 3 Days
+    ];
+    
+    public function __construct() 
+    {
+        $class = str_replace(CI::$APP->config->item('controller_suffix'), '', get_class($this));
+        log_message('debug', $class." MX_Controller Initialized");
+        Modules::$registry[strtolower($class)] = $this; 
         
-		$this->_debug['on'] = false;
-		$this->cache_timeout = $this->config->item('cache_timeout');
+        /* copy a loader instance and initialize */
+        $this->load = clone load_class('Loader');
+        $this->load->initialize($this); 
+        
+        /* autoload module items */
+        $this->load->_autoloader($this->autoload);
+        
+        $this->_debug['on'] = false;
+        $this->cache_timeout = $this->config->item('cache_timeout');
 
         if ($_SERVER['SERVER_ADDR'] !== $_SERVER['REMOTE_ADDR']) {
             $this->output->set_status_header(400, 'No Remote Access Allowed');
@@ -64,9 +74,9 @@ class MX_Controller
         }
 
         #$this->output->enable_profiler(TRUE);
-	}
-	
-	public function __get($class) {
-		return CI::$APP->$class;
-	}
+    }
+    
+    public function __get($class) {
+        return CI::$APP->$class;
+    }
 }

@@ -1,5 +1,5 @@
 requirejs.config({
-    baseUrl: "/",
+    // baseUrl: "../",
 
     // automatically require on page load in debug mode
     // deps: ['assets/scripts/main'],
@@ -9,28 +9,27 @@ requirejs.config({
     // insertRequire: ['assets/scripts/main'],
 
     paths: {
-        "bower" : "../../../bower_components",
         "module": "../modules",
 
-        "jquery"               : "bower_components/jquery/dist/jquery",
-        "jquery.ui"            : "assets/scripts/vendor/jquery-ui-1.10.3.custom.min",
-        "jquery.ui.touch-punch": "assets/scripts/vendor/jquery.ui.touch-punch.min",
-        "bootstrap"            : "bower_components/bootstrap/dist/js/bootstrap",
-        "lazyload"             : "bower_components/jquery.lazyload/jquery.lazyload",
-        "ajax-cache"           : "assets/scripts/vendor/jquery-ajax-localstorage-cache",
+        "jquery"               : "../bower_components/jquery/dist/jquery",
+        "jquery.ui"            : "vendor/jquery-ui-1.10.3.custom.min",
+        "jquery.ui.touch-punch": "vendor/jquery.ui.touch-punch.min",
+        "bootstrap"            : "../bower_components/bootstrap/dist/js/bootstrap",
+        "lazyload"             : "../bower_components/jquery.lazyload/jquery.lazyload",
+        "ajax-cache"           : "vendor/jquery-ajax-localstorage-cache",
 
-        "bootstrap-select"     : "assets/scripts/vendor/bootstrap/bootstrap-select",
-        "bootstrap-switch"     : "assets/scripts/vendor/bootstrap/bootstrap-switch",
+        "bootstrap-select"     : "vendor/bootstrap/bootstrap-select",
+        "bootstrap-switch"     : "vendor/bootstrap/bootstrap-switch",
         //"typeahead"          : "typeahead",
 
-        "flatui-checkbox"      : "assets/scripts/vendor/flatui/flatui-checkbox",
-        "flatui-radio"         : "assets/scripts/vendor/flatui/flatui-radio",
+        "flatui-checkbox"      : "vendor/flatui/flatui-checkbox",
+        "flatui-radio"         : "vendor/flatui/flatui-radio",
 
-        "swfobject"            : "assets/scripts/vendor/swfobject",
-        "tagsinput"            : "assets/scripts/vendor/jquery.tagsinput",
-        "placeholder"          : "assets/scripts/vendor/jquery.placeholder",
-        "cookie"               : "assets/scripts/vendor/jquery.cookie",
-        "query"                : "assets/scripts/vendor/jquery.query",
+        "swfobject"            : "vendor/swfobject",
+        "tagsinput"            : "vendor/jquery.tagsinput",
+        "placeholder"          : "vendor/jquery.placeholder",
+        "cookie"               : "vendor/jquery.cookie",
+        "query"                : "vendor/jquery.query",
     },
     shim: {
         'jquery.ui':             ['jquery'],
@@ -50,4 +49,4 @@ requirejs.config({
 }).call(this);
 
 // Load the main app module to start the app
-// requirejs(["app", "module/home"]);
+requirejs(["main"]);

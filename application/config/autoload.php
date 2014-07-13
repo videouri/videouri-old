@@ -85,7 +85,8 @@ $autoload['packages'] = array();
 |   $autoload['libraries'] = array('user_agent' => 'ua');
 */
 
-$autoload['libraries'] = array('Template');
+#$autoload['libraries'] = array('Template', 'database', 'session');
+$autoload['libraries'] = array('database', 'template');
 
 
 /*
@@ -101,7 +102,7 @@ $autoload['libraries'] = array('Template');
 |	$autoload['drivers'] = array('session', 'cache');
 */
 
-$autoload['drivers'] = array();
+$autoload['drivers'] = array('session');
 
 
 /*
@@ -145,7 +146,7 @@ $autoload['config'] = array();
 |
 */
 
-$autoload['language'] = array('common');
+$autoload['language'] = array('common', 'messages');
 
 
 /*
@@ -162,6 +163,7 @@ $autoload['language'] = array('common');
 |        $autoload['model'] = array('first_model' => 'first');
 */
 
+#$autoload['model'] = array('system/settings_model');
 $autoload['model'] = array();
 
 
