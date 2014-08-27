@@ -1,6 +1,6 @@
 <?php defined('BASEPATH') OR exit("No direct script access allowed");
 
-class Home extends MX_Controller {
+class Home extends MY_Controller {
 
     /**
      * Default parameters for homepage 
@@ -17,6 +17,8 @@ class Home extends MX_Controller {
 
     public function __construct()
     {
+        parent::__construct();
+        
         $this->parametersHash = md5(serialize($this->parameters));
     }
 

@@ -14,33 +14,63 @@
 
 
     <div id="options" class="row">
-        <div class="container">
-            <div class="col-xs-7">
-                <select name="source" class="mbn">
-                    <option>Select source</option>
-                    <option value="all">All</option>
+        <div class="col-xs-7">
+            <div class="btn-group">
+                <button class="btn btn-default">Source</button>
+                <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                    <span class="caret"></span>
+                </button>
+                <span class="dropdown-arrow dropdown-arrow-inverse"></span>
+                <ul class="dropdown-menu dropdown-inverse">
+                    <li>
+                        <a href="#" class="video-source" data-source="all"> All </a>
+                    </li>
 
                     <?php foreach($apis as $api): ?>
-                    <option value="<?= strtolower($api) ?>"><?= $api ?></option>
+                    <li>
+                        <a href="#" class="video-source" data-source="<?= strtolower($api) ?>"> <?= $api ?> </a>
+                    </li>
                     <?php endforeach; ?>
-
-                </select>
+                </ul>
             </div>
-            <div class="col-xs-5 text-right" id="options-block">
-                <select>
-                    <option value="popular"> <?= lang('popular_videos') ?> </option>
-                    <option value="top_rated"> <?= lang('toprated_videos') ?> </option>
-                    <option value="most_viewed"> <?= lang('mostviewed_videos') ?> </option>
-                </select>
-                <select>
-                    <option>Select When</option>
-                    
-                    <?php foreach($time as $name => $attr): ?>
-                        <option value="<?= $attr ?>"> <?= ucfirst($name) ?> </option>
-                    <?php endforeach; ?>
-                </select>
-            </div> <!-- Options block -->
         </div>
+        <div class="col-xs-5 text-right" id="options-block">
+            <!-- Video sorting -->
+            <div class="btn-group">
+                <button class="btn btn-default">Sort</button>
+                <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                    <span class="caret"></span>
+                </button>
+                <span class="dropdown-arrow dropdown-arrow-inverse"></span>
+                <ul class="dropdown-menu dropdown-inverse">
+                    <li>
+                        <a href="#" class="video-sort" data-source="popular"> <?= lang('popular_videos') ?> </a>
+                    </li>
+                    <li>
+                        <a href="#" class="video-sort" data-source="top_rated"> <?= lang('toprated_videos') ?> </a>
+                    </li>
+                    <li>
+                        <a href="#" class="video-sort" data-source="most_viewed"> <?= lang('mostviewed_videos') ?> </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Video period -->
+            <div class="btn-group">
+                <button class="btn btn-default">Period</button>
+                <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                    <span class="caret"></span>
+                </button>
+                <span class="dropdown-arrow dropdown-arrow-inverse"></span>
+                <ul class="dropdown-menu dropdown-inverse">
+                    <?php foreach($time as $name => $attr): ?>
+                    <li>
+                        <a href="#" class="video-period" data-source="<?= $attr ?>"> <?= ucfirst($name) ?> </a>
+                    </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </div> <!-- Options block -->
     </div>
 
     <div id="video-list">
@@ -55,9 +85,11 @@
                 <div class="col-md-3 col-sm-6 col-xs-12 <?= $sort ?> <?= $api ?>">
                     <div class="tile">
                         <div class="tile-image">
-                            <img data-original="<?= $video['img'] ?>" alt="<?= $video['title'] ?>" class="lazy-image"
-                                 data-toggle="tooltip" data-tooltip-style="light"
-                                 title="<?= $video['description'] ?>"/>
+                            <a href="<?= $video['url'] ?>" title="<?= $video['title'] ?>">
+                                <img data-original="<?= $video['img'] ?>" alt="<?= $video['title'] ?>" class="lazy-image"
+                                     data-toggle="tooltip" data-tooltip-style="light"
+                                    title="<?= $video['description'] ?>"/>
+                            </a>
                             <span class="fui-play" style="position: absolute; top: 35%; left: 45%; color: #fff; font-size: 30px; text-shadow: 0px 0px 20px #000, 1px -3px 0px #45c8a9" data-url="<?= $video['url'] ?>"></span>
                         </div>                        
                         <div class="tile-sidebar hidden">

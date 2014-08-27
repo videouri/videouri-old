@@ -89,6 +89,8 @@ class ApiProcessing
 
     public function __construct()
     {
+        // parent::__construct();
+
         if ( ! in_array($this->period, $this->validPeriods)) {
             $this->period = 'today';
         }

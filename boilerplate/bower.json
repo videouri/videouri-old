@@ -16,6 +16,7 @@
   ],
   "dependencies": {
     "jquery.lazyload": "latest",
+    "isotope": "latest",
     "momentjs": "latest",
     "bootstrap": "latest",
     "requirejs": "latest",

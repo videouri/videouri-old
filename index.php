@@ -46,7 +46,7 @@
 
 $ips = array('87.218.116.86', '37.11.31.254', '37.11.17.184', '87.218.135.242', '188.78.244.136');
 
-if(in_array($_SERVER['REMOTE_ADDR'], $ips)) {
+if (in_array($_SERVER['REMOTE_ADDR'], $ips)) {
 
 	define('ENVIRONMENT', 'development');
 

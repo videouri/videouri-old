@@ -13394,8 +13394,11 @@ define('main',[
         // Custom Selects
         $("select[name='huge']").selectpicker({style: 'btn-hg btn-primary', menuStyle: 'dropdown-inverse'});
         $("select[name='large']").selectpicker({style: 'btn-lg btn-danger'});
+        
         $("select[name='info']").selectpicker({style: 'btn-info'});
         $("select[name='small']").selectpicker({style: 'btn-sm btn-warning'});
+
+        $("select.source-select").selectpicker({style: 'btn-lg btn-danger'});
 
         // Tooltips
         $("img[data-toggle=tooltip], .tooltip").hover(function() {
@@ -13654,6 +13657,8 @@ requirejs.config({
         "bootstrap"            : "../bower_components/bootstrap/dist/js/bootstrap",
         "lazyload"             : "../bower_components/jquery.lazyload/jquery.lazyload",
         "ajax-cache"           : "vendor/jquery-ajax-localstorage-cache",
+
+        // "isotope"              : "../bower_components/isotope/isotope.pkgd.js",
 
         "bootstrap-select"     : "vendor/bootstrap/bootstrap-select",
         "bootstrap-switch"     : "vendor/bootstrap/bootstrap-switch",

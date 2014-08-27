@@ -7,11 +7,11 @@
     &.active {
       > img,
       > a > img {
-        border-radius: @border-radius-large;
+        border-radius: @carousel-border-radius;
       }
       @media (max-width: @screen-xs-max) {
         > img {
-          border-radius: @border-radius-large @border-radius-large 0 0;
+          border-radius: @carousel-border-radius @carousel-border-radius 0 0;
         }
       } 
     } 
@@ -32,9 +32,9 @@
   position: absolute;
   top: 45%;
   font-size: 20px;
-  line-height: 32px;
+  line-height: 35px;
   color: @inverse;    
-  text-indent: 1px;  
+  text-indent: 3px;  
   border: 3px solid @inverse;  
   height: 40px;
   right: 15px;
@@ -50,7 +50,7 @@
     background: none @carousel-controls-background;
   }
   &.left {
-    text-indent: -1px;
+    text-indent: -3px;
     left: 15px;
   }
   &.right {
@@ -72,7 +72,7 @@
   top: 16px;
   width: auto;
   line-height: 8px;
-  .user-select(none);
+  user-select: none;
 
   li {
     vertical-align: top;
@@ -101,7 +101,7 @@
   right: 0;
   bottom: 0;
   text-align: left;
-  border-radius: 0 0 @border-radius-large @border-radius-large;
+  border-radius: 0 0 @carousel-border-radius @carousel-border-radius;
   text-shadow: none;
 
   h3,
@@ -109,7 +109,7 @@
     color: @inverse;
   }
   h3 {
-    font-size: ceil(@component-font-size-base * 1.2); // ~18px
+    font-size: ceil((@component-font-size-base * 1.2)); // ~18px
     line-height: 20px;
     margin: 0 0 5px;
   }

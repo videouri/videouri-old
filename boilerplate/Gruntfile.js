@@ -1,5 +1,3 @@
-'use strict';
-
 // var vendorScripts = [
 //         './bower_components/jquery/dist/jquery.js',
 //         '/jquery-ui-1.10.3.custom.min.js',
@@ -31,6 +29,7 @@
 
 /*global module:false*/
 module.exports = function(grunt) {
+    'use strict';
 
     grunt.initConfig({
 
@@ -109,11 +108,20 @@ module.exports = function(grunt) {
 
         // Compile LESS files
         less: {
-            development: {
+            dev: {
                 options: {
-                    paths: ["<%= project.stylesheets %>/less"],
-                    //compress: true,
-                    //cleancss: true,
+                    // paths: ["<%= project.stylesheets %>/less"],
+                    ieCompat: true
+                },
+                files: {
+                    "<%= project.dist %>/videouri.css": "<%= project.stylesheets %>/less/boilerplate.less"
+                }
+            },
+            dist: {
+                options: {
+                    // paths: ["<%= project.stylesheets %>/less"],
+                    // compress: true,
+                    cleancss: true,
                     ieCompat: true
                 },
                 files: {
@@ -124,25 +132,25 @@ module.exports = function(grunt) {
 
 
         // Concatenate files
-        concat: {
-            options: {
-                banner: '<%= banner %>',
-                stripBanners: true,
-                nonull: true,
-            },
-            /*js: {
-                src: scripts,
-                dest: '<%= project.scripts %>/main.js'
-            },*/
-            css: {
-                src: [
-                        '<%= project.bowerDir %>/bootstrap/dist/css/bootstrap.css', 
-                        '<%= project.bowerDir %>/font-awesome/css/font-awesome.css',
-                        '<%= project.dist %>/videouri.css'
-                     ],
-                dest: '<%= project.dist %>/videouri.css',
-            }
-        },
+        // concat: {
+        //     options: {
+        //         banner: '<%= banner %>',
+        //         stripBanners: true,
+        //         nonull: true,
+        //     },
+        //     /*js: {
+        //         src: scripts,
+        //         dest: '<%= project.scripts %>/main.js'
+        //     },*/
+        //     css: {
+        //         src: [
+        //                 '<%= project.bowerDir %>/bootstrap/dist/css/bootstrap.css', 
+        //                 '<%= project.bowerDir %>/font-awesome/css/font-awesome.css',
+        //                 '<%= project.dist %>/videouri.css'
+        //              ],
+        //         dest: '<%= project.dist %>/videouri.css',
+        //     }
+        // },
 
         // Minify and such, for production
         /*uglify: {
@@ -204,14 +212,8 @@ module.exports = function(grunt) {
             //////
             less: {
                 files: '<%= project.stylesheets %>/less/**/*.less',
-                tasks: ['less', 'concat:css']
+                tasks: ['less:dev']
             },
-            concat: {
-                files: '<%= project.stylesheets %>/css/**/*.css',
-                //tasks: ['concat:js', 'concat:css']
-                tasks: ['concat:css']
-            },
-
 
             //////
             /// SCRIPTS

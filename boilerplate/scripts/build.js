@@ -18,6 +18,8 @@ requirejs.config({
         "lazyload"             : "../bower_components/jquery.lazyload/jquery.lazyload",
         "ajax-cache"           : "vendor/jquery-ajax-localstorage-cache",
 
+        // "isotope"              : "../bower_components/isotope/isotope.pkgd.js",
+
         "bootstrap-select"     : "vendor/bootstrap/bootstrap-select",
         "bootstrap-switch"     : "vendor/bootstrap/bootstrap-switch",
         //"typeahead"          : "typeahead",

@@ -1,6 +1,6 @@
-<?php if (  ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php if (! defined('BASEPATH')) exit('No direct script access allowed');
 
-class YouTubeController extends MX_Controller {
+class YouTubeController extends MY_Controller {
     
     function __construct()
     {

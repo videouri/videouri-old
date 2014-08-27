@@ -48,6 +48,18 @@
         <?php endif ?>
 
         <script src="<?= base_url() ?>assets/scripts/vendor/modernizr-2.7.1.min.js"></script>
+
+        <?php if (ENVIRONMENT !== 'development'): ?>
+            <script type="text/javascript">
+                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+                ga('create', 'UA-28752800-1', 'auto');
+                ga('send', 'pageview');
+            </script>
+        <?php endif; ?>
     </head>
 
     <body id="<?= $this->template->body_id; ?>">
@@ -120,15 +132,6 @@
             // $("select[name='video-category']").css('border', '1px solid red');
             // $("select[name='video-category']").selectpicker({style: 'btn-primary', menuStyle: 'dropdown-inverse'});
             requirejs(["module/home"]);
-        </script>
-
-        <script>
-        
-            var _gaq=[['_setAccount','UA-28752800-1'],['_trackPageview']];
-            (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-            g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-            s.parentNode.insertBefore(g,s)}(document,'script'));
-
         </script>
 
     </body>

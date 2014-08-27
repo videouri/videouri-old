@@ -5,7 +5,8 @@
 .btn-file {
   overflow: hidden;
   position: relative;
-  
+  //vertical-align: middle;
+
   > input[type="file"] {
     position: absolute;
     top: 0;
@@ -13,38 +14,41 @@
     left: 0;
     bottom: 0;
     margin: 0;
-    .opacity(0);
     font-size: 23px;
     direction: ltr;
     cursor: pointer;
     width: 100%;
+    height: 100%;
+    outline: 0;
+    .opacity(0);
   }
 }
 
 .fileinput {
   margin-bottom: 9px;
   display: block;
-  
-  .fileinput-filename {
-    font-size: @component-font-size-base;   
-  }
-  .uneditable-input {
+  overflow: hidden;
+
+  .form-control {
     display: inline-block;
-    margin-bottom: 0px;
-    vertical-align: middle;
-    cursor: text;  
-    .text-overflow();  
-    
-    [class^="fui-"] {
-      margin-right: .3em;
-    }
+    margin-bottom: 0;
+    cursor: text;
   }
-  .fileinput-preview {
-    cursor: pointer;
+  .input-group-addon {
+    padding-top: 8px;
+    padding-bottom: 8px;
   }
   .thumbnail {
     overflow: hidden;
     display: inline-block;
+    margin-bottom: 5px;
+    text-align: center;
+    > img {
+      max-height: 100%;
+    }
+  }
+  .uneditable-input [class^="fui-"] {
+    margin-right: .3em;
   }
 }
 .fileinput-exists .fileinput-new,
@@ -54,24 +58,42 @@
 .fileinput-inline .fileinput-controls {
   display: inline;
 }
+.fileinput-filename {
+  vertical-align: middle;
+  overflow: hidden;
+  font-size: @component-font-size-base;
+  line-height: (@input-line-height-base * 1.14);
+}
+.form-control .fileinput-filename {
+  vertical-align: bottom;
+}
+.fileinput.input-group {
+    display: table;
+
+    > * {
+        position: relative;
+        z-index: 2;
+    }
+    > .btn-file {
+        z-index: 1;
+    }
+}
 
 // Not 100% correct, but helps in typical use case
+.fileinput-new.input-group .btn-file,
 .fileinput-new .input-group .btn-file {
   border-radius: 0 @border-radius-base @border-radius-base 0;
-}
-.fileinput-new .input-group .btn-file.btn-xs,
-.fileinput-new .input-group .btn-file.btn-sm {
-  border-radius: 0 @border-radius-small @border-radius-small 0;
-}
-.fileinput-new .input-group .btn-file.btn-lg {
-  border-radius: 0 @border-radius-large @border-radius-large 0;
+
+  &.btn-xs,
+  &.btn-sm {
+    border-radius: 0 @border-radius-small @border-radius-small 0;
+  }
+  &.btn-lg {
+    border-radius: 0 @border-radius-large @border-radius-large 0;
+  }
 }
 
 .form-group.has-warning .fileinput {
-  .uneditable-input {
-    color: @state-warning-text;
-    border-color: @state-warning-border;
-  }
   .fileinput-preview {
     color: @state-warning-text;
   }
@@ -80,10 +102,6 @@
   }
 }
 .form-group.has-error .fileinput {
-  .uneditable-input {
-    color: @state-danger-text;
-    border-color: @state-danger-border;
-  }
   .fileinput-preview {
     color: @state-danger-text;
   }
@@ -92,10 +110,6 @@
   }
 }
 .form-group.has-success .fileinput {
-  .uneditable-input {
-    color: @state-success-text;
-    border-color: @state-success-border;
-  }
   .fileinput-preview {
     color: @state-success-text;
   }

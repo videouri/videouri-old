@@ -156,7 +156,11 @@ class MX_Loader extends CI_Loader
 		if ($path === FALSE) {
 			
 			$this->_ci_load_class($library, $params, $object_name);
-			$_alias = $this->_ci_classes[$class];
+			if ($class == 'user_agent')
+				#$_alias = $this->_ci_classes['agent'];
+				$_alias = 'agent';
+			else
+				$_alias = $this->_ci_classes[$class];
 			
 		} else {		
 			
