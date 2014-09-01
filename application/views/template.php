@@ -23,15 +23,13 @@
 
         <?= $this->template->meta ?>
 
-        <meta property="fb:admins" content="1315989914"/>
         <meta property="fb:app_id" content="277719198954055"/>
 
-        <meta http-equiv="content-language" content="en" />
-        <meta http-equiv="imagetoolbar" content="no" />
-        <meta name="copyright" content="&copy; 2012 videouri.com. All Rights Reserved." />
+        <meta name="copyright" content="&copy; 2012-<?= date('Y'); ?> videouri.com. All Rights Reserved." />
+        <link type="text/plain" rel="author" href="<?= base_url() ?>humans.txt" />
+
         <meta name="robots" content="all" />
 
-        <meta name="google-site-verification" content="-zDN10YXmnKG2hYhqYqo5xrNLMNnz1PqO6r1vSo6F38" />
         <meta name="msvalidate.01" content="48B0A933360DDEC6CF1775D7C7E28FD3" />
 
         <link href='http://fonts.googleapis.com/css?family=Lobster|Ubuntu:300|Cabin|Raleway&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
@@ -39,10 +37,7 @@
         <link rel="stylesheet" href="<?= base_url() ?>assets/dist/videouri.css">
         <?= $this->template->stylesheet ?>
         <!--[if gte IE 9]><style type="text/css">.gradient{filter:none;}</style><![endif]-->
-
-        <meta name="author" content="videouri.com" >
-        <meta name="owner" content="videouri.com" >
-        <link type="text/plain" rel="author" href="<?= base_url() ?>humans.txt" />
+        
         <?php if(isset($canonical)) : ?>
         <link rel="canonical" href="<?= base_url().$canonical ?>" />
         <?php endif ?>
@@ -84,16 +79,16 @@
                     <a class="navbar-brand"> Videouri </a>
                 </div>
                 <div class="col-md-6 col-md-offset-2">
-                    <form class="navbar-form" action="#" role="search">
+                    <?= form_open('results', 'class="navbar-form" role="search" method="get" autocomplete="off"') ?>
                         <div class="form-group">
                             <div class="input-group">
-                                <input class="form-control" type="search" placeholder="Search">
+                                <input class="form-control" type="search" name="search_query" placeholder="Search">
                                 <span class="input-group-btn">
                                     <button type="submit" class="btn"><span class="fui-search"></span></button>
                                 </span>
                             </div>
                         </div>
-                    </form>
+                    <?= form_close() ?>
                 </div>
             </div>
         </header>
@@ -131,7 +126,7 @@
         <script type="text/javascript">
             // $("select[name='video-category']").css('border', '1px solid red');
             // $("select[name='video-category']").selectpicker({style: 'btn-primary', menuStyle: 'dropdown-inverse'});
-            requirejs(["module/home"]);
+            // requirejs(["module/home"]);
         </script>
 
     </body>

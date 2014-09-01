@@ -18,14 +18,12 @@ requirejs.config({
         "lazyload"             : "../bower_components/jquery.lazyload/jquery.lazyload",
         "ajax-cache"           : "vendor/jquery-ajax-localstorage-cache",
 
-        // "isotope"              : "../bower_components/isotope/isotope.pkgd.js",
-
         "bootstrap-select"     : "vendor/bootstrap/bootstrap-select",
         "bootstrap-switch"     : "vendor/bootstrap/bootstrap-switch",
         //"typeahead"          : "typeahead",
 
-        "flatui-checkbox"      : "vendor/flatui/flatui-checkbox",
-        "flatui-radio"         : "vendor/flatui/flatui-radio",
+        // "flatui-radiocheck"    : "vendor/flat-ui/radiocheck",
+        // "flatui-fileinput"     : "vendor/flat-ui/fileinput",
 
         "swfobject"            : "vendor/swfobject",
         "tagsinput"            : "vendor/jquery.tagsinput",
@@ -41,8 +39,10 @@ requirejs.config({
         'ajax-cache':            ['jquery'],
         'bootstrap-switch':      ['bootstrap'],
         'bootstrap-select':      ['bootstrap'],
-        'flatui-checkbox':       ['jquery'],
-        'flatui-radio':          ['jquery'],
+
+        // 'flatui-radiocheck':          ['jquery'],
+        // 'flatui-fileinput':       ['jquery'],
+
         'tagsinput':             ['jquery'],
         'placeholder':           ['jquery'],
         'cookie':                ['jquery'],
@@ -51,4 +51,10 @@ requirejs.config({
 }).call(this);
 
 // Load the main app module to start the app
-requirejs(["main"]);
+requirejs(["main", '../bower_components/isotope/dist/isotope.pkgd'], function(x, Isotope) {
+
+    var iso = new Isotope( '#video-list', {
+        itemSelector: '.col-md-3',
+        layoutMode: 'masonry'
+    });
+});

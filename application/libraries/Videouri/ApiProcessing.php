@@ -167,7 +167,8 @@ class ApiProcessing
                 'description' => trim_text($video['media$group']['media$description']['$t'], 90),
                 'rating'      => $video['gd$rating']['average'],
                 'viewsCount'  => $video['yt$statistics']['viewCount'],
-                'img'         => $video['media$group']['media$thumbnail'][0]['url'],
+                // 'img'         => $video['media$group']['media$thumbnail'][0]['url'],
+                'img'         => 'https://i.ytimg.com/vi/'.$origid.'/mqdefault.jpg',
             ));
 
             $i++;

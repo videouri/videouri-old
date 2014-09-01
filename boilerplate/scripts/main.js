@@ -2,7 +2,7 @@ define([
     'jquery', 'jquery.ui', 'jquery.ui.touch-punch',
     'bootstrap', 'bootstrap-select', 'bootstrap-switch',
     'lazyload', 'ajax-cache',
-    'flatui-checkbox', 'flatui-radio',
+    // 'flatui-radiocheck', 'flatui-fileinput',
     'swfobject', 'tagsinput', 'placeholder', 'cookie', 'query'
     ], function (require) {
     
@@ -10,44 +10,17 @@ define([
 
     $(function () {
 
-        // alert('main.');
-
-        // Custom Selects
-        $("select[name='huge']").selectpicker({style: 'btn-hg btn-primary', menuStyle: 'dropdown-inverse'});
-        $("select[name='large']").selectpicker({style: 'btn-lg btn-danger'});
-        
-        $("select[name='info']").selectpicker({style: 'btn-info'});
-        $("select[name='small']").selectpicker({style: 'btn-sm btn-warning'});
-
-        $("select.source-select").selectpicker({style: 'btn-lg btn-danger'});
-
         // Tooltips
-        $("img[data-toggle=tooltip], .tooltip").hover(function() {
-            $(this).tooltip("show");
+        // $("img[data-toggle=tooltip], .tooltip").hover(function() {
+        //     $(this).tooltip("show");
 
-            // Add style class name to a tooltips
-            $(".tooltip").addClass(function() {
-                if ($(this).prev().attr("data-tooltip-style")) {
-                    return "tooltip-" + $(this).prev().attr("data-tooltip-style");
-                }
-            });
-        });
-
-        // Tags Input
-        $(".tagsinput").tagsInput();
-
-        // Placeholders for input/textarea
-        $("input, textarea").placeholder();
-
-        // Make pagination demo work
-        $(".pagination a").on('click', function() {
-            $(this).parent().siblings("li").removeClass("active").end().addClass("active");
-        });
-
-        $(".btn-group a").on('click', function() {
-            $(this).siblings().removeClass("active").end().addClass("active");
-        });
-
+        //     // Add style class name to a tooltips
+        //     $(".tooltip").addClass(function() {
+        //         if ($(this).prev().attr("data-tooltip-style")) {
+        //             return "tooltip-" + $(this).prev().attr("data-tooltip-style");
+        //         }
+        //     });
+        // });
 
         $(document).scroll(function() {
             /*if ($(this).scrollTop() >= 140 ) {

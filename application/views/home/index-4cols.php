@@ -73,22 +73,21 @@
         </div> <!-- Options block -->
     </div>
 
-    <div id="video-list">
+    <div id="video-list" class="row">
     <?php foreach ($data as $sort => $sortData): ?>
         <?php foreach ($sortData as $api => $apiData): ?>
             <?php $videosCount = count($apiData); $i = 1; foreach ($apiData as $video): ?>
 
             <?php if ($i == 1): ?>
-            <div class="row">
             <?php endif; ?>
 
                 <div class="col-md-3 col-sm-6 col-xs-12 <?= $sort ?> <?= $api ?>">
                     <div class="tile">
                         <div class="tile-image">
-                            <a href="<?= $video['url'] ?>" title="<?= $video['title'] ?>">
+                            <a href="<?= $video['url'] ?>">
                                 <img data-original="<?= $video['img'] ?>" alt="<?= $video['title'] ?>" class="lazy-image"
                                      data-toggle="tooltip" data-tooltip-style="light"
-                                    title="<?= $video['description'] ?>"/>
+                                     title="<?= $video['description'] ?>"/>
                             </a>
                             <span class="fui-play" style="position: absolute; top: 35%; left: 45%; color: #fff; font-size: 30px; text-shadow: 0px 0px 20px #000, 1px -3px 0px #45c8a9" data-url="<?= $video['url'] ?>"></span>
                         </div>                        
@@ -117,20 +116,23 @@
                                 <?php endif; ?>
                             </ul>
                         </div>
-                        <div class="tile-title <?= $api ?>" style="height: 40px; text-align: center;">
-                            <h2 class="title" style="font-size: 12px; margin: 0 auto; display:inline-block; vertical-align:middle">
+                        
+                        <div class="tile-bottom">
+                            <span class="source <?= $api ?>">
+                                <?= $api ?>
+                            </span>
+
+                            <h2 class="tile-title">
                                 <a href="<?= $video['url'] ?>" title="<?= $video['title'] ?>">
                                     <?= $video['title'] ?>
                                 </a>
                             </h2>
                         </div>
                     </div>
-                    <br/>
 
                 </div>
 
             <?php if ($i == $videosCount): ?>
-            </div>
             <?php endif; ?>
 
             <?php $i++; endforeach; //$video ?>
