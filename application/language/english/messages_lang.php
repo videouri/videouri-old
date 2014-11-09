@@ -1,32 +1,33 @@
 <?php
+
 // membership views
-$lang['username'] = 'Username';
-$lang['password'] = 'Password';
-$lang['confirm_password'] = 'Confirm password';
-$lang['remember_me'] = 'Remember me';
-$lang['login'] = 'Log in';
-$lang['forgot_password'] = 'Retrieve password';
-$lang['forgot_username'] = 'Retrieve username';
-$lang['resend_activation'] = 'Resend activation link';
+$lang['username']                 = 'Username';
+$lang['password']                 = 'Password';
+$lang['confirm_password']         = 'Confirm password';
+$lang['remember_me']              = 'Remember me';
+$lang['signin']                   = 'Sign in';
+$lang['signup']                   = 'Sign up';
+
+$lang['forgot_password']          = 'Retrieve password';
+$lang['forgot_username']          = 'Retrieve username';
+$lang['resend_activation']        = 'Resend activation link';
 $lang['resend_activation_return'] = 'Verify activation code';
-$lang['forgot_password'] = 'Retrieve password';
-$lang['create_account'] = 'Create account';
-$lang['your_email'] = 'Your e-mail address';
-$lang['send_password'] = 'Send password';
-$lang['send_username'] = 'Send username';
-$lang['send_activation_email'] = 'Send activation e-mail';
-$lang['first_name'] = 'First name';
-$lang['last_name'] = 'Last name';
-$lang['email_address'] = 'E-mail address';
-$lang['edit_password'] = 'Edit password';
-$lang['logged_in_with'] = 'Logged in with: ';
-$lang['logged_in_as'] = 'Logged in as: ';
-$lang['no_access'] = 'You are not authorized to view this page.';
-$lang['role'] = 'Role';
+$lang['forgot_password']          = 'Retrieve password';
+$lang['your_email']               = 'Your e-mail address';
+$lang['send_password']            = 'Send password';
+$lang['send_username']            = 'Send username';
+$lang['send_activation_email']    = 'Send activation e-mail';
+$lang['first_name']               = 'First name';
+$lang['last_name']                = 'Last name';
+$lang['email_address']            = 'E-mail address';
+$lang['edit_password']            = 'Edit password';
+$lang['logged_in_with']           = 'Logged in with: ';
+$lang['logged_in_as']             = 'Logged in as: ';
+$lang['no_access']                = 'You are not authorized to view this page.';
+$lang['role']                     = 'Role';
+
 // oauth
-$lang['social_login'] = "Social login";
 $lang['go_to_regular_registration'] = "I prefer creating a new account on this website";
-$lang['regular_login'] = "Regular login";
 $lang['go_to_social_login'] = "Let a social network register me";
 $lang['oauth_unable_to_log_in'] = 'Authentication with %s failed - please try again or use another method.';
 $lang['oauth_complete_social_logon'] = 'Complete social logon';
@@ -42,6 +43,7 @@ $lang['oauth_validation_request'] = "Almost done! Activate your account, you hav
 $lang['oauth_database_insert_failed'] = "Unable to insert account into database. Please try again or contact us when it keeps failing.";
 $lang['oauth_session_not_found'] = "Social login stream interrupted - please try again!";
 $lang['you_are_logged_in_with'] = "You are logged in with";
+
 // general
 $lang['is_valid_email'] = 'Please enter a correct e-mail address.';
 $lang['is_valid_username'] = 'The username field can only contain a-z A-Z 0-9 _ and - characters.';
@@ -167,10 +169,6 @@ $lang['email_requirements'] = "* Please provide a valid e-mail address";
 // e-mail greetings
 $lang['email_not_found'] = 'E-mail address not found.';
 $lang['email_greeting'] = 'Hello';
-
-// membership navbar
-$lang['login_help'] = "Login help";
-$lang['login'] = "Log in";
 
 // forgot_password.php
 $lang['forgot_password_title'] = 'Forgot password';

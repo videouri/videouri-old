@@ -15,11 +15,13 @@
     "tests"
   ],
   "dependencies": {
-    "jquery.lazyload": "latest",
-    "isotope": "latest",
-    "momentjs": "latest",
-    "bootstrap": "latest",
-    "requirejs": "latest",
-    "almond": "latest"
+    "jquery": "1.x",
+    "jquery.lazyload": "1.9.x",
+    "isotope": "2.x",
+    "momentjs": "2.x",
+    "bootstrap": "3.x",
+    "requirejs": "2.x",
+    "almond": "0.x",
+    "font-awesome": "4.x"
   }
 }

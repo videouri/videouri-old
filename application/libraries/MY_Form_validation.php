@@ -1,4 +1,4 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
 
 class MY_Form_validation extends CI_Form_validation {
 
@@ -15,13 +15,14 @@ class MY_Form_validation extends CI_Form_validation {
      * @return boolean
      *
      */
-
-    public function is_valid_email($email) {
+    public function is_valid_email($email)
+    {
         if (filter_var($email, FILTER_VALIDATE_EMAIL) !== false) {
             if(checkdnsrr(array_pop(explode("@", $email)), "MX") != false) {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -33,11 +34,12 @@ class MY_Form_validation extends CI_Form_validation {
      * @return boolean
      *
      */
-
-    public function is_valid_password($password) {
+    public function is_valid_password($password)
+    {
         if (preg_match("/[\$\.\[\]\|\(\)\?\*\+\{\}\@\#\!]/", $password) && (strcspn($password, '0123456789') != strlen($password))) {
             return true;
         }
+
         return false;
     }
 
@@ -49,11 +51,12 @@ class MY_Form_validation extends CI_Form_validation {
      * @return boolean
      *
      */
-
-    public function is_valid_username($username) {
+    public function is_valid_username($username)
+    {
         if (preg_match("/^[a-zA-Z0-9_-]+$/", $username)) {
             return true;
         }
+        
         return false;
     }
 
@@ -66,9 +69,8 @@ class MY_Form_validation extends CI_Form_validation {
      * @return boolean
      *
      */
-
-    public function is_existing_unique_field($value, $info) {
-
+    public function is_existing_unique_field($value, $info)
+    {
         list($table, $column) = explode('.', $info, 2);
 
         $this->CI->db->select($column);
@@ -94,9 +96,8 @@ class MY_Form_validation extends CI_Form_validation {
      * @return boolean
      *
      */
-
-    public function is_existing_unique_field_by_id($value, $info) {
-
+    public function is_existing_unique_field_by_id($value, $info)
+    {
         list($table, $column, $id) = explode('.', $info, 3);
 
         if ($id != strval(intval($id))) {return false;}
@@ -123,8 +124,8 @@ class MY_Form_validation extends CI_Form_validation {
      * @return boolean
      *
      */
-
-    function check_captcha($val) {
+    function check_captcha($val)
+    {
         if ($this->CI->recaptcha->check_answer($this->CI->input->ip_address(), $this->CI->input->post('recaptcha_challenge_field'), $val)) {
             return true;
         }
@@ -139,9 +140,8 @@ class MY_Form_validation extends CI_Form_validation {
      * @return boolean
      *
      */
-
-    public function is_member_password($password) {
-
+    public function is_member_password($password)
+    {
         $this->CI->db->select('nonce, password');
         $this->CI->db->from('user');
         $this->CI->db->where('username', $this->CI->session->userdata('username'));
@@ -150,12 +150,12 @@ class MY_Form_validation extends CI_Form_validation {
         $query = $this->CI->db->get();
 
         if($query->num_rows() == 1) {
-            $this->CI->load->helper('password');
             $row = $query->row();
             if (hash_password($password, $row->nonce) === $row->password) {
                 return true;
             }
         }
+        
         return false;
     }
 }

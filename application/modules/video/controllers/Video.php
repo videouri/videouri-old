@@ -74,11 +74,17 @@ class Video extends MX_Controller {
         }
 
         if ($api === "Dailymotion") {
-            $data['data']['swf']['url']  = $results['swf_url'].'&enableApi=1&playerapiid=dmplayer';
+            $swfUrl = $result['swf_url'].'&enableApi=1&playerapiid=dmplayer';
+            $swfUrl = preg_replace("/^http:/i", "https:", $swfUrl);
+
+            $data['data']['swf']['url']  = $swfUrl;
             $data['data']['swf']['api']  = 'dmapiplayer';
             $data['data']['title']       = $results['title'];
             $data['data']['description'] = $results['description'];
-            $data['data']['img']         = $results['thumbnail_medium_url'];
+
+            $thumbnailUrl = preg_replace("/^http:/i", "https:", $result['thumbnail_medium_url']);
+            $data['data']['img']         = $thumbnailUrl;
+
             $data['canonical']           = "video/$custom_id";
             $data['data']['tags']        = $results['tags'];
             $data['data']['related']     = $this->_relatedVideos(array('api'=>$api,'id'=>$id));
@@ -119,7 +125,7 @@ class Video extends MX_Controller {
 
         elseif ($api == "Vimeo") {
             #$data['data']['embed_html']  = html_entity_decode($results['videoCode']->html);
-            $data['data']['swf']['url']  = "http://vimeo.com/moogaloop.swf?clip_id=".$id."&amp;server=vimeo.com&amp;color=00adef&amp;fullscreen=1&amp;autoplay=1";
+            $data['data']['swf']['url']  = "https://vimeo.com/moogaloop.swf?clip_id=".$id."&amp;server=vimeo.com&amp;color=00adef&amp;fullscreen=1&amp;autoplay=1";
             $data['data']['swf']['api']  = "vmapiplayer";
             $data['data']['title']       = $results->video[0]->title;
             $data['data']['description'] = $results->video[0]->description;
@@ -140,7 +146,7 @@ class Video extends MX_Controller {
 
         elseif ($api == "YouTube") {
             #$data['data']['embed_html']  = $results['videoCode'];
-            $data['data']['swf']['url']  = "http://www.youtube.com/v/".$id."?enablejsapi=1&playerapiid=ytplayer&version=3";
+            $data['data']['swf']['url']  = "https://www.youtube.com/v/".$id."?enablejsapi=1&playerapiid=ytplayer&version=3";
             $data['data']['swf']['api']  = "ytapiplayer";
             $data['data']['title']       = $results->title;
             $data['data']['description'] = $results->description;
@@ -150,7 +156,7 @@ class Video extends MX_Controller {
                 $tags[] = $results->category[$i];
             }
 
-            $data['data']['img']       = 'http://i.ytimg.com/vi/'.$id.'/0.jpg';
+            $data['data']['img']       = 'https://i.ytimg.com/vi/'.$id.'/0.jpg';
             $data['canonical']         = "video/$custom_id";
             $data['data']['tags']      = $tags;
             $data['data']['related']   = $this->_relatedVideos(array('api'=>$api,'id'=>$id));
@@ -196,7 +202,8 @@ class Video extends MX_Controller {
 
                         $related['Dailymotion'][$i]['url']   = $url;
                         $related['Dailymotion'][$i]['title'] = $video['title'];
-                        $related['Dailymotion'][$i]['img']   = $video['thumbnail_small_url'];
+                        $thumbnailUrl = preg_replace("/^http:/i", "https:", $video['thumbnail_small_url']);
+                        $related['Dailymotion'][$i]['img']   = $thumbnailUrl;
                         $i++;
                     }
                 break;
@@ -236,7 +243,8 @@ class Video extends MX_Controller {
 
                         $related['YouTube'][$i]['url']   = $url;
                         $related['YouTube'][$i]['title'] = trim_text($video['title']['$t'], 83);
-                        $related['YouTube'][$i]['img']   = $video['media$group']['media$thumbnail'][0]['url'];
+                        $thumbnailUrl = preg_replace("/^http:/i", "https:", $video['media$group']['media$thumbnail'][0]['url']);
+                        $related['YouTube'][$i]['img']   = $thumbnailUrl;
                         $i++;
                     }
                 break;

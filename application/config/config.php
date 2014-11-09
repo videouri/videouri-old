@@ -52,7 +52,8 @@ switch ($_SERVER['SERVER_NAME'])
     	$config['base_url']	= 'http://testing.w0rldart.com/videouri/';
     break;
     case 'www.videouri.com':
-        $config['base_url']	= 'http://www.videouri.com/';
+    case 'videouri.com':
+        $config['base_url']	= 'https://videouri.com/'; // note the HTTPS
     break;
 }
 
@@ -88,7 +89,7 @@ $config['index_page'] = '';
 | 'QUERY_STRING'    Uses $_SERVER['QUERY_STRING']
 |
 */
-$config['uri_protocol'] = 'AUTO';
+$config['uri_protocol'] = 'QUERY_STRING';
 
 /*
 |--------------------------------------------------------------------------
@@ -175,8 +176,8 @@ $config['subclass_prefix'] = 'MY_';
 | DO NOT CHANGE THIS UNLESS YOU FULLY UNDERSTAND THE REPERCUSSIONS!!
 |
 */
-#$config['permitted_uri_chars'] = 'a-z 0-9?~%.:_\-';
-$config['permitted_uri_chars'] = 'a-z 0-9~%.:_\-';
+$config['permitted_uri_chars'] = 'a-z 0-9~%.:_\-?';
+#$config['permitted_uri_chars'] = 'a-z 0-9~%.:_\-';
 
 
 /*
@@ -234,7 +235,7 @@ $config['directory_trigger']	= 'd'; // experimental not currently in use
 | your log files will fill up very fast.
 |
 */
-$config['log_threshold'] = 2;
+$config['log_threshold'] = 1;
 
 /*
 |--------------------------------------------------------------------------
@@ -368,7 +369,7 @@ $config['standardize_newlines'] = FALSE;
 | COOKIE data is encountered
 |
 */
-$config['global_xss_filtering'] = FALSE;
+$config['global_xss_filtering'] = TRUE;
 
 /*
 |--------------------------------------------------------------------------
@@ -408,7 +409,7 @@ $config['csrf_exclude_uris'] = array();
 | by the output class.  Do not 'echo' any values with compression enabled.
 |
 */
-$config['compress_output'] = FALSE;
+$config['compress_output'] = false;
 
 /*
 |--------------------------------------------------------------------------

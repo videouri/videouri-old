@@ -15,5 +15,13 @@
     .navbar-form {
         border: 0;
         padding: 0;
+
+        // Make the search box have 100% witdh
+        & > .form-group {
+            width: 100%;
+            & > .input-group {
+                width: 100%;
+            }
+        }
     }
 }

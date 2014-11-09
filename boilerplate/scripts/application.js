@@ -6,6 +6,39 @@ String.prototype.repeat = function(num) {
 
 (function($) {
 
+    // http://stackoverflow.com/questions/7131909/facebook-callback-appends-to-return-url
+    // edited to accomodate a bug in the above solution on Stackoverflow thanks to mayhemx (see his comment in the product discussion to know the fix details)
+    if (window.location.hash == '#_=_') {
+        history.replaceState
+            ? history.replaceState(null, null, window.location.href.split('#')[0])
+            : window.location.hash = '';
+        event.preventDefault();
+    }
+
+
+
+    var error_box = function(error) {
+        var $error = $("div#error");
+        $error.addClass('alert alert-danger');
+        $error.hide();
+        $error.append("<h4>Please verify the following:</h4>" + error);
+        $error.fadeIn(200);
+        $('.loading').hide();
+        $('html, body').animate({scrollTop:0}, 'slow');
+        $(".btn-loading").removeAttr("disabled");
+    };
+
+    var pwd_error_box = function(error) {
+        var $error = $("div#pwd_error");
+        $error.addClass('alert alert-danger');
+        $error.hide();
+        $error.append("<h4>Password error:</h4>" + error);
+        $error.fadeIn(200);
+        $('.loading').hide();
+        $(".btn-loading").removeAttr("disabled");
+    };
+    
+
     // Add segments to a slider
     $.fn.addSliderSegments = function (amount) {
         return this.each(function () {

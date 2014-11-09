@@ -1,4 +1,4 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
 
 if (!function_exists('load_email_config')) {
     /**
@@ -17,7 +17,7 @@ if (!function_exists('load_email_config')) {
             case 2:
                 $config = array(
                     'protocol' => 'sendmail',
-                    'mailpath' => Settings_model::$db_config['sendmail_path'],
+                    'mailpath' => $this->config->item('sendmail_path'),
                     'charset' => "utf-8",
                     'wordwrap' => TRUE,
                     'newline' => "\r\n"
@@ -26,10 +26,10 @@ if (!function_exists('load_email_config')) {
             case 3:
                 $config = array(
                     'protocol' => 'smtp',
-                    'smtp_host' => Settings_model::$db_config['smtp_host'],
-                    'smtp_port' => Settings_model::$db_config['smtp_port'],
-                    'smtp_user' => $CI->encrypt->decode(Settings_model::$db_config['smtp_user']),
-                    'smtp_pass' => $CI->encrypt->decode(Settings_model::$db_config['smtp_pass']),
+                    'smtp_host' => $this->config->item('smtp_host'),
+                    'smtp_port' => $this->config->item('smtp_port'),
+                    'smtp_user' => $CI->encrypt->decode($this->config->item('smtp_user')),
+                    'smtp_pass' => $CI->encrypt->decode($this->config->item('smtp_pass')),
                     'smtp_timeout' => 30,
                     'charset' => "utf-8",
                     'newline' => "\r\n"

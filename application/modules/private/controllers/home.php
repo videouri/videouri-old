@@ -30,7 +30,6 @@ class Home extends Private_Controller {
             "focus is on easy to understand, quick and clean coding"
         );
 
-        $this->template->set_theme(Settings_model::$db_config['active_theme']);
         $this->template->set_layout('main');
         $this->template->title('home page');
         $this->process_partial('header', 'private/header');

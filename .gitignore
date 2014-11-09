@@ -1,9 +1,12 @@
-# Config
-application/config/development
-
 # Stuff
 /folder-files/
 test.*
+/___adminpanel/
+/stats/
+
+
+# CI related
+application/config/development
 
 application/cache/*
 !application/cache/index.html

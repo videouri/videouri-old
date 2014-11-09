@@ -74,6 +74,7 @@
     </div>
 
     <div id="video-list" class="row">
+    <?php if (!$fakeContent): ?>
     <?php foreach ($data as $sort => $sortData): ?>
         <?php foreach ($sortData as $api => $apiData): ?>
             <?php $videosCount = count($apiData); $i = 1; foreach ($apiData as $video): ?>
@@ -138,6 +139,7 @@
             <?php $i++; endforeach; //$video ?>
         <?php endforeach;  //$api, $apiData ?>
     <?php endforeach; //$sort, $sortData ?>
+    <?php endif; ?>
     </div>
 
 </section>

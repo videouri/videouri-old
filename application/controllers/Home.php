@@ -30,7 +30,7 @@ class Home extends MY_Controller {
     {
         $content = self::runAPIs();
 
-        $content['apis']      = $this->parameters['apis'];
+        #$content['apis']      = $this->parameters['apis'];
         $content['canonical'] = '';
         $content['time']      = array(
                                 'today'      => 'today',
@@ -39,7 +39,11 @@ class Home extends MY_Controller {
                                 'ever'       => 'ever'
                             );
 
+        // Choose not to show home page content
+        $content['fakeContent'] = false;
+
         $this->template->body_id = 'home';
+
         $this->template->home_featured->view('home/featured');
         $this->template->content->view('home/index-4cols', $content);
         $this->template->publish();

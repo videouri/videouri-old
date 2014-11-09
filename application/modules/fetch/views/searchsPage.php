@@ -5,9 +5,9 @@
 
         <div class="inside_top_bar">
             <div class="resultsFor">
-                Search results for <span class="query"><?=$query;?></span> in 
+                Search results for <span class="query"><?= $query; ?></span> in 
                 <span class="searchIn">
-                    <?php foreach($data as $key=>$value): ?>
+                    <?php foreach($data as $key => $value): ?>
                     <strong><?=$key;?></strong>
                     <?php endforeach; ?>
                 </span>.

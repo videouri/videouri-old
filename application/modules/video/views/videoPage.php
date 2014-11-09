@@ -34,11 +34,6 @@
                         <li>
                             <div class="g-plusone" data-annotation="none" data-size="standard"></div>
                         </li>
-                        <li>
-                            <a class="addthis_button" href="http://www.addthis.com/bookmark.php?v=250&amp;pubid=ra-4f2476ee695f238a">
-                                <img src="http://s7.addthis.com/static/btn/sm-share-en.gif" width="83" height="16" alt="Bookmark and Share" style="border:0"/>
-                            </a>
-                        </li>
                     </ul>
                 </div>
                 <div class="clearfix"></div>
@@ -87,7 +82,6 @@
         <div id="fbcomments"></div>
     </center>
 </section>
-<script src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4f2476ee695f238a"></script>
 <script>
     <?php
         $count = count($data['tags']);

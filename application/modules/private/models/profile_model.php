@@ -1,8 +1,9 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Profile_model extends CI_Model {
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
     }
 
@@ -13,8 +14,8 @@ class Profile_model extends CI_Model {
      * @return mixed
      *
      */
-
-    public function get_profile() {
+    public function get_profile()
+    {
         $this->db->select('id, first_name, last_name, email');
         $this->db->from('user');
         $this->db->where('username', $this->session->userdata('username'));
@@ -38,8 +39,8 @@ class Profile_model extends CI_Model {
      * @return boolean
      *
      */
-
-    public function set_profile($first_name, $last_name, $email = "") {
+    public function set_profile($first_name, $last_name, $email = "")
+    {
         $data = array(
                'first_name' => $first_name,
                'last_name' => $last_name,
@@ -62,9 +63,8 @@ class Profile_model extends CI_Model {
      * @return boolean
      *
      */
-
-    public function set_password($password) {
-        $this->load->helper('password');
+    public function set_password($password)
+    {
         $new_nonce = md5(uniqid(mt_rand(), true));
         $data = array(
                'password' => hash_password($password, $new_nonce),
@@ -84,8 +84,8 @@ class Profile_model extends CI_Model {
      * @return mixed
      *
      */
-
-    public function get_oauth_profile() {
+    public function get_oauth_profile()
+    {
         $this->db->select('u.id, u.first_name, u.last_name, u.email, u.oauth_profile_url, op.name as provider_name');
         $this->db->from('user u');
         $this->db->join('oauth_providers op', 'op.id = u.oauth_provider_id');
@@ -108,8 +108,8 @@ class Profile_model extends CI_Model {
      * @return bool
      *
      */
-	 
-	public function delete_membership() {
+	public function delete_membership()
+    {
 		$this->db->where('username', $this->session->userdata('username'))->delete('user');
 		return $this->db->affected_rows();
 	}

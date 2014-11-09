@@ -29,7 +29,7 @@
 			<?php }else{ ?>
 				<ul class="nav navbar-nav navbar-right">
 					<li<?php print ($this->uri->segment('2') == "login" ? ' class="active"' : ''); ?>><a href="<?php print base_url(); ?>membership/login"><?php print $this->lang->line('login'); ?></a></li>
-					<li<?php print ($this->uri->segment('2') == "register" ? ' class="active"' : ''); ?>><a href="<?php print base_url(); ?>membership/register"><?php print $this->lang->line('create_account'); ?></a></li>
+					<li<?php print ($this->uri->segment('2') == "register" ? ' class="active"' : ''); ?>><a href="<?php print base_url(); ?>membership/register"><?php print $this->lang->line('signup'); ?></a></li>
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php print $this->lang->line('login_help'); ?> <b class="caret"></b></a>
 						<ul class="dropdown-menu" role="menu">

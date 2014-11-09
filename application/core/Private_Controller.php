@@ -16,10 +16,10 @@ class Private_Controller extends MY_Controller
         $cookie_domain = config_item('cookie_domain'); // application/config/config.php
 
         // When the site is disabled, clean and destroy all cookies and sessions
-        if (Settings_model::$db_config['login_enabled'] == 0 && $this->session->userdata('username') != ADMINISTRATOR) {
+        if ($this->config->item('login_enabled') == 0 && $this->session->userdata('username') != ADMINISTRATOR) {
             $this->session->sess_destroy();
             setcookie("unique_token", null, time() - 60*60*24*3, '/', $cookie_domain, false, false);
-            redirect("/membership/login");
+            redirect("/user/login");
         }
 
         // When we do not find the sessions variable "logged_in" and there's a cookie: check DB for data and act accordingly
@@ -37,27 +37,27 @@ class Private_Controller extends MY_Controller
                 if ($data->banned != 0) {
                     $this->session->set_flashdata('error', '<p>You are banned.</p>');
                     setcookie("unique_token", null, time() - 60*60*24*3, '/', $cookie_domain, false, false);
-                    redirect("/membership/login");
+                    redirect("/user/login");
                 }elseif($data->active != 1) {
                     $this->session->set_flashdata('error', '<p>Your acount is inactive.</p>');
                     setcookie("unique_token", null, time() - 60*60*24*3, '/', $cookie_domain, false, false);
-                    redirect("/membership/login");
+                    redirect("/user/login");
                 }
 
                 // renew cookie
-                setcookie("unique_token", get_cookie('unique_token'), time() + Settings_model::$db_config['cookie_expires'], '/', $cookie_domain, false, false);
+                setcookie("unique_token", get_cookie('unique_token'), time() + $this->config->item('cookie_expires'), '/', $cookie_domain, false, false);
                 $this->session->set_userdata('logged_in', true);
                 $this->session->set_userdata('username', $data->username);
                 $this->session->set_userdata('role_id', $data->role_id);
-                redirect('private/'. Settings_model::$db_config['home_page']);
+                redirect('private/'. $this->config->item('home_page'));
             } else {
-                redirect("/membership/login");
+                redirect("/user/login");
             }
 
         }
 
         elseif (!$this->session->userdata('logged_in') && !get_cookie('unique_token')) {
-            redirect("/membership/login");
+            redirect("/user/login");
         }
     }
 

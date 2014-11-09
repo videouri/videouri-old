@@ -5,22 +5,6 @@ $config['adapter'] = 'apc';
 $config['backup']  = 'file';
 
 
-/*
-The reCaptcha server keys and API locations
-
-Obtain your own keys from:
-http://www.recaptcha.net
-*/
-$config['recaptcha'] = array(
-  'public'=>'',
-  'private'=>'',
-  'RECAPTCHA_API_SERVER' =>'http://www.google.com/recaptcha/api',
-  'RECAPTCHA_API_SECURE_SERVER'=>'https://www.google.com/recaptcha/api',
-  'RECAPTCHA_VERIFY_SERVER' =>'www.google.com',
-  'RECAPTCHA_SIGNUP_URL' => 'https://www.google.com/recaptcha/admin/create',
-  'theme' => Settings_model::$db_config['recaptcha_theme']
-);
-
 //  Settings_model::$db_config
 
 $config['members_per_page']    = 20;
@@ -66,9 +50,17 @@ $config['remember_me_enabled']  = true;
 
 ##
 # Captcha
+#  - Key at: http://www.recaptcha.net
 ##
-$config['recaptcha_enabled'] = true;
-$config['recaptcha_theme']   = 'white';
+$config['recaptcha'] = array(
+  'public'                      => '6LdCSvwSAAAAAIvJGYawoR6mDn_3m6PKPbwI2972',
+  'private'                     => '6LdCSvwSAAAAAHuEpZTh7XDzRrphxZUg9eIOkjki',
+  'RECAPTCHA_API_SERVER'        => 'http://www.google.com/recaptcha/api',
+  'RECAPTCHA_API_SECURE_SERVER' => 'https://www.google.com/recaptcha/api',
+  'RECAPTCHA_VERIFY_SERVER'     => 'www.google.com',
+  'RECAPTCHA_SIGNUP_URL'        => 'https://www.google.com/recaptcha/admin/create',
+  'theme'                       => 'white',
+);
 
 /* security site key used for password encryption */
 define('SITE_KEY', 'putyourowncreatedsitekeyhereforsecurity');

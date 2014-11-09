@@ -293,7 +293,12 @@
 @timepicker-nav-color:        mix(@brand-secondary, white, 70%);
 @timepicker-nav-hover-color:  @inverse;
 @timepicker-border-radius:    @border-radius-large;
-@timepicker-bg:               @brand-secondary;
+@timepicker-bg:               #fff;
+@timepicker-hover-bg:         @brand-secondary;
+@timepicker-border:           @brand-secondary;
+@timepicker-link-color:       fade(@text-color, 90%);
+@zindex-timepicker:           1000;
+
 
 //== Spinner
 //
@@ -719,7 +724,7 @@
 //** Modal backdrop background color
 @modal-backdrop-bg:           mix(@brand-primary, black, 70%);
 //** Modal backdrop opacity
-@modal-backdrop-opacity:      .95;
+@modal-backdrop-opacity:      .65;
 
 //** Modal header border color
 @modal-header-border-color:   @modal-content-border-color;

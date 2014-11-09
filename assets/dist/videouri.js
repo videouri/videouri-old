@@ -9189,8 +9189,6 @@ return jQuery;
 
 }));
 
-define("jquery", function(){});
-
 /*! jQuery UI - v1.10.3 - 2013-05-04
 * http://jqueryui.com
 * Includes: jquery.ui.core.js, jquery.ui.widget.js, jquery.ui.mouse.js, jquery.ui.position.js, jquery.ui.button.js, jquery.ui.datepicker.js, jquery.ui.slider.js, jquery.ui.spinner.js, jquery.ui.tooltip.js, jquery.ui.effect.js
@@ -13134,6 +13132,12 @@ define('main',[
 
     $(function () {
 
+        $('.input-group').on('focus', '.form-control', function () {
+            $(this).closest('.input-group, .form-group').addClass('focus');
+        }).on('blur', '.form-control', function () {
+            $(this).closest('.input-group, .form-group').removeClass('focus');
+        });
+
         // Tooltips
         // $("img[data-toggle=tooltip], .tooltip").hover(function() {
         //     $(this).tooltip("show");
@@ -13146,13 +13150,116 @@ define('main',[
         //     });
         // });
 
-        $(document).scroll(function() {
-            /*if ($(this).scrollTop() >= 140 ) {
-                $('header.navbar').removeClass('hidden');
-            } else {
-                $('header.navbar').addClass('hidden');
-            }*/
+        // $(document).scroll(function() {
+        //     /*if ($(this).scrollTop() >= 140 ) {
+        //         $('header.navbar').removeClass('hidden');
+        //     } else {
+        //         $('header.navbar').addClass('hidden');
+        //     }*/
+        // });
+
+        /**
+         * On .modal hidden
+         */
+        $(document).on('hidden.bs.modal', '.modal', function ()
+        {
+            // Reset .modal
+            $(this).removeData('bs.modal');
         });
+
+        /**
+         * On .modal shown
+         */
+        $(document).on('click', '.modal-trigger', function (e)
+        {
+            e.preventDefault();
+
+            var url = $(this).attr('href');
+
+            $('#videouri-modal').modal({
+                'backdrop': 'static',
+                'show': true,
+            }).find('.modal-body').load(url, function(response)
+            {
+                $(this).html(response);
+            });
+
+            return false;
+        });
+
+        // /**
+        //  * AJAX Modal forms
+        //  */
+        // $(document).on('submit', 'form.form-ajax', function(event)
+        // {
+        //     event.preventDefault();
+
+        //     var $form      = $(this),
+        //         formId     = $form.attr('id'),
+        //         formMethod = $form.find('input[name="_method"]').length > 0 ? $form.find('input[name="_method"]').val() : $form.attr('method');
+
+        //     var $ajaxForm = $.ajax({
+        //         url:      $form.attr('action'),
+        //         type:     formMethod,
+        //         async:    false,
+        //         dataType: 'json',
+        //         data:     $form.serialize()
+        //     });
+
+        //     // AJAX form executed with success
+        //     $ajaxForm.done(function(response)
+        //     {
+        //         $(document).find('.alert').fadeOut();
+                
+        //         // Close the modal
+        //         $('.modal').modal('hide');
+
+        //         if (response.message) {
+        //             $(document.body).append('<div class="alert alert-success fade in" style="position: absolute; bottom: 10px; right: 10px;">'
+        //                                         +'<a class="close" data-dismiss="alert" href="#" aria-hidden="true">&times;</a>'
+        //                                         +response.message
+        //                                     +'</div>');
+        //         }
+        //         else {
+        //             $(document.body).append('<div class="alert alert-success fade in" style="position: absolute; bottom: 10px; right: 10px;">'
+        //                                         +'<a class="close" data-dismiss="alert" href="#" aria-hidden="true">&times;</a>'
+        //                                         +'Accion tramitada con exito!'
+        //                                     +'</div>');
+        //         }
+
+        //         // Refresh the datatable
+        //         if (typeof oTable !== "undefined") {
+        //             oTable[formId].fnDraw();
+        //             if (formId === 'budgets-opened') {    
+        //                 oTable['budgets-closed'].fnDraw();
+        //             }
+        //         } else {
+        //             location.reload();
+        //         }
+        //     });
+
+        //     // On AJAX fail show the form with errors.
+        //     $ajaxForm.fail(function(jqXHR, textStatus, errorThrown) {
+        //         if (jqXHR === false) {
+        //             alert('Something went wrong. Try again');
+        //         }
+
+        //         else if (textStatus === 'parsererror') {
+        //             // Show HTML error result in the modal
+        //             $('.modal-body').html(jqXHR.responseText);
+        //         }
+
+        //         else if (jqXHR.responseJSON.length >= 1) {
+        //             $(document).find('.alert').fadeOut();
+        //             $.each(jqXHR.responseJSON, function(i, message) {
+        //                 $(document.body).append('<div class="alert alert-absolute alert-danger fade in">'
+        //                                             +' <a class="close" data-dismiss="alert" href="#" aria-hidden="true">&times;</a>'
+        //                                             + message
+        //                                         + '</div>');
+        //             });
+        //         }
+        //     });
+        // });
 
         /*function smartColumns() {
             $("ul.panel").css({ 'width' : "100%"});
@@ -13357,7 +13464,7 @@ define('main',[
 
 });
 /*!
- * Isotope PACKAGED v2.0.0
+ * Isotope PACKAGED v2.0.1
  * Filter & sort magical layouts
  * http://isotope.metafizzy.co
  */
@@ -16077,6 +16184,16 @@ Item.prototype.updateSortData = function() {
   }
 };
 
+var _destroy = Item.prototype.destroy;
+Item.prototype.destroy = function() {
+  // call super
+  _destroy.apply( this, arguments );
+  // reset display, #741
+  this.css({
+    display: ''
+  });
+};
+
 return Item;
 
 }
@@ -16643,7 +16760,7 @@ if ( typeof define === 'function' && define.amd ) {
 })( window );
 
 /*!
- * Isotope v2.0.0
+ * Isotope v2.0.1
  * Filter & sort magical layouts
  * http://isotope.metafizzy.co
  */
@@ -17193,6 +17310,17 @@ function isotopeDefinition( Outlayer, getSize, matchesSelector, Item, LayoutMode
     }
   };
 
+  Isotope.prototype.shuffle = function() {
+    // update random sortData
+    for ( var i=0, len = this.items.length; i < len; i++ ) {
+      var item = this.items[i];
+      item.sortData.random = Math.random();
+    }
+    this.options.sortBy = 'random';
+    this._sort();
+    this._layout();
+  };
+
   /**
    * trigger fn without transition
    * kind of hacky to have this in the first place
@@ -17210,6 +17338,20 @@ function isotopeDefinition( Outlayer, getSize, matchesSelector, Item, LayoutMode
     // re-enable transition for reveal
     this.options.transitionDuration = transitionDuration;
     return returnValue;
+  };
+
+  // ----- helper methods ----- //
+
+  /**
+   * getter method for getting filtered item elements
+   * @returns {Array} elems - collection of item elements
+   */
+  Isotope.prototype.getFilteredItemElements = function() {
+    var elems = [];
+    for ( var i=0, len = this.filteredItems.length; i < len; i++ ) {
+      elems.push( this.filteredItems[i].element );
+    }
+    return elems;
   };
 
   // -----  ----- //

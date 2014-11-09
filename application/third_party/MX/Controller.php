@@ -73,6 +73,13 @@ class MX_Controller
             exit;
         }
 
+
+        // Set the country key in user's session
+        if (!$this->session->userdata('country')) {
+            $this->load->helper('users');
+            $this->session->set_userdata('country', getUserCountry());
+        }
+
         #$this->output->enable_profiler(TRUE);
     }
     

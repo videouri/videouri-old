@@ -37,7 +37,17 @@ class ApiProcessing
         'top_rated',
         'getVideoEntry',
         'getRelatedVideos',
+        'search',
+        'tag',
     );
+
+
+    /**
+     * Variable to be used, to mention what action will be executed
+     *
+     * @var boolean
+     */
+    public $content = null;
 
 
     /**
@@ -57,19 +67,12 @@ class ApiProcessing
 
 
     /**
-     * Initiate the videoId variable
+     * Variables to be populated by specific uses
      *
-     * @var boolean
+     * @var string
      */
-    public $videoId = null;
-
-
-    /**
-     * Variable to be used, to mention what action will be executed
-     *
-     * @var boolean
-     */
-    public $content = null;
+    public $videoId,
+           $searchQuery;
 
 
     /**
@@ -85,7 +88,7 @@ class ApiProcessing
      * if set.
      * @var boolean
      */
-    private $sortForParser = null;
+    private $contentForParser = null;
 
     public function __construct()
     {
@@ -131,12 +134,12 @@ class ApiProcessing
         return $apiResponse;
     }
 
-    public function parseApiResult($api, $data, $sort = null)
+    public function parseApiResult($api, $data, $specificContent = null)
     {
         $apiParser = "{$api}Parser";
 
-        if (!is_null($sort)) {
-            $this->sortForParser = $sort;
+        if (!is_null($specificContent)) {
+            $this->contentForParser = $specificContent;
         }
 
         return $this->$apiParser($data);
@@ -174,8 +177,8 @@ class ApiProcessing
             $i++;
         }
 
-        if ($sort = $this->sortForParser) {
-            $results[$sort]['YouTube'] = $results['YouTube'];
+        if ($content = $this->contentForParser) {
+            $results[$content]['YouTube'] = $results['YouTube'];
             unset($results['YouTube']);
         }
 
@@ -205,8 +208,8 @@ class ApiProcessing
             $i++;
         }
 
-        if (isset($results['Dailymotion']) && $sort = $this->sortForParser) {
-            $results[$sort]['Dailymotion'] = $results['Dailymotion'];
+        if (isset($results['Dailymotion']) && $content = $this->contentForParser) {
+            $results[$content]['Dailymotion'] = $results['Dailymotion'];
             unset($results['Dailymotion']);
         }
 
@@ -243,8 +246,8 @@ class ApiProcessing
 
         }
 
-        if (isset($results['Metacafe']) && $sort = $this->sortForParser) {
-            $results[$sort]['Metacafe'] = $results['Metacafe'];
+        if (isset($results['Metacafe']) && $content = $this->contentForParser) {
+            $results[$content]['Metacafe'] = $results['Metacafe'];
             unset($results['Metacafe']);
         }
 
@@ -259,13 +262,15 @@ class ApiProcessing
     private function getContent($content, $api)
     {
         $parameters = array(
-                            'content' => $content,
-                            'period'  => $this->period,
+                            'content'    => $content,
+                            'period'     => $this->period,
                             'maxResults' => $this->maxResults,
                         );
 
         if (isset($this->videoId)) {
             $parameters['videoId'] = $this->videoId;
+        }
+        if (isset($this->videoId)) {
         }
 
         return modules::run("apis/{$api}Controller/data", $parameters);

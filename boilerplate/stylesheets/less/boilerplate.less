@@ -3,6 +3,7 @@
  */
 @import 'bootstrap.less';
 @import 'flat-ui.less';
+@import 'font-awesome.less';
 
 /**
  * Custom shit
@@ -23,10 +24,35 @@ body {
     margin: 0 auto;
     font: 12px/20px 'Cabin', Helvetica, Arial, sans-serif;
     text-rendering: optimizeLegibility;
+
+    div#content {
+        margin-top: 54px;
+    }
+
+    &#home > div#content {
+        margin-top: 0;
+    }
 }
 
-@import 'module/navbar'; 
-@import 'module/home'; 
+::-webkit-input-placeholder {
+   color: red;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+   color: red;  
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+   color: red;  
+}
+
+:-ms-input-placeholder {  
+   color: red;  
+}
+
+@import 'module/navbar';
+@import 'module/home';
+@import 'module/login';
 
 
 #right-block {

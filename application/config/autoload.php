@@ -114,7 +114,7 @@ $autoload['drivers'] = array('session');
 |	$autoload['helper'] = array('url', 'file');
 */
 
-$autoload['helper'] = array('url', 'language', 'form', 'commons');
+$autoload['helper'] = array('url', 'language', 'form', 'commons', 'users');
 
 
 /*
@@ -130,7 +130,7 @@ $autoload['helper'] = array('url', 'language', 'form', 'commons');
 |
 */
 
-$autoload['config'] = array();
+$autoload['config'] = array('app_settings');
 
 
 /*
