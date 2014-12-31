@@ -4,24 +4,35 @@
  *
  * An open source application development framework for PHP 5.2.4 or newer
  *
- * NOTICE OF LICENSE
+ * This content is released under the MIT License (MIT)
  *
- * Licensed under the Open Software License version 3.0
+ * Copyright (c) 2014, British Columbia Institute of Technology
  *
- * This source file is subject to the Open Software License (OSL 3.0) that is
- * bundled with this package in the files license.txt / license.rst.  It is
- * also available through the world wide web at this URL:
- * http://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to obtain it
- * through the world wide web, please send an email to
- * licensing@ellislab.com so we can send you a copy immediately.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * @package		CodeIgniter
- * @author		EllisLab Dev Team
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @package	CodeIgniter
+ * @author	EllisLab Dev Team
  * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
- * @license		http://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
- * @link		http://codeigniter.com
- * @since		Version 3.0
+ * @copyright	Copyright (c) 2014, British Columbia Institute of Technology (http://bcit.ca/)
+ * @license	http://opensource.org/licenses/MIT	MIT License
+ * @link	http://codeigniter.com
+ * @since	Version 3.0.0
  * @filesource
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -105,7 +116,6 @@ class CI_Encryption {
 			'cfb8' => 'cfb8',
 			'ctr' => 'ctr',
 			'stream' => '',
-			'gcm' => 'gcm',
 			'xts' => 'xts'
 		)
 	);
@@ -123,6 +133,13 @@ class CI_Encryption {
 		'sha384' => 48,
 		'sha512' => 64
 	);
+
+	/**
+	 * mbstring.func_override flag
+	 *
+	 * @var	bool
+	 */
+	protected static $func_override;
 
 	// --------------------------------------------------------------------
 
@@ -146,8 +163,10 @@ class CI_Encryption {
 			return show_error('Encryption: Unable to find an available encryption driver.');
 		}
 
+		isset(self::$func_override) OR self::$func_override = (extension_loaded('mbstring') && ini_get('mbstring.func_override'));
 		$this->initialize($params);
-		if ( ! isset($this->_key) && strlen($key = config_item('encryption_key')) > 0)
+
+		if ( ! isset($this->_key) && self::strlen($key = config_item('encryption_key')) > 0)
 		{
 			$this->_key = $key;
 		}
@@ -193,6 +212,7 @@ class CI_Encryption {
 			log_message('debug', "Encryption: Auto-configured driver '".$this->_driver."'.");
 		}
 
+		empty($params['cipher']) && $params['cipher'] = $this->_cipher;
 		empty($params['key']) OR $this->_key = $params['key'];
 		$this->{'_'.$this->_driver.'_initialize'}($params);
 		return $this;
@@ -310,6 +330,21 @@ class CI_Encryption {
 	// --------------------------------------------------------------------
 
 	/**
+	 * Create a random key
+	 *
+	 * @param	int	$length	Output length
+	 * @return	string
+	 */
+	public function create_key($length)
+	{
+		return ($this->_driver === 'mcrypt')
+			? mcrypt_create_iv($length, MCRYPT_DEV_URANDOM)
+			: openssl_random_pseudo_bytes($length);
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
 	 * Encrypt
 	 *
 	 * @param	string	$data	Input data
@@ -323,7 +358,7 @@ class CI_Encryption {
 			return FALSE;
 		}
 
-		isset($params['key']) OR $params['key'] = $this->hkdf($this->_key, 'sha512', NULL, strlen($this->_key), 'encryption');
+		isset($params['key']) OR $params['key'] = $this->hkdf($this->_key, 'sha512', NULL, self::strlen($this->_key), 'encryption');
 
 		if (($data = $this->{'_'.$this->_driver.'_encrypt'}($data, $params)) === FALSE)
 		{
@@ -356,16 +391,14 @@ class CI_Encryption {
 		{
 			return FALSE;
 		}
-		elseif ( ! isset($params['iv']))
-		{
-			// The greater-than-1 comparison is mostly a work-around for a bug,
-			// where 1 is returned for ARCFour instead of 0.
-			$params['iv'] = (($iv_size = mcrypt_enc_get_iv_size($params['handle'])) > 1)
-				? mcrypt_create_iv($iv_size, MCRYPT_DEV_URANDOM)
-				: NULL;
-		}
 
-		if (mcrypt_generic_init($params['handle'], $params['key'], $params['iv']) < 0)
+		// The greater-than-1 comparison is mostly a work-around for a bug,
+		// where 1 is returned for ARCFour instead of 0.
+		$iv = (($iv_size = mcrypt_enc_get_iv_size($params['handle'])) > 1)
+			? mcrypt_create_iv($iv_size, MCRYPT_DEV_URANDOM)
+			: NULL;
+
+		if (mcrypt_generic_init($params['handle'], $params['key'], $iv) < 0)
 		{
 			if ($params['handle'] !== $this->_handle)
 			{
@@ -380,7 +413,7 @@ class CI_Encryption {
 		if (in_array(strtolower(mcrypt_enc_get_modes_name($params['handle'])), array('cbc', 'ecb'), TRUE))
 		{
 			$block_size = mcrypt_enc_get_block_size($params['handle']);
-			$pad = $block_size - (strlen($data) % $block_size);
+			$pad = $block_size - (self::strlen($data) % $block_size);
 			$data .= str_repeat(chr($pad), $pad);
 		}
 
@@ -396,7 +429,7 @@ class CI_Encryption {
 		// but OpenSSL isn't that dumb and we need to make the process
 		// portable, so ...
 		$data = (mcrypt_enc_get_modes_name($params['handle']) !== 'ECB')
-			? $params['iv'].mcrypt_generic($params['handle'], $data)
+			? $iv.mcrypt_generic($params['handle'], $data)
 			: mcrypt_generic($params['handle'], $data);
 
 		mcrypt_generic_deinit($params['handle']);
@@ -423,19 +456,17 @@ class CI_Encryption {
 		{
 			return FALSE;
 		}
-		elseif ( ! isset($params['iv']))
-		{
-			$params['iv'] = ($iv_size = openssl_cipher_iv_length($params['handle']))
-				? openssl_random_pseudo_bytes($iv_size)
-				: NULL;
-		}
+
+		$iv = ($iv_size = openssl_cipher_iv_length($params['handle']))
+			? openssl_random_pseudo_bytes($iv_size)
+			: NULL;
 
 		$data = openssl_encrypt(
 			$data,
 			$params['handle'],
 			$params['key'],
 			1, // DO NOT TOUCH!
-			$params['iv']
+			$iv
 		);
 
 		if ($data === FALSE)
@@ -443,7 +474,7 @@ class CI_Encryption {
 			return FALSE;
 		}
 
-		return $params['iv'].$data;
+		return $iv.$data;
 	}
 
 	// --------------------------------------------------------------------
@@ -470,13 +501,13 @@ class CI_Encryption {
 				? $this->_digests[$params['hmac_digest']] * 2
 				: $this->_digests[$params['hmac_digest']];
 
-			if (strlen($data) <= $digest_size)
+			if (self::strlen($data) <= $digest_size)
 			{
 				return FALSE;
 			}
 
-			$hmac_input = substr($data, 0, $digest_size);
-			$data = substr($data, $digest_size);
+			$hmac_input = self::substr($data, 0, $digest_size);
+			$data = self::substr($data, $digest_size);
 
 			isset($params['hmac_key']) OR $params['hmac_key'] = $this->hkdf($this->_key, 'sha512', NULL, NULL, 'authentication');
 			$hmac_check = hash_hmac($params['hmac_digest'], $data, $params['hmac_key'], ! $params['base64']);
@@ -499,12 +530,7 @@ class CI_Encryption {
 			$data = base64_decode($data);
 		}
 
-		if (isset($params['iv']) && strncmp($params['iv'], $data, $iv_size = strlen($params['iv'])) === 0)
-		{
-			$data = substr($data, $iv_size);
-		}
-
-		isset($params['key']) OR $params['key'] = $this->hkdf($this->_key, 'sha512', NULL, strlen($this->_key), 'encryption');
+		isset($params['key']) OR $params['key'] = $this->hkdf($this->_key, 'sha512', NULL, self::strlen($this->_key), 'encryption');
 
 		return $this->{'_'.$this->_driver.'_decrypt'}($data, $params);
 	}
@@ -524,30 +550,28 @@ class CI_Encryption {
 		{
 			return FALSE;
 		}
-		elseif ( ! isset($params['iv']))
+
+		// The greater-than-1 comparison is mostly a work-around for a bug,
+		// where 1 is returned for ARCFour instead of 0.
+		if (($iv_size = mcrypt_enc_get_iv_size($params['handle'])) > 1)
 		{
-			// The greater-than-1 comparison is mostly a work-around for a bug,
-			// where 1 is returned for ARCFour instead of 0.
-			if (($iv_size = mcrypt_enc_get_iv_size($params['handle'])) > 1)
+			if (mcrypt_enc_get_modes_name($params['handle']) !== 'ECB')
 			{
-				if (mcrypt_enc_get_modes_name($params['handle']) !== 'ECB')
-				{
-					$params['iv'] = substr($data, 0, $iv_size);
-					$data = substr($data, $iv_size);
-				}
-				else
-				{
-					// MCrypt is dumb and this is ignored, only size matters
-					$params['iv'] = str_repeat("\x0", $iv_size);
-				}
+				$iv = self::substr($data, 0, $iv_size);
+				$data = self::substr($data, $iv_size);
 			}
 			else
 			{
-				$params['iv'] = NULL;
+				// MCrypt is dumb and this is ignored, only size matters
+				$iv = str_repeat("\x0", $iv_size);
 			}
 		}
+		else
+		{
+			$iv = NULL;
+		}
 
-		if (mcrypt_generic_init($params['handle'], $params['key'], $params['iv']) < 0)
+		if (mcrypt_generic_init($params['handle'], $params['key'], $iv) < 0)
 		{
 			if ($params['handle'] !== $this->_handle)
 			{
@@ -561,7 +585,7 @@ class CI_Encryption {
 		// Remove PKCS#7 padding, if necessary
 		if (in_array(strtolower(mcrypt_enc_get_modes_name($params['handle'])), array('cbc', 'ecb'), TRUE))
 		{
-			$data = substr($data, 0, -ord($data[strlen($data)-1]));
+			$data = self::substr($data, 0, -ord($data[self::strlen($data)-1]));
 		}
 
 		mcrypt_generic_deinit($params['handle']);
@@ -584,17 +608,14 @@ class CI_Encryption {
 	 */
 	protected function _openssl_decrypt($data, $params)
 	{
-		if ( ! isset($params['iv']))
+		if ($iv_size = openssl_cipher_iv_length($params['handle']))
 		{
-			if ($iv_size = openssl_cipher_iv_length($params['handle']))
-			{
-				$params['iv'] = substr($data, 0, $iv_size);
-				$data = substr($data, $iv_size);
-			}
-			else
-			{
-				$params['iv'] = NULL;
-			}
+			$iv = self::substr($data, 0, $iv_size);
+			$data = self::substr($data, $iv_size);
+		}
+		else
+		{
+			$iv = NULL;
 		}
 
 		return empty($params['handle'])
@@ -604,7 +625,7 @@ class CI_Encryption {
 				$params['handle'],
 				$params['key'],
 				1, // DO NOT TOUCH!
-				$params['iv']
+				$iv
 			);
 	}
 
@@ -627,7 +648,7 @@ class CI_Encryption {
 					'mode' => $this->_mode,
 					'key' => NULL,
 					'base64' => TRUE,
-					'hmac_digest' => ($this->_mode !== 'gcm' ? 'sha512' : NULL),
+					'hmac_digest' => 'sha512',
 					'hmac_key' => NULL
 				)
 				: FALSE;
@@ -650,7 +671,7 @@ class CI_Encryption {
 			}
 		}
 
-		if ($params['mode'] === 'gcm' OR (isset($params['hmac']) && $params['hmac'] === FALSE))
+		if (isset($params['hmac']) && $params['hmac'] === FALSE)
 		{
 			$params['hmac_digest'] = $params['hmac_key'] = NULL;
 		}
@@ -679,7 +700,6 @@ class CI_Encryption {
 			'cipher' => $params['cipher'],
 			'mode' => $params['mode'],
 			'key' => $params['key'],
-			'iv' => isset($params['iv']) ? $params['iv'] : NULL,
 			'base64' => isset($params['raw_data']) ? ! $params['raw_data'] : FALSE,
 			'hmac_digest' => $params['hmac_digest'],
 			'hmac_key' => $params['hmac_key']
@@ -828,17 +848,17 @@ class CI_Encryption {
 			return FALSE;
 		}
 
-		strlen($salt) OR $salt = str_repeat("\0", $this->_digests[$digest]);
+		self::strlen($salt) OR $salt = str_repeat("\0", $this->_digests[$digest]);
 
 		$prk = hash_hmac($digest, $key, $salt, TRUE);
 		$key = '';
-		for ($key_block = '', $block_index = 1; strlen($key) < $length; $block_index++)
+		for ($key_block = '', $block_index = 1; self::strlen($key) < $length; $block_index++)
 		{
 			$key_block = hash_hmac($digest, $key_block.$info.chr($block_index), $prk, TRUE);
 			$key .= $key_block;
 		}
 
-		return substr($key, 0, $length);
+		return self::substr($key, 0, $length);
 	}
 
 	// --------------------------------------------------------------------
@@ -864,6 +884,45 @@ class CI_Encryption {
 		return NULL;
 	}
 
+	// --------------------------------------------------------------------
+
+	/**
+	 * Byte-safe strlen()
+	 *
+	 * @param	string	$str
+	 * @return	integer
+	 */
+	protected static function strlen($str)
+	{
+		return (self::$func_override)
+			? mb_strlen($str, '8bit')
+			: strlen($str);
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Byte-safe substr()
+	 *
+	 * @param	string	$str
+	 * @param	int	$start
+	 * @param	int	$length
+	 * @return	string
+	 */
+	protected static function substr($str, $start, $length = NULL)
+	{
+		if (self::$func_override)
+		{
+			// mb_substr($str, $start, null, '8bit') returns an empty
+			// string on PHP 5.3
+			isset($length) OR $length = ($start >= 0 ? self::strlen($str) - $start : -$start);
+			return mb_substr($str, $start, $length, '8bit');
+		}
+
+		return isset($length)
+			? substr($str, $start, $length)
+			: substr($str, $start);
+	}
 }
 
 /* End of file Encryption.php */

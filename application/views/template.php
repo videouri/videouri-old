@@ -33,8 +33,8 @@
         <meta name="msvalidate.01" content="48B0A933360DDEC6CF1775D7C7E28FD3" />
 
         <link href='https://fonts.googleapis.com/css?family=Lobster|Ubuntu:300|Cabin|Raleway&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-        <!-- <link rel="stylesheet" href="<?= base_url() ?>assets/stylesheets/css/jquery-sticklr-1.4-light-color.css"> -->
-        <link rel="stylesheet" href="<?= base_url() ?>assets/dist/videouri.css">
+        <!-- <link rel="stylesheet" href="<?= base_url() ?>stylesheets/css/jquery-sticklr-1.4-light-color.css"> -->
+        <link rel="stylesheet" href="<?= base_url() ?>dist/videouri.css">
         <?= $this->template->stylesheet ?>
         <!--[if gte IE 9]><style type="text/css">.gradient{filter:none;}</style><![endif]-->
         
@@ -42,7 +42,7 @@
         <link rel="canonical" href="<?= base_url().$canonical ?>" />
         <?php endif ?>
 
-        <script src="<?= base_url() ?>assets/dist/vendor/modernizr.min.js"></script>
+        <script src="<?= base_url() ?>dist/vendor/modernizr.min.js"></script>
 
         <?php if (ENVIRONMENT !== 'development'): ?>
             <script type="text/javascript">
@@ -57,19 +57,7 @@
         <?php endif; ?>
     </head>
 
-    <body id="<?= $this->template->body_id; ?>">
-        <header class="hidden">
-            <div id="header_content">
-                <div class="top_header">
-                    <a href="<?= site_url() ?>"><img src="<?= base_url() ?>assets/imgs/logo.png" alt="Videouri"></a>
-                    <?= form_open('results', 'id="search_form" class="form_wrapp hidden" method="get" autocomplete="off"') ?>
-                        <input class="inputbox" type="text" name="search_query" />
-                        <button class="button" type="submit"><span class="button-content"></span></button>
-                    <?= form_close() ?>
-                </div>
-            </div>
-        </header>
-
+    <body id="<?= $this->template->bodyId ?>">
         <header class="navbar navbar-default navbar-fixed-top">
             <div class="container">
                 <div class="row">
@@ -80,9 +68,11 @@
                         <?= form_open('results', 'class="navbar-form" role="search" method="get" autocomplete="off"') ?>
                             <div class="form-group">
                                 <div class="input-group">
-                                    <input class="form-control" type="search" name="search_query" placeholder="Search">
+                                    <input class="form-control" type="text" name="search_query" placeholder="Search"
+                                            value="<?= isset($searchQuery) ? $searchQuery : '' ?>">
                                     <span class="input-group-btn">
-                                        <button class="btn" data-toggle="dropdown">
+                                        <?php if (false): // @TODO ?>
+                                        <!-- <button class="btn" data-toggle="dropdown">
                                             <i class="fa fa-filter"></i>
                                         </button>
                                         <ul class="dropdown-menu dropdown-inverse" role="menu">
@@ -91,13 +81,15 @@
                                             <li><a href="#">Something else here</a></li>
                                             <li class="divider"></li>
                                             <li><a href="#">Separated link</a></li>
-                                        </ul>
+                                        </ul> -->
+                                        <?php endif ?>
                                         <button type="submit" class="btn"><i class="fa fa-search"></i></button>
                                     </span>
                                 </div>
                             </div>
                         <?= form_close() ?>
                     </div>
+                    <?php if (false): // @TODO ?>
                     <div class="col-md-3">
                         <ul class="nav navbar-nav navbar-right">
                             <?php if ($this->session->userdata('logged_in') == true): ?>
@@ -127,6 +119,7 @@
                             <?php endif; ?>
                         </ul>
                     </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </header>
@@ -143,24 +136,22 @@
         <div class="bottom-menu bottom-menu-inverse">
             <div class="container">
                 <div class="row">
-                    <div class="col-md-2 col-sm-2">
+                    <!-- <div class="col-md-2 col-sm-2">
                         <a href="#fakelink" class="bottom-menu-brand">Flat UI</a>
-                    </div>
-                    <div class="col-md-8 col-sm-8">
+                    </div> -->
+                    <div class="col-md-10 col-sm-10">
                         <ul class="bottom-menu-list">
-                            <li><a href="/legal/terms">Terms of Use</a></li>
+                            <li><a href="/legal/termsofuse">Terms of Use</a></li>
                             <li><a href="/legal/dmca">DMCA</a></li>
                             <li>
-                                <a href="//www.iubenda.com/privacy-policy/863528" class="iubenda-white no-brand iubenda-embed" title="Privacy Policy">
-                                    Privacy Policy
-                                </a>
+                                <a href="//www.iubenda.com/privacy-policy/863528" class="iubenda-nostyle no-brand iubenda-embed" title="Privacy Policy">Privacy Policy</a>
                             </li>
                         </ul>
                     </div>
-                    <div class="col-md-2 col-sm-2">
+                    <div class="col-md-2 col-sm-2 text-right">
                         <ul class="bottom-menu-iconic-list">
-                            <li><a href="#fakelink" class="fa fa-facebook"></a></li>
-                            <li><a href="#fakelink" class="fa fa-twitter"></a></li>
+                            <li><a href="https://facebook.com/Videouri" target="_blank" class="fa fa-facebook"></a></li>
+                            <li><a href="https://twitter.com/Videouri" target="_blank" class="fa fa-twitter"></a></li>
                         </ul>
                     </div>
                 </div>
@@ -183,6 +174,7 @@
             </ul>
         </footer>
 
+        <?php if (false): // @TODO ?>
         <!-- .modal -->
         <div id="videouri-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
             <div class="modal-dialog modal-sm">
@@ -197,16 +189,18 @@
             </div>
         </div>
         <!-- / .modal -->
+        <?php endif ?>
 
 
         <script type="text/javascript">
             (function (w,d) {var loader = function () {var s = d.createElement("script"), tag = d.getElementsByTagName("script")[0]; s.src = "//cdn.iubenda.com/iubenda.js"; tag.parentNode.insertBefore(s,tag);}; if(w.addEventListener){w.addEventListener("load", loader, false);}else if(w.attachEvent){w.attachEvent("onload", loader);}else{w.onload = loader;}})(window, document);
         </script>
 
-        <!-- <script data-main="/assets/scripts/build" src="/assets/dist/require.js"></script> -->
-        <script data-main="/assets/dist/videouri" src="/assets/dist/require.js"></script> 
+        <!-- <script data-main="/scripts/build" src="/dist/require.js"></script> -->
+        <script data-main="/dist/videouri" src="/dist/require.js"></script> 
 
         <?= $this->template->javascript ?>
+        <?= isset($scriptCode) ? $scriptCode : '' ?>
 
         <script type="text/javascript">
             // $("select[name='video-category']").css('border', '1px solid red');

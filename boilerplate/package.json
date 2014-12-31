@@ -6,7 +6,9 @@
   "version": "0.0.1",
   "copyright": "&copy; Videouri.com",
   "license": "Attribution-NonCommercial-NoDerivs",
-  "dependencies": {},
+  "dependencies": {
+    "grunt-contrib-copy": "^0.7.0"
+  },
   "devDependencies": {
     "grunt": "0.4.x",
     "grunt-notify": "0.4.x",

@@ -1,553 +1,523 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php
+
+/**
+ *   Copyright 2013 Vimeo
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
+
+if (!function_exists('json_decode')) {
+    throw new Exception('We could not find json_decode. json_decode is found in php 5.2 and up, but not found on many linux systems due to licensing conflicts. If you are running ubuntu try "sudo apt-get install php5-json".');
+}
 
 class Vimeo
 {
-    const API_REST_URL = 'http://vimeo.com/api/rest/v2';
-    const API_AUTH_URL = 'http://vimeo.com/oauth/authorize';
-    const API_ACCESS_TOKEN_URL = 'http://vimeo.com/oauth/access_token';
-    const API_REQUEST_TOKEN_URL = 'http://vimeo.com/oauth/request_token';
+    const ROOT_ENDPOINT = 'https://api.vimeo.com';
+    const AUTH_ENDPOINT = 'https://api.vimeo.com/oauth/authorize';
+    const ACCESS_TOKEN_ENDPOINT = '/oauth/access_token';
+    const CLIENT_CREDENTIALS_TOKEN_ENDPOINT = '/oauth/authorize/client';
+    const REPLACE_ENDPOINT = '/files';
+    const VERSION_STRING = 'application/vnd.vimeo.*+json; version=3.2';
+    const USER_AGENT = 'vimeo.php 1.0; (http://developer.vimeo.com/api/docs)';
 
-    const CACHE_FILE = 'file';
+    private $_client_id = null;
+    private $_client_secret = null;
+    private $_access_token = null;
 
-    private $_consumer_key = false;
-    private $_consumer_secret = false;
-    private $_cache_enabled = false;
-    private $_cache_dir = false;
-    private $_token = false;
-    private $_token_secret = false;
-    private $_upload_md5s = array();
+    protected $_curl_opts = array();
 
-
-    public function __construct($token = null, $token_secret = null)
+    /**
+     * Creates the Vimeo library, and tracks the client and token information.
+     *
+     * @param string $client_id Your applications client id. Can be found on developer.vimeo.com/apps
+     * @param string $client_secret Your applications client secret. Can be found on developer.vimeo.com/apps
+     * @param string $access_token Your applications client id. Can be found on developer.vimeo.com/apps or generated using OAuth 2.
+     */
+    // public function __construct($client_id, $client_secret, $access_token = null)
+    public function __construct()
     {
         $CI =& get_instance();
         $CI->config->load('app_libraries');
 
-        $vm_config              = $CI->config->item('vimeo');
-        
-        $this->_consumer_key    = $vm_config['consumer_key'];
-        $this->_consumer_secret = $vm_config['consumer_secret'];
-        
-        $token                  = $vm_config['token'];
-        $token_secret           = $vm_config['token_secret'];
+        $vimeo = $CI->config->item('vimeo');
 
-        if ($token && $token_secret)
-        {
-            $this->setToken($token, $token_secret);
-        }
+        $this->_client_id     = $vimeo['client_id'];
+        $this->_client_secret = $vimeo['client_secret'];
+        $this->_access_token  = $vimeo['access_token'];
     }
 
     /**
-     * Cache a response.
+     * Make an API request to Vimeo.
      *
-     * @param array $params The parameters for the response.
-     * @param string $response The serialized response data.
+     * @param string $url A Vimeo API Endpoint. Should not include the host
+     * @param array $params An array of parameters to send to the endpoint. If the HTTP method is GET, they will be added to the url, otherwise they will be written to the body
+     * @param string $method The HTTP Method of the request
+     * @param bool $json_body
+     * @return array This array contains three keys, 'status' is the status code, 'body' is an object representation of the json response body, and headers are an associated array of response headers
      */
-    private function _cache($params, $response)
+    public function request($url, $params = array(), $method = 'GET', $json_body = true)
     {
-        // Remove some unique things
-        unset($params['oauth_nonce']);
-        unset($params['oauth_signature']);
-        unset($params['oauth_timestamp']);
+        // add accept header hardcoded to version 3.0
+        $headers[] = 'Accept: ' . self::VERSION_STRING;
+        $headers[] = 'User-Agent: ' . self::USER_AGENT;
 
-        $hash = md5(serialize($params));
-
-        if ($this->_cache_enabled == self::CACHE_FILE) {
-            $file = $this->_cache_dir.'/'.$hash.'.cache';
-            if (file_exists($file)) {
-                unlink($file);
-            }
-            return file_put_contents($file, $response);
-        }
-    }
-
-    /**
-     * Create the authorization header for a set of params.
-     *
-     * @param array $oauth_params The OAuth parameters for the call.
-     * @return string The OAuth Authorization header.
-     */
-    private function _generateAuthHeader($oauth_params)
-    {
-        $auth_header = 'Authorization: OAuth realm=""';
-
-        foreach ($oauth_params as $k => $v) {
-            $auth_header .= ','.self::url_encode_rfc3986($k).'="'.self::url_encode_rfc3986($v).'"';
-        }
-
-        return $auth_header;
-    }
-
-    /**
-     * Generate a nonce for the call.
-     *
-     * @return string The nonce
-     */
-    private function _generateNonce()
-    {
-        return md5(uniqid(microtime()));
-    }
-
-    /**
-     * Generate the OAuth signature.
-     *
-     * @param array $args The full list of args to generate the signature for.
-     * @param string $request_method The request method, either POST or GET.
-     * @param string $url The base URL to use.
-     * @return string The OAuth signature.
-     */
-    private function _generateSignature($params, $request_method = 'GET', $url = self::API_REST_URL)
-    {
-        uksort($params, 'strcmp');
-        $params = self::url_encode_rfc3986($params);
-
-        // Make the base string
-        $base_parts = array(
-            strtoupper($request_method),
-            $url,
-            urldecode(http_build_query($params, '', '&'))
-        );
-        $base_parts = self::url_encode_rfc3986($base_parts);
-        $base_string = implode('&', $base_parts);
-
-        // Make the key
-        $key_parts = array(
-            $this->_consumer_secret,
-            ($this->_token_secret) ? $this->_token_secret : ''
-        );
-        $key_parts = self::url_encode_rfc3986($key_parts);
-        $key = implode('&', $key_parts);
-
-        // Generate signature
-        return base64_encode(hash_hmac('sha1', $base_string, $key, true));
-    }
-
-    /**
-     * Get the unserialized contents of the cached request.
-     *
-     * @param array $params The full list of api parameters for the request.
-     */
-    private function _getCached($params)
-    {
-        // Remove some unique things
-        unset($params['oauth_nonce']);
-        unset($params['oauth_signature']);
-        unset($params['oauth_timestamp']);
-
-        $hash = md5(serialize($params));
-
-        if ($this->_cache_enabled == self::CACHE_FILE) {
-            $file = $this->_cache_dir.'/'.$hash.'.cache';
-            if (file_exists($file)) {
-                return unserialize(file_get_contents($file));
-            }
-        }
-    }
-
-    /**
-     * Call an API method.
-     *
-     * @param string $method The method to call.
-     * @param array $call_params The parameters to pass to the method.
-     * @param string $request_method The HTTP request method to use.
-     * @param string $url The base URL to use.
-     * @param boolean $cache Whether or not to cache the response.
-     * @param boolean $use_auth_header Use the OAuth Authorization header to pass the OAuth params.
-     * @return string The response from the method call.
-     */
-    private function _request($method, $call_params = array(), $request_method = 'GET', $url = self::API_REST_URL, $cache = true, $use_auth_header = true)
-    {
-        // Prepare oauth arguments
-        $oauth_params = array(
-            'oauth_consumer_key' => $this->_consumer_key,
-            'oauth_version' => '1.0',
-            'oauth_signature_method' => 'HMAC-SHA1',
-            'oauth_timestamp' => time(),
-            'oauth_nonce' => $this->_generateNonce()
-        );
-
-        // If we have a token, include it
-        if ($this->_token) {
-            $oauth_params['oauth_token'] = $this->_token;
-        }
-
-        // Regular args
-        $api_params = array('format' => 'php');
-        if (!empty($method)) {
-            $api_params['method'] = $method;
-        }
-
-        // Merge args
-        foreach ($call_params as $k => $v) {
-            if (strpos($k, 'oauth_') === 0) {
-                $oauth_params[$k] = $v;
-            }
-            else if ($call_params[$k] !== null) {
-                $api_params[$k] = $v;
-            }
-        }
-
-        // Generate the signature
-        $oauth_params['oauth_signature'] = $this->_generateSignature(array_merge($oauth_params, $api_params), $request_method, $url);
-
-        // Merge all args
-        $all_params = array_merge($oauth_params, $api_params);
-
-        // Returned cached value
-        if ($this->_cache_enabled && ($cache && $response = $this->_getCached($all_params))) {
-            return $response;
-        }
-
-        // Curl options
-        if ($use_auth_header) {
-            $params = $api_params;
+        // add bearer token, or client information
+        if (!empty($this->_access_token)) {
+            $headers[] = 'Authorization: Bearer ' . $this->_access_token;
         }
         else {
-            $params = $all_params;
+            //  this may be a call to get the tokens, so we add the client info.
+            $headers[] = 'Authorization: Basic ' . $this->_authHeader();
         }
 
-        if (strtoupper($request_method) == 'GET') {
-            $curl_url = $url.'?'.http_build_query($params, '', '&');
-            $curl_opts = array(
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_TIMEOUT => 30
-            );
-        }
-        else if (strtoupper($request_method) == 'POST') {
-            $curl_url = $url;
-            $curl_opts = array(
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_TIMEOUT => 30,
-                CURLOPT_POST => true,
-                CURLOPT_POSTFIELDS => http_build_query($params, '', '&')
-            );
+        //  Set the methods, determine the URL that we should actually request and prep the body.
+        $curl_opts = array();
+        switch (strtoupper($method)) {
+            case 'GET' :
+                if (!empty($params)) {
+                    $query_component = '?' . http_build_query($params, '', '&');
+                } else {
+                    $query_component = '';
+                }
+
+                $curl_url = self::ROOT_ENDPOINT . $url . $query_component;
+                break;
+
+            case 'POST' :
+            case 'PATCH' :
+            case 'PUT' :
+            case 'DELETE' :
+                if ($json_body && !empty($params)) {
+                    $headers[] = 'Content-Type: application/json';
+                    $body = json_encode($params);
+                } else {
+                    $body = http_build_query($params, '', '&');
+                }
+
+                $curl_url = self::ROOT_ENDPOINT . $url;
+                $curl_opts = array(
+                    CURLOPT_POST => true,
+                    CURLOPT_CUSTOMREQUEST => $method,
+                    CURLOPT_POSTFIELDS => $body
+                );
+                break;
         }
 
-        // Authorization header
-        if ($use_auth_header) {
-            $curl_opts[CURLOPT_HTTPHEADER] = array($this->_generateAuthHeader($oauth_params));
-        }
+        // Set the headers
+        $curl_opts[CURLOPT_HTTPHEADER] = $headers;
 
-        // Call the API
-        $curl = curl_init($curl_url);
-        curl_setopt_array($curl, $curl_opts);
-        $response = curl_exec($curl);
-        $curl_info = curl_getinfo($curl);
-        curl_close($curl);
+        $response = $this->_request($curl_url, $curl_opts);
 
-        // Cache the response
-        if ($this->_cache_enabled && $cache) {
-            $this->_cache($all_params, $response);
-        }
-
-        // Return
-        if (!empty($method)) {
-            $response = unserialize($response);
-            if ($response->stat == 'ok') {
-                return $response;
-            }
-            else if ($response->err) {
-                throw new VimeoAPIException($response->err->msg, $response->err->code);
-            }
-
-            return false;
-        }
+        $response['body'] = json_decode($response['body'], true);
 
         return $response;
     }
 
     /**
-     * Send the user to Vimeo to authorize your app.
-     * http://www.vimeo.com/api/docs/oauth
+     * Internal function to handle requests, both authenticated and by the upload function.
      *
-     * @param string $perms The level of permissions to request: read, write, or delete.
+     * @param string $url
+     * @param array $curl_opts
+     * @return array
      */
-    public function auth($permission = 'read', $callback_url = 'oob')
-    {
-        $t = $this->getRequestToken($callback_url);
-        $this->setToken($t['oauth_token'], $t['oauth_token_secret'], 'request', true);
-        $url = $this->getAuthorizeUrl($this->_token, $permission);
-        header("Location: {$url}");
-    }
-
-    /**
-     * Call a method.
-     *
-     * @param string $method The name of the method to call.
-     * @param array $params The parameters to pass to the method.
-     * @param string $request_method The HTTP request method to use.
-     * @param string $url The base URL to use.
-     * @param boolean $cache Whether or not to cache the response.
-     * @return array The response from the API method
-     */
-    public function call($method, $params = array(), $request_method = 'GET', $url = self::API_REST_URL, $cache = true)
-    {
-        $method = (substr($method, 0, 6) != 'vimeo.') ? "vimeo.{$method}" : $method;
-        return $this->_request($method, $params, $request_method, $url, $cache);
-    }
-
-    /**
-     * Enable the cache.
-     *
-     * @param string $type The type of cache to use (Vimeo::CACHE_FILE is built in)
-     * @param string $path The path to the cache (the directory for CACHE_FILE)
-     * @param int $expire The amount of time to cache responses (default 10 minutes)
-     */
-    public function enableCache($type, $path, $expire = 600)
-    {
-        $this->_cache_enabled = $type;
-        if ($this->_cache_enabled == self::CACHE_FILE) {
-            $this->_cache_dir = $path;
-            $files = scandir($this->_cache_dir);
-            foreach ($files as $file) {
-                $last_modified = filemtime($this->_cache_dir.'/'.$file);
-                if (substr($file, -6) == '.cache' && ($last_modified + $expire) < time()) {
-                    unlink($this->_cache_dir.'/'.$file);
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Get an access token. Make sure to call setToken() with the
-     * request token before calling this function.
-     *
-     * @param string $verifier The OAuth verifier returned from the authorization page or the user.
-     */
-    public function getAccessToken($verifier)
-    {
-        $access_token = $this->_request(null, array('oauth_verifier' => $verifier), 'GET', self::API_ACCESS_TOKEN_URL, false, true);
-        parse_str($access_token, $parsed);
-        return $parsed;
-    }
-
-    /**
-     * Get the URL of the authorization page.
-     *
-     * @param string $token The request token.
-     * @param string $permission The level of permissions to request: read, write, or delete.
-     * @param string $callback_url The URL to redirect the user back to, or oob for the default.
-     * @return string The Authorization URL.
-     */
-    public function getAuthorizeUrl($token, $permission = 'read')
-    {
-        return self::API_AUTH_URL."?oauth_token={$token}&permission={$permission}";
-    }
-
-    /**
-     * Get a request token.
-     */
-    public function getRequestToken($callback_url = 'oob')
-    {
-        $request_token = $this->_request(
-            null,
-            array('oauth_callback' => $callback_url),
-            'GET',
-            self::API_REQUEST_TOKEN_URL,
-            false,
-            false
+    private function _request($url, $curl_opts = array()) {
+        // Apply the defaults to the curl opts.
+        $curl_defaults = array(
+            CURLOPT_HEADER => 1,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 30
         );
 
-        parse_str($request_token, $parsed);
-        return $parsed;
+        // Merge the options (custom options take precedence).
+        $curl_opts = $this->_curl_opts + $curl_opts + $curl_defaults;
+
+        // Call the API.
+        $curl = curl_init($url);
+        curl_setopt_array($curl, $curl_opts);
+        $response = curl_exec($curl);
+        $curl_info = curl_getinfo($curl);
+        curl_close($curl);
+
+        // Retrieve the info
+        $header_size = $curl_info['header_size'];
+        $headers = substr($response, 0, $header_size);
+        $body = substr($response, $header_size);
+
+        // Return it raw.
+        return array(
+            'body' => $body,
+            'status' => $curl_info['http_code'],
+            'headers' => self::parse_headers($headers)
+        );
     }
 
     /**
-     * Get the stored auth token.
+     * Request the access token associated with this library.
      *
-     * @return array An array with the token and token secret.
+     * @return string
      */
     public function getToken()
     {
-        return array($this->_token, $this->_token_secret);
+        return $this->_access_token;
     }
 
     /**
-     * Set the OAuth token.
+     * Assign a new access token to this library.
      *
-     * @param string $token The OAuth token
-     * @param string $token_secret The OAuth token secret
-     * @param string $type The type of token, either request or access
-     * @param boolean $session_store Store the token in a session variable
-     * @return boolean true
+     * @param string $access_token the new access token
      */
-    public function setToken($token, $token_secret, $type = 'access', $session_store = false)
+    public function setToken($access_token)
     {
-        $this->_token = $token;
-        $this->_token_secret = $token_secret;
-
-        if ($session_store) {
-            $_SESSION["{$type}_token"] = $token;
-            $_SESSION["{$type}_token_secret"] = $token_secret;
-        }
-
-        return true;
+        $this->_access_token = $access_token;
     }
 
     /**
-     * Upload a video in one piece.
+     * Sets custom cURL options.
      *
-     * @param string $file_path The full path to the file
-     * @param boolean $use_multiple_chunks Whether or not to split the file up into smaller chunks
-     * @param string $chunk_temp_dir The directory to store the chunks in
-     * @param int $size The size of each chunk in bytes (defaults to 2MB)
-     * @return int The video ID
+     * @param array $curl_opts An associative array of cURL options.
      */
-    public function upload($file_path, $use_multiple_chunks = false, $chunk_temp_dir = '.', $size = 2097152, $replace_id = null)
+    public function setCURLOptions($curl_opts = array())
     {
-        if (!file_exists($file_path)) {
-            return false;
-        }
-
-        // Figure out the filename and full size
-        $path_parts = pathinfo($file_path);
-        $file_name = $path_parts['basename'];
-        $file_size = filesize($file_path);
-
-        // Make sure we have enough room left in the user's quota
-        $quota = $this->call('vimeo.videos.upload.getQuota');
-        if ($quota->user->upload_space->free < $file_size) {
-            throw new VimeoAPIException('The file is larger than the user\'s remaining quota.', 707);
-        }
-
-        // Get an upload ticket
-        $params = array();
-
-        if ($replace_id) {
-            $params['video_id'] = $replace_id;
-        }
-
-        $rsp = $this->call('vimeo.videos.upload.getTicket', $params, 'GET', self::API_REST_URL, false);
-        $ticket = $rsp->ticket->id;
-        $endpoint = $rsp->ticket->endpoint;
-
-        // Make sure we're allowed to upload this size file
-        if ($file_size > $rsp->ticket->max_file_size) {
-            throw new VimeoAPIException('File exceeds maximum allowed size.', 710);
-        }
-
-        // Split up the file if using multiple pieces
-        $chunks = array();
-        if ($use_multiple_chunks) {
-            if (!is_writeable($chunk_temp_dir)) {
-                throw new Exception('Could not write chunks. Make sure the specified folder has write access.');
-            }
-
-            // Create pieces
-            $number_of_chunks = ceil(filesize($file_path) / $size);
-            for ($i = 0; $i < $number_of_chunks; $i++) {
-                $chunk_file_name = "{$chunk_temp_dir}/{$file_name}.{$i}";
-
-                // Break it up
-                $chunk = file_get_contents($file_path, FILE_BINARY, null, $i * $size, $size);
-                $file = file_put_contents($chunk_file_name, $chunk);
-
-                $chunks[] = array(
-                    'file' => realpath($chunk_file_name),
-                    'size' => filesize($chunk_file_name)
-                );
-            }
-        }
-        else {
-            $chunks[] = array(
-                'file' => realpath($file_path),
-                'size' => filesize($file_path)
-            );
-        }
-
-        // Upload each piece
-        foreach ($chunks as $i => $chunk) {
-            $params = array(
-                'oauth_consumer_key'     => $this->_consumer_key,
-                'oauth_token'            => $this->_token,
-                'oauth_signature_method' => 'HMAC-SHA1',
-                'oauth_timestamp'        => time(),
-                'oauth_nonce'            => $this->_generateNonce(),
-                'oauth_version'          => '1.0',
-                'ticket_id'              => $ticket,
-                'chunk_id'               => $i
-            );
-
-            // Generate the OAuth signature
-            $params = array_merge($params, array(
-                'oauth_signature' => $this->_generateSignature($params, 'POST', self::API_REST_URL),
-                'file_data'       => '@'.$chunk['file'] // don't include the file in the signature
-            ));
-
-            // Post the file
-            $curl = curl_init($endpoint);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($curl, CURLOPT_POST, 1);
-            curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
-            $rsp = curl_exec($curl);
-            curl_close($curl);
-        }
-
-        // Verify
-        $verify = $this->call('vimeo.videos.upload.verifyChunks', array('ticket_id' => $ticket));
-
-        // Make sure our file sizes match up
-        foreach ($verify->ticket->chunks as $chunk_check) {
-            $chunk = $chunks[$chunk_check->id];
-
-            if ($chunk['size'] != $chunk_check->size) {
-                // size incorrect, uh oh
-                echo "Chunk {$chunk_check->id} is actually {$chunk['size']} but uploaded as {$chunk_check->size}<br>";
-            }
-        }
-
-        // Complete the upload
-        $complete = $this->call('vimeo.videos.upload.complete', array(
-            'filename' => $file_name,
-            'ticket_id' => $ticket
-        ));
-
-        // Clean up
-        if (count($chunks) > 1) {
-            foreach ($chunks as $chunk) {
-                unlink($chunk['file']);
-            }
-        }
-
-        // Confirmation successful, return video id
-        if ($complete->stat == 'ok') {
-            return $complete->ticket->video_id;
-        }
-        else if ($complete->err) {
-            throw new VimeoAPIException($complete->err->msg, $complete->err->code);
-        }
+        $this->_curl_opts = $curl_opts;
     }
 
     /**
-     * Upload a video in multiple pieces.
+     * Convert the raw headers string into an associated array
      *
-     * @deprecated
+     * @param string $headers
+     * @return array
      */
-    public function uploadMulti($file_name, $size = 1048576)
+    public static function parse_headers($headers)
     {
-        // for compatibility with old library
-        return $this->upload($file_name, true, '.', $size);
+        $final_headers = array();
+        $list = explode("\n", trim($headers));
+
+        $http = array_shift($list);
+
+        foreach ($list as $header) {
+            $parts = explode(':', $header);
+            $final_headers[trim($parts[0])] = isset($parts[1]) ? trim($parts[1]) : '';
+        }
+
+        return $final_headers;
     }
 
     /**
-     * URL encode a parameter or array of parameters.
+     * Request an access token. This is the final step of the
+     * OAuth 2 workflow, and should be called from your redirect url.
      *
-     * @param array/string $input A parameter or set of parameters to encode.
+     * @param string $code The authorization code that was provided to your redirect url
+     * @param string $redirect_uri The redirect_uri that is configured on your app page, and was used in buildAuthorizationEndpoint
+     * @return array This array contains three keys, 'status' is the status code, 'body' is an object representation of the json response body, and headers are an associated array of response headers
      */
-    public static function url_encode_rfc3986($input)
+    public function accessToken($code, $redirect_uri) {
+        return $this->request(self::ACCESS_TOKEN_ENDPOINT, array(
+            'grant_type' => 'authorization_code',
+            'code' => $code,
+            'redirect_uri' => $redirect_uri
+        ), "POST", false);
+    }
+
+    /**
+     * Get client credentials for requests.
+     *
+     * @param mixed $scope Scopes to request for this token from the server.
+     * @return array Response from the server with the tokens, we also set it into this object.
+     */
+    public function clientCredentials($scope = 'public') {
+        if (is_array($scope)) {
+            $scope = implode(' ', $scope);
+        }
+
+        $token_response = $this->request(self::CLIENT_CREDENTIALS_TOKEN_ENDPOINT, array(
+            'grant_type' => 'client_credentials',
+            'scope' => $scope
+        ), "POST", false);
+
+        return $token_response;
+    }
+
+    /**
+     * Get authorization header for retrieving tokens/credentials.
+     *
+     * @return string
+     */
+    private function _authHeader() {
+        return base64_encode($this->_client_id . ':' . $this->_client_secret);
+    }
+
+    /**
+     * Build the url that your user.
+     *
+     * @param string $redirect_uri The redirect url that you have configured on your app page
+     * @param string $scope An array of scopes that your final access token needs to access
+     * @param string $state A random variable that will be returned on your redirect url. You should validate that this matches
+     * @return string
+     */
+    public function buildAuthorizationEndpoint($redirect_uri, $scope = 'public', $state = null) {
+        $query = array(
+            "response_type" => 'code',
+            "client_id" => $this->_client_id,
+            "redirect_uri" => $redirect_uri
+        );
+
+        $query['scope'] = $scope;
+        if (empty($scope)) {
+            $query['scope'] = 'public';
+        } elseif (is_array($scope)) {
+            $query['scope'] = implode(' ', $scope);
+        }
+
+        if (!empty($state)) {
+            $query['state'] = $state;
+        }
+
+        return self::AUTH_ENDPOINT . '?' . http_build_query($query);
+    }
+
+    /**
+     * Upload a file. This should be used to upload a local file.
+     * If you want a form for your site to upload direct to Vimeo,
+     * you should look at the POST /me/videos endpoint.
+     *
+     * @param string $file_path Path to the video file to upload.
+     * @param boolean $upgrade_to_1080 Should we automatically upgrade the video file to 1080p
+     * @throws VimeoUploadException
+     * @return array Status
+     */
+    public function upload($file_path, $upgrade_to_1080 = false, $machine_id = null)
     {
-        if (is_array($input)) {
-            return array_map(array('Vimeo', 'url_encode_rfc3986'), $input);
+        // Validate that our file is real.
+        if (!is_file($file_path)) {
+            throw new VimeoUploadException('Unable to locate file to upload.');
         }
-        else if (is_scalar($input)) {
-            return str_replace(array('+', '%7E'), array(' ', '~'), rawurlencode($input));
+
+        // Begin the upload request by getting a ticket
+        $ticket_args = array('type' => 'streaming', 'upgrade_to_1080' => $upgrade_to_1080);
+        if ($machine_id !== null) {
+            $ticket_args['machine_id'] = $machine_id;
         }
-        else {
-            return '';
+        $ticket = $this->request('/me/videos', $ticket_args, 'POST');
+
+        return $this->perform_upload($file_path, $ticket);
+    }
+
+    /**
+     * Replace the source of a single Vimeo video.
+     *
+     * @param string $video_uri Video uri of the video file to replace.
+     * @param string $file_path Path to the video file to upload.
+     * @param boolean $upgrade_to_1080 Should we automatically upgrade the video file to 1080p
+     * @throws VimeoUploadException
+     * @return array Status
+     */
+    public function replace($video_uri, $file_path, $upgrade_to_1080 = false, $machine_id = null)
+    {
+        //  Validate that our file is real.
+        if (!is_file($file_path)) {
+            throw new VimeoUploadException('Unable to locate file to upload.');
         }
+
+        $uri = $video_uri . self::REPLACE_ENDPOINT;
+
+        // Begin the upload request by getting a ticket
+        $ticket_args = array('type' => 'streaming', 'upgrade_to_1080' => $upgrade_to_1080);
+        if ($machine_id !== null) {
+            $ticket_args['machine_id'] = $machine_id;
+        }
+        $ticket = $this->request($uri, $ticket_args, 'PUT');
+
+        return $this->perform_upload($file_path, $ticket);
+    }
+
+    /**
+     * Take an upload ticket and perform the actual upload
+     *
+     * @param string $file_path Path to the video file to upload.
+     * @param Ticket $ticket Upload ticket data.
+     * @throws VimeoUploadException
+     * @return array Status
+     */
+    private function perform_upload($file_path, $ticket)
+    {
+        if ($ticket['status'] != 201) {
+            throw new VimeoUploadException('Unable to get an upload ticket.');
+        }
+
+        // We are going to always target the secure upload URL.
+        $url = $ticket['body']['upload_link_secure'];
+
+        // We need a handle on the input file since we may have to send segments multiple times.
+        $file = fopen($file_path, 'r');
+
+        // PUTs a file in a POST....do for the streaming when we get there.
+        $curl_opts = array(
+            CURLOPT_PUT => true,
+            CURLOPT_INFILE => $file,
+            CURLOPT_INFILESIZE => filesize($file_path),
+            CURLOPT_UPLOAD => true,
+            CURLOPT_HTTPHEADER => array('Expect: ', 'Content-Range: replaced...')
+        );
+
+        // These are the options that set up the validate call.
+        $curl_opts_check_progress = array(
+            CURLOPT_PUT => true,
+            CURLOPT_HTTPHEADER => array('Content-Length: 0', 'Content-Range: bytes */*')
+        );
+
+        // Perform the upload by streaming as much to the server as possible and ending when we reach the filesize on the server.
+        $size = filesize($file_path);
+        $server_at = 0;
+        do {
+            // The last HTTP header we set MUST be the Content-Range, since we need to remove it and replace it with a proper one.
+            array_pop($curl_opts[CURLOPT_HTTPHEADER]);
+            $curl_opts[CURLOPT_HTTPHEADER][] = 'Content-Range: bytes ' . $server_at . '-' . $size . '/' . $size;
+
+            fseek($file, $server_at);   //  Put the FP at the point where the server is.
+            $upload_response = $this->_request($url, $curl_opts);   //  Send what we can.
+            $progress_check = $this->_request($url, $curl_opts_check_progress); //  Check on what the server has.
+
+            // Figure out how much is on the server.
+            list(, $server_at) = explode('-', $progress_check['headers']['Range']);
+            $server_at = (int)$server_at;
+        } while ($server_at < $size);
+
+        // Complete the upload on the server.
+        $completion = $this->request($ticket['body']['complete_uri'], array(), 'DELETE');
+
+        // Validate that we got back 201 Created
+        $status = (int) $completion['status'];
+        if ($status != 201) {
+            throw new VimeoUploadException('Error completing the upload.');
+        }
+
+        // Furnish the location for the new clip in the API via the Location header.
+        return $completion['headers']['Location'];
+    }
+
+    /**
+     * Uploads an image to an individual picture response.
+     *
+     * @param string $pictures_uri The pictures endpoint for a resource that allows picture uploads (eg videos and users)
+     * @param string $file_path The path to your image file
+     * @param boolean $activate Activate image after upload
+     * @throws VimeoUploadException
+     * @return string The URI of the uploaded image.
+     */
+    public function uploadImage($pictures_uri, $file_path, $activate = false) {
+        // Validate that our file is real.
+        if (!is_file($file_path)) {
+            throw new VimeoUploadException('Unable to locate file to upload.');
+        }
+
+        $pictures_response = $this->request($pictures_uri, array(), 'POST');
+        if ($pictures_response['status'] != 201) {
+            throw new VimeoUploadException('Unable to request an upload url from vimeo');
+        }
+
+        $upload_url = $pictures_response['body']['link'];
+
+        $image_resource = fopen($file_path, 'r');
+
+        $curl_opts = array(
+            CURLOPT_HEADER => 1,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 240,
+            CURLOPT_UPLOAD => true,
+            CURLOPT_CUSTOMREQUEST => 'PUT',
+            CURLOPT_READDATA => $image_resource
+        );
+
+        $curl = curl_init($upload_url);
+        curl_setopt_array($curl, $curl_opts);
+        $response = curl_exec($curl);
+        $curl_info = curl_getinfo($curl);
+
+        if (!$response) {
+            $error = curl_error($curl);
+            throw new VimeoUploadException($error);
+        }
+        curl_close($curl);
+
+        if ($curl_info['http_code'] != 200) {
+            throw new VimeoUploadException($response);
+        }
+
+        // Activate the uploaded image
+        if ($activate) {
+            $completion = $this->request($pictures_response['body']['uri'], array('active' => true), 'PATCH');
+        }
+
+        return $pictures_response['body']['uri'];
+    }
+
+    /**
+     * Uploads a text track.
+     *
+     * @param string $texttracks_uri The text tracks uri that we are adding our text track to
+     * @param string $file_path The path to your text track file
+     * @param string $track_type The type of your text track
+     * @param string $language The language of your text track
+     * @throws VimeoUploadException
+     * @return string The URI of the uploaded text track.
+     */
+    public function uploadTexttrack ($texttracks_uri, $file_path, $track_type, $language) {
+        // Validate that our file is real.
+        if (!is_file($file_path)) {
+            throw new VimeoUploadException('Unable to locate file to upload.');
+        }
+
+        // To simplify the script we provide the filename as the text track name, but you can provide any value you want.
+        $name = array_slice(explode("/", $file_path), -1);
+        $name = $name[0];
+
+        $texttrack_response = $this->request($texttracks_uri, array('type' => $track_type, 'language' => $language, 'name' => $name), 'POST');
+        if ($texttrack_response['status'] != 201) {
+            throw new VimeoUploadException('Unable to request an upload url from vimeo');
+        }
+
+        $upload_url = $texttrack_response['body']['link'];
+
+        $texttrack_resource = fopen($file_path, 'r');
+
+        $curl_opts = array(
+            CURLOPT_HEADER => 1,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 240,
+            CURLOPT_UPLOAD => true,
+            CURLOPT_CUSTOMREQUEST => 'PUT',
+            CURLOPT_READDATA => $texttrack_resource
+        );
+
+        $curl = curl_init($upload_url);
+        curl_setopt_array($curl, $curl_opts);
+        $response = curl_exec($curl);
+        $curl_info = curl_getinfo($curl);
+
+        if (!$response) {
+            $error = curl_error($curl);
+            throw new VimeoUploadException($error);
+        }
+        curl_close($curl);
+
+        if ($curl_info['http_code'] != 200) {
+            throw new VimeoUploadException($response);
+        }
+
+        return $texttrack_response['body']['uri'];
     }
 
 }
 
-class VimeoAPIException extends Exception {}
+interface ExceptionInterface  {}
+class VimeoUploadException extends \Exception implements ExceptionInterface {}

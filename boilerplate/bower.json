@@ -16,12 +16,16 @@
   ],
   "dependencies": {
     "jquery": "1.x",
-    "jquery.lazyload": "1.9.x",
-    "isotope": "2.x",
-    "momentjs": "2.x",
-    "bootstrap": "3.x",
-    "requirejs": "2.x",
-    "almond": "0.x",
-    "font-awesome": "4.x"
+    "jquery.lazyload": "~1.9.3",
+    "isotope": "~2.1.0",
+    "momentjs": "~2.8.4",
+    "bootstrap": "~3.3.1",
+    "requirejs": "~2.1.15",
+    "almond": "~0.3.0",
+    "font-awesome": "~4.2.0",
+    "video.js": "~4.11.1",
+    "videojs-youtube": "~1.2.7",
+    "videojs-vimeo": "*",
+    "jquery-bridget": "~1.1.0"
   }
 }

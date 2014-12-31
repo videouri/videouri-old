@@ -2,24 +2,19 @@
 
 class Home extends MY_Controller {
 
-    /**
-     * Default parameters for homepage 
-     * 
-     * @var array
-     */
-    private $parameters = [
-        'apis'       => ['YouTube', 'Dailymotion'],
-        // 'content'    => ['top_rated', 'most_viewed'],
-        'content'    => ['most_viewed'],
-        'period'     => 'today',
-        'maxResults' => 8,
-    ];
-
     public function __construct()
     {
         parent::__construct();
-        
-        $this->parametersHash = md5(serialize($this->parameters));
+
+        $this->load->library('Videouri/ApiProcessing');
+
+        /**
+         * Default parameters for homepage
+         */
+        $this->apiprocessing->apis       = ['YouTube', 'Dailymotion'];
+        $this->apiprocessing->content    = ['most_viewed'];
+        $this->apiprocessing->period     = 'today';
+        $this->apiprocessing->maxResults = 8;
     }
 
     /**
@@ -30,7 +25,7 @@ class Home extends MY_Controller {
     {
         $content = self::runAPIs();
 
-        #$content['apis']      = $this->parameters['apis'];
+        $content['apis']      = $this->apiprocessing->apis;
         $content['canonical'] = '';
         $content['time']      = array(
                                 'today'      => 'today',
@@ -42,52 +37,48 @@ class Home extends MY_Controller {
         // Choose not to show home page content
         $content['fakeContent'] = false;
 
-        $this->template->body_id = 'home';
+        $this->template->bodyId = 'home';
 
-        $this->template->home_featured->view('home/featured');
+        // $this->template->home_featured->view('home/featured');
         $this->template->content->view('home/index-4cols', $content);
+        // $this->template->javascript->add('dist/modules/home.js');
         $this->template->publish();
     }
 
-    /**
-     * Function to process specific request for each API.
-     * @return array Content data
-     */
     private function runAPIs()
     {
-        $this->load->driver('cache');
-        $this->load->library('Videouri/ApiProcessing');
-        $cache = $this->cache->apc;
+        $apiResults = $this->apiprocessing->mixedCalls();
 
-        $period = $this->parameters['period'];
-
-        if (! $viewData = $cache->get($this->parametersHash)) {
-
-            ////
-            // Here is where, the keys and their values in $this->parameters, 
-            // are being asigned to their respective objects in the ApiProcessing class
-            ////
-            foreach ($this->parameters as $key => $value) {
-                $this->apiprocessing->{$key} = $value;
-            }
-
-            $apiResults = $this->apiprocessing->interogateApis();
-            // dd($apiResults);
-
-            $viewData = array();
-            foreach ($apiResults as $content => $contentData) {
-                foreach ($contentData as $api => $apiData) {
-                    $results = $this->apiprocessing->parseApiResult($api, $apiData, $content);
-                    if (!empty($results)) {
-                        $viewData['data'][$content][$api] = $results[$content][$api];
+        $viewData = array();
+        foreach ($apiResults as $content => $contentData) {
+            foreach ($contentData as $api => $apiData) {
+                $results = $this->apiprocessing->parseApiResult($api, $apiData, $content);
+                if (!empty($results)) {
+                    if (!isset($viewData['data'][$content])) {
+                        $viewData['data'][$content] = $results[$content];
+                    } elseif (is_array($viewData['data'][$content])) {
+                        $viewData['data'][$content] = array_merge($viewData['data'][$content], $results[$content]);
                     }
-                } // $sortData as $api => $apiData
-            } // $api_response as $sortName => $sortData
+                }
 
+                $viewsCount = [];
+                // $ratings = [];
+                foreach ($viewData['data'][$content] as $k => $v) {
+                    $viewsCount[$k] = $v['viewsCount'];
+                    // $ratings[$k] = $v['rating'];
+                }
 
-            // Caching results
-            $cache->save($this->parametersHash, $viewData, $this->_periodCachingTime[$period]);
-        }
+                array_multisort($viewsCount, SORT_DESC, $viewData['data'][$content]);
+            } // $sortData as $api => $apiData
+
+            // array_multisort($viewData['data'][$content], SORT_DESC, $viewData['data'][$content]);
+            // $test = array_filter($viewData['data'][$content], function($v, $k) {
+            //     echo('<pre>');
+            //     var_dump($k['viewsCount']);
+            //     // return strpos($k, 'theme');
+            // });
+    
+        } // $api_response as $sortName => $sortData
 
         return $viewData;
     }

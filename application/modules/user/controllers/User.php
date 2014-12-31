@@ -98,7 +98,7 @@ class User extends Membership_Controller {
      */
     public function getReset()
     {
-        $this->template->body_id = 'membership';
+        $this->template->bodyId = 'membership';
         $this->template->content->view('reset_password', array());
         $this->template->publish();
     }

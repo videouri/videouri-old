@@ -4,8 +4,7 @@
  * Ajax API handling operations
  *
  */
-
-class Api extends MX_Controller
+class Api extends MY_Controller
 {
     /**
      * Override construct()
@@ -14,10 +13,6 @@ class Api extends MX_Controller
      */
     public function __construct()
     {
-        if ($_SERVER['SERVER_ADDR'] !== $_SERVER['REMOTE_ADDR']) {
-            exit('Bad boy....');
-        }
-
         parent::__construct();
 
         $this->load->library(array('response', 'Videouri/ApiProcessing'));
@@ -32,6 +27,7 @@ class Api extends MX_Controller
     */
     public function getVideo($id)
     {
+        dd(false);
         if ($this->input->is_ajax_request()) {
             
             // Mock up Ajax request to load data from model
@@ -77,7 +73,7 @@ class Api extends MX_Controller
         #$this->apiprocessing->period = 'today';
         
         if (!empty($this->input->get('maxResults'))) {
-            $this->apiprocessing->maxResults = $this->input->get('maxResults');
+            $this->apiParameters['maxResults'] = $this->input->get('maxResults');
         }
 
         if (!empty($this->input->get('source')) && $this->input->get('source') !== 'all') {
@@ -89,11 +85,11 @@ class Api extends MX_Controller
                 $apis = array($apis);
             }
 
-            $this->apiprocessing->apis = $apis;
+            $this->apiParameters['apis'] = $apis;
         }
 
         if (!empty($this->input->get('period')) && $this->input->get('period') !== 'ever') {
-            $this->apiprocessing->period = $this->input->get('period');
+            $this->apiParameters['period'] = $this->input->get('period');
         }
 
         if (empty($this->input->get('content'))) {
@@ -108,7 +104,7 @@ class Api extends MX_Controller
                 $content = array($content);
             }*/
 
-            $this->apiprocessing->content = $content;
+            $this->apiParameters['content'] = $content;
         }
 
         $apiResults = $this->apiprocessing->interogateApis();

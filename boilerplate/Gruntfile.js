@@ -38,16 +38,7 @@ module.exports = function(grunt) {
 
         // Set variables to be used inside Grunt
         project: {
-            dist:        '../assets/dist',
-            stylesheets: './stylesheets',
-            scripts:     './scripts',
-            bowerDir:    './bower_components',
-            css: [
-                '<%= project.stylesheets %>/css/main.css'
-            ],
-            js: [
-                '<%= project.scripts %>/scripts.min.js',
-            ]
+            dist:        '../dist'
         },
 
 
@@ -63,8 +54,15 @@ module.exports = function(grunt) {
 
         // Clean dev assets
         clean: {
+            fonts: {
+                src: [
+                    '<%= project.dist %>/fonts'
+                ]
+            },
+
             js: {
                 src: [
+                    '<%= project.dist %>/modules/',
                     '<%= project.dist %>/videouri.js'
                 ]
             },
@@ -77,25 +75,58 @@ module.exports = function(grunt) {
         },
 
 
+        copy: {
+            fonts: {
+                flatten: true,
+                expand: true,
+                src: [
+                    'bower_components/video.js/dist/video-js/font/*',
+                    'bower_components/font-awesome/fonts/*',
+                    './fonts/**/*'
+                ],
+                dest: '<%= project.dist %>/fonts/'
+            },
+
+            misc: {
+                flatten: true,
+                expand: true,
+                src: [
+                    'bower_components/video.js/dist/video-js/video-js.swf'
+                ],
+                dest: '<%= project.dist %>/misc/'
+            },
+
+            jsModules: {
+                flatten: true,
+                expand: true,
+                src: [
+                    'scripts/modules/*.js'
+                ],
+                dest: '<%= project.dist %>/modules/'
+            }
+        },
+
         // pretty clear what this is
         requirejs: {
             dev: {
                 options: {
-                    baseUrl:            '<%= project.scripts %>',
-                    mainConfigFile:     '<%= project.scripts %>/build.js',
-                    //name:               '<%= project.bowerDir %>/almond/almond',
+                    baseUrl:            'scripts',
+                    mainConfigFile:     'scripts/build.js',
+                    // name:               '../bower_components/almond/almond',
                     name:               'main',
                     include:            ['build'],
                     out:                '<%= project.dist %>/videouri.js',
+                    optimize: 'none',
                     generateSourceMaps: true,
-                    optimize: 'none'
+                    useStrict: true,
+                    findNestedDependencies: true
                 }
             },
 
             dist: {
                 options: {
-                    baseUrl:            '<%= project.scripts %>',
-                    mainConfigFile:     '<%= project.scripts %>/build.js',
+                    baseUrl:            'scripts',
+                    mainConfigFile:     'scripts/build.js',
                     //name:               '<%= project.bowerDir %>/almond/almond',
                     name:               'main',
                     include:            ['build'],
@@ -110,22 +141,22 @@ module.exports = function(grunt) {
         less: {
             dev: {
                 options: {
-                    // paths: ["<%= project.stylesheets %>/less"],
+                    // paths: ["stylesheets/less"],
                     ieCompat: true
                 },
                 files: {
-                    "<%= project.dist %>/videouri.css": "<%= project.stylesheets %>/less/boilerplate.less"
+                    "<%= project.dist %>/videouri.css": "stylesheets/less/boilerplate.less"
                 }
             },
             dist: {
                 options: {
-                    // paths: ["<%= project.stylesheets %>/less"],
+                    // paths: ["stylesheets/less"],
                     // compress: true,
                     cleancss: true,
                     ieCompat: true
                 },
                 files: {
-                    "<%= project.dist %>/videouri.css": "<%= project.stylesheets %>/less/boilerplate.less"
+                    "<%= project.dist %>/videouri.css": "stylesheets/less/boilerplate.less"
                 }
             }
         },
@@ -140,12 +171,12 @@ module.exports = function(grunt) {
         //     },
         //     /*js: {
         //         src: scripts,
-        //         dest: '<%= project.scripts %>/main.js'
+        //         dest: 'scripts/main.js'
         //     },*/
         //     css: {
         //         src: [
-        //                 '<%= project.bowerDir %>/bootstrap/dist/css/bootstrap.css', 
-        //                 '<%= project.bowerDir %>/font-awesome/css/font-awesome.css',
+        //                 'bower_components/bootstrap/dist/css/bootstrap.css', 
+        //                 'bower_components/font-awesome/css/font-awesome.css',
         //                 '<%= project.dist %>/videouri.css'
         //              ],
         //         dest: '<%= project.dist %>/videouri.css',
@@ -166,31 +197,37 @@ module.exports = function(grunt) {
 
         jshint: {
             files: [
-                '<%= project.scripts %>/script.js',
+                'scripts/modules/*.js',
+                'scripts/application.js',
+                'scripts/build.js',
+                'scripts/main.js',
                 'Gruntfile.js'
             ],
             options: {
-                "node": true,
+                // "node": true,
                 "browser": true,
                 "es5": true,
-                "esnext": true,
+                // "esnext": true,
                 "bitwise": true,
                 "camelcase": true,
                 "curly": true,
                 "eqeqeq": true,
                 "immed": true,
                 "indent": 4,
-                "latedef": true,
+                // "latedef": true,
                 "newcap": true,
                 "noarg": true,
                 "quotmark": "mixed",
-                "regexp": true,
-                "undef": true,
+                // "regexp": true,
+                // "undef": true,
                 "unused": true,
                 "strict": true,
-                "trailing": false,
+                // "trailing": false,
                 "smarttabs": true,
                 "globals" : {
+                    "requirejs": true,
+                    "require": true,
+                    "$": true,
                     "jQuery": true,
                     "Modernizr": true
                 }
@@ -208,11 +245,29 @@ module.exports = function(grunt) {
 
 
             //////
+            /// COPY
+            //////
+            fonts: {
+                files: [
+                    'bower_components/video.js/dist/video-js/font/*',
+                    'bower_components/font-awesome/fonts/*',
+                    './fonts/**/*'
+                ],
+                tasks: ['copy:fonts']
+            },
+            misc: {
+                files: [
+                    'bower_components/video.js/dist/video-js/video-js.swf'
+                ],
+                tasks: ['copy:misc']
+            },
+            
+            //////
             /// STYLES
             //////
             less: {
-                // files: '<%= project.stylesheets %>/less/**/*.less',
-                files: '<%= project.stylesheets %>/less/{,*/}*.less',
+                // files: 'stylesheets/less/**/*.less',
+                files: 'stylesheets/less/**/*.less',
                 tasks: ['less:dev']
             },
 
@@ -221,12 +276,18 @@ module.exports = function(grunt) {
             //////
             requirejs: {
                 files: [
-                        '<%= project.scripts %>/vendor/{,*/}*.js',
-                        '<%= project.scripts %>/module/{,*/}*.js',
-                        '<%= project.scripts %>/build.js',
-                        '<%= project.scripts %>/main.js'
-                        ],
+                    'scripts/vendor/{,*/}*.js',
+                    'scripts/build.js',
+                    'scripts/main.js'
+                ],
+                // tasks: ['jshint', 'requirejs:dev']
                 tasks: ['requirejs:dev']
+            },
+            jsModules: {
+                files: [
+                    'scripts/modules/*.js'
+                ],
+                tasks: ['copy:jsModules']
             }
             // livereload: {
             //     files: [
@@ -243,6 +304,7 @@ module.exports = function(grunt) {
     // These plugins provide necessary tasks.
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-contrib-copy');
     // grunt.loadNpmTasks('grunt-contrib-compress');
     // grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
@@ -254,9 +316,9 @@ module.exports = function(grunt) {
 
     // Defining Tasks
     //grunt.registerTask('default', ['less', 'concat']);
-    grunt.registerTask('work', ['watch']);
     //grunt.registerTask('production', ['less', 'jshint', 'concat', 'uglify']);
-    grunt.registerTask('production', ['less', 'concat', 'uglify']);
-    grunt.registerTask('default', ['work']);
+
+    grunt.registerTask('production', ['clean', 'copy', 'less', 'concat', 'uglify']);
+    grunt.registerTask('default', ['watch']);
 
 };

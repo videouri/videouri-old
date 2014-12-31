@@ -1,5 +1,9 @@
-requirejs.config({
+'use strict';
+
+require.config({
     // baseUrl: "../",
+    
+    // dir: 'dist/',
 
     // automatically require on page load in debug mode
     // deps: ['assets/scripts/main'],
@@ -8,53 +12,66 @@ requirejs.config({
     // automatically require this for production build
     // insertRequire: ['assets/scripts/main'],
 
+    // packages: ['home', 'video'],
+
     paths: {
-        "module": "../modules",
+        // "module": "../modules",
 
         "jquery"               : "../bower_components/jquery/dist/jquery",
         "jquery.ui"            : "vendor/jquery-ui-1.10.3.custom.min",
+        "jquery.bridget"       : "../bower_components/jquery-bridget/jquery.bridget",
         "jquery.ui.touch-punch": "vendor/jquery.ui.touch-punch.min",
+
+        "jquery.placeholder"   : "vendor/jquery.placeholder",
+        "jquery.cookie"        : "vendor/jquery.cookie",
+        "jquery.query"         : "vendor/jquery.query",
+
         "bootstrap"            : "../bower_components/bootstrap/dist/js/bootstrap",
         "lazyload"             : "../bower_components/jquery.lazyload/jquery.lazyload",
-        "ajax-cache"           : "vendor/jquery-ajax-localstorage-cache",
+        'isotope'              : '../bower_components/isotope/dist/isotope.pkgd',
+        // "ajax-cache"           : "vendor/jquery-ajax-localstorage-cache",
 
-        "bootstrap-select"     : "vendor/bootstrap/bootstrap-select",
-        "bootstrap-switch"     : "vendor/bootstrap/bootstrap-switch",
-        //"typeahead"          : "typeahead",
+        // "swfobject"            : "vendor/swfobject",
+         
+        // 'flat-ui'              : 'vendor/flat-ui-pro',
 
-        // "flatui-radiocheck"    : "vendor/flat-ui/radiocheck",
-        // "flatui-fileinput"     : "vendor/flat-ui/fileinput",
-
-        "swfobject"            : "vendor/swfobject",
-        "tagsinput"            : "vendor/jquery.tagsinput",
-        "placeholder"          : "vendor/jquery.placeholder",
-        "cookie"               : "vendor/jquery.cookie",
-        "query"                : "vendor/jquery.query",
+        "video-js"             : "../bower_components/video.js/dist/video-js/video",
+        "video-js-youtube"     : "../bower_components/videojs-youtube/dist/vjs.youtube",
+        "video-js-vimeo"       : "../bower_components/videojs-vimeo/vjs.vimeo",
+        "video-js-dailymotion" : "vendor/video.js-dailymotion/vjs.dailymotion",
     },
     shim: {
         'jquery.ui':             ['jquery'],
+        // 'jquery.bridget':        ['jquery'],
         'jquery.ui.touch-punch': ['jquery'],
+
+        'jquery.placeholder':           ['jquery'],
+        'jquery.cookie':                ['jquery'],
+        'jquery.query':                 ['jquery'],
+
         'bootstrap':             ['jquery'],
         'lazyload':              ['jquery'],
-        'ajax-cache':            ['jquery'],
-        'bootstrap-switch':      ['bootstrap'],
-        'bootstrap-select':      ['bootstrap'],
+        // 'isotope':               ['jquery'], 
+        
+        // 'flat-ui': ['jquery'],
 
-        // 'flatui-radiocheck':          ['jquery'],
-        // 'flatui-fileinput':       ['jquery'],
-
-        'tagsinput':             ['jquery'],
-        'placeholder':           ['jquery'],
-        'cookie':                ['jquery'],
-        'query':                 ['jquery'],
+        // 'video-js-youtube':      ['video-js'],
+        // 'video-js-vimeo':        ['video-js'],
+        // 'video-js-dailymotion':  ['video-js']
     }
-}).call(this);
+});
 
 // Load the main app module to start the app
-requirejs(["main", '../bower_components/isotope/dist/isotope.pkgd'], function(x, Isotope) {
+// require(["main", '../bower_components/isotope/dist/isotope.pkgd'], function(x, Isotope) {
 
-    var iso = new Isotope( '#video-list', {
-        itemSelector: '.col-md-3',
-        layoutMode: 'masonry'
-    });
-});
+//     isotope = new Isotope( '#video-list', {
+//         itemSelector: '.col-md-3',
+//         layoutMode: 'masonry'
+//     });
+
+//     // filter items on button click
+//     $('.video-source').on('click', function() {
+//         var filterValue = $(this).attr('data-filter');
+//         isotope({ filter: filterValue });
+//     });
+// });

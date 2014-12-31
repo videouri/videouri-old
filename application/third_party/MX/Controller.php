@@ -39,18 +39,6 @@ require dirname(__FILE__).'/Base.php';
 class MX_Controller 
 {
     public $autoload = array();
-
-    protected $_debug, $cache_timeout;
-
-    /**
-     * Default caching times in seconds, for API periods
-     * @var array
-     */
-    protected $_periodCachingTime = [
-        'today' => 86400,  // 1 Day
-        'week'  => 172800, // 2 Days
-        'month' => 259200  // 3 Days
-    ];
     
     public function __construct() 
     {
@@ -64,23 +52,6 @@ class MX_Controller
         
         /* autoload module items */
         $this->load->_autoloader($this->autoload);
-        
-        $this->_debug['on'] = false;
-        $this->cache_timeout = $this->config->item('cache_timeout');
-
-        if ($_SERVER['SERVER_ADDR'] !== $_SERVER['REMOTE_ADDR']) {
-            $this->output->set_status_header(400, 'No Remote Access Allowed');
-            exit;
-        }
-
-
-        // Set the country key in user's session
-        if (!$this->session->userdata('country')) {
-            $this->load->helper('users');
-            $this->session->set_userdata('country', getUserCountry());
-        }
-
-        #$this->output->enable_profiler(TRUE);
     }
     
     public function __get($class) {

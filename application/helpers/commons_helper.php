@@ -1,5 +1,31 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
+    function in_array_r($needle, $haystack)
+    {
+        if (!is_array($needle)) {
+            return in_array_r(array($needle), $haystack);
+        }
+
+        foreach ($needle as $item) {
+            if (in_array($item, $haystack)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    function sortByViews($a, $b)
+    {
+        if ($a['viewsCount'] === null)
+            $a['viewsCount'] = 0;
+
+        if ($b['viewsCount'] === null)
+            $b['viewsCount'] = 0;
+
+        return $b['viewsCount'] - $a['viewsCount'];
+    }
+
     function generateRandomString($length = 10)
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';

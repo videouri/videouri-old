@@ -2,7 +2,7 @@
     <?php if(!isset($fail)) : ?>    
     <div id="results">
         <div class="resultsFor">
-            <span class="query"><?=$query;?></span> tag results in 
+            <span class="searchQuery"><?=$searchQuery;?></span> tag results in 
             <span class="searchIn">
                 <?php foreach($data as $key=>$value): ?>
                 <strong><?=$key;?></strong>
@@ -41,7 +41,7 @@
     </div>
     <?php else: ?>
         <div class="resultsFor">
-        There was a problem retrieving results for <span class="query"><?=$query;?></span> from 
+        There was a problem retrieving results for <span class="searchQuery"><?=$searchQuery;?></span> from 
         <span class="searchIn">
             <?php foreach($fail as $api): ?>
             <h2><?=$api;?></h2>

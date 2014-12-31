@@ -27,10 +27,12 @@
 
 $route['default_controller'] = 'home';
 
-#$route['api/videos']['get']  = "resources/api/getVideos";
+$route['api/([a-zA-Z_-]+)']['get']  = "api/get".ucfirst("$1");
 
-$route['user/([a-zA-Z_-]+)']['get'] = "user/get".ucfirst("$1");
-$route['signin']['get']      = "user/getLogin";
+// $route['user/([a-zA-Z_-]+)']['get'] = "user/get".ucfirst("$1");
+// $route['signin']['get']      = "user/getLogin";
+
+$route['legal/([a-zA-Z_-]+)']['get'] = "legal/index/$1";
 
 $route['video/(.+)$']['get'] = "video/id/$1";
 #$route['results$']    = "fetch/results$1";

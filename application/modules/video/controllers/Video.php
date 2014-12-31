@@ -7,24 +7,19 @@ class Video extends MX_Controller {
         parent::__construct();
 
         $this->load->library('Videouri/ApiProcessing');
-
         $this->lang->load('error');
-
-        $this->load->driver('cache',
-            array('adapter' => 'apc', 'backup' => 'file', 'key_prefix' => 'videouri_')
-        );
     }
 
     /**
     * This function will retrieve the video's data according to its id
     *
-    * @param string $id The id for which to look for data
+    * @param string $customId The id for which to look for data
     * @return the php response from parsing the data.
     */
-    public function id($custom_id, $extra = NULL)
+    public function id($customId, $extra = NULL)
     {
-        $api = substr($custom_id,1,1);
-        $id  = substr_replace($custom_id, '', 1, 1);
+        $api    = substr($customId, 1, 1);
+        $origId = substr_replace($customId, '', 1, 1);
 
         switch ($api) {
             case 'd':
@@ -41,24 +36,20 @@ class Video extends MX_Controller {
 
             case 'M':
                 $api = 'Metacafe';
-                $long_id  = $id.'/'.$extra;
+                $long_id  = $origId.'/'.$extra;
                 break;
 
             default:
-                show_error(lang('video_id',$custom_id));
+                show_error(lang('video_id',$customId));
                 break;
         }
 
-        $this->apiprocessing->apis     = [$api];
-        $this->apiprocessing->content  = 'getVideoEntry';
-        $this->apiprocessing->videoId  = ($api === "Metacafe") ? $long_id : $id;
 
-        $data['api']       = $api;
-        $data['custom_id'] = $custom_id;
+        $this->apiprocessing->videoId = ($api === "Metacafe") ? $long_id : $origId;
+        $this->apiprocessing->content = 'getVideoEntry';
 
         try {
-            $results = $this->apiprocessing->interogateApis();
-            $results = $results['getVideoEntry'][$api];
+            $results = $this->apiprocessing->individualCall($api);
         }
 
         catch (ParameterException $e) {
@@ -74,34 +65,32 @@ class Video extends MX_Controller {
         }
 
         if ($api === "Dailymotion") {
-            $swfUrl = $result['swf_url'].'&enableApi=1&playerapiid=dmplayer';
-            $swfUrl = preg_replace("/^http:/i", "https:", $swfUrl);
+            // $swfUrl = $result['swf_url'].'&enableApi=1&playerapiid=dmplayer';
+            // $swfUrl = preg_replace("/^http:/i", "https:", $swfUrl);
 
-            $data['data']['swf']['url']  = $swfUrl;
-            $data['data']['swf']['api']  = 'dmapiplayer';
-            $data['data']['title']       = $results['title'];
-            $data['data']['description'] = $results['description'];
+            // $data['video']['swf']['url']  = $swfUrl;
+            // $data['video']['swf']['api']  = 'dmapiplayer';
+            $data['video']['title']       = $results['title'];
+            $data['video']['description'] = $results['description'];
 
-            $thumbnailUrl = preg_replace("/^http:/i", "https:", $result['thumbnail_medium_url']);
-            $data['data']['img']         = $thumbnailUrl;
-
-            $data['canonical']           = "video/$custom_id";
-            $data['data']['tags']        = $results['tags'];
-            $data['data']['related']     = $this->_relatedVideos(array('api'=>$api,'id'=>$id));
+            $thumbnailUrl = preg_replace("/^http:/i", "https:", $results['thumbnail_medium_url']);
+            $data['video']['img']         = $thumbnailUrl;
+            $data['video']['tags']        = $results['tags'];
+            // $data['video']['related']     = $this->_relatedVideos(array('api'=>$api,'id'=>$origId));
         }
 
         elseif ($api === "Metacafe") {
-            $data['data']['title'] = $results->title;
-            if (preg_match('/http:\/\/[w\.]*metacafe\.com\/fplayer\/(.*).swf/is', $results['embed'], $match)) {
-                $data['data']['swf']['url'] = $results['embed'];
-                $data['data']['swf']['api'] = 'mcapiplayer';
-            }
+            // if (preg_match('/http:\/\/[w\.]*metacafe\.com\/fplayer\/(.*).swf/is', $results['embed'], $match)) {
+            //     $data['video']['swf']['url'] = $results['embed'];
+            //     $data['video']['swf']['api'] = 'mcapiplayer';
+            // }
 
-            else {
-                $data['data']['embed_html'] = $results['embed'];
-            }
+            // else {
+            //     $data['video']['embed_html'] = $results['embed'];
+            // }
 
-            $data['data']['img'] = 'http://www.metacafe.com/thumb/'.$id.'.jpg';
+            $data['video']['title'] = $results->title;
+            $data['video']['img'] = 'http://www.metacafe.com/thumb/'.$origId.'.jpg';
 
             $dom = new DOMDocument();
             $dom->loadHTML($results->description);
@@ -109,7 +98,7 @@ class Video extends MX_Controller {
             $xml = simplexml_import_dom($dom);
             $p   = (string)$xml->body->p;
             
-            $data['data']['description'] = strstr($p, 'Ranked', true);
+            $data['video']['description'] = strstr($p, 'Ranked', true);
 
             $tags  = array();
             $count = count((object)$xml->body->p[1]->a) - 2;
@@ -118,62 +107,55 @@ class Video extends MX_Controller {
                 $tag = str_replace(array('News & Events'), '', $tag);
                 $tags[] = $tag;
             }
-            $data['canonical']   = "video/$long_id";
-            $data['data']['tags']        = $tags;
-            $data['data']['related']     = $this->_relatedVideos(array('api'=>$api,'id'=>$id));
+
+            $data['video']['tags']        = $tags;
+            // $data['video']['related']     = $this->_relatedVideos(array('api'=>$api,'id'=>$origId));
         }
 
         elseif ($api == "Vimeo") {
-            #$data['data']['embed_html']  = html_entity_decode($results['videoCode']->html);
-            $data['data']['swf']['url']  = "https://vimeo.com/moogaloop.swf?clip_id=".$id."&amp;server=vimeo.com&amp;color=00adef&amp;fullscreen=1&amp;autoplay=1";
-            $data['data']['swf']['api']  = "vmapiplayer";
-            $data['data']['title']       = $results->video[0]->title;
-            $data['data']['description'] = $results->video[0]->description;
+            $video = $results['body'];
+
+            $data['video']['url']         = "https://vimeo.com/".$origId;
+            $data['video']['title']       = $video['name'];
+            $data['video']['description'] = $video['description'];
 
             $tags = array();
-            if (!empty($results->video[0]->tags)) {
-                foreach($results->video[0]->tags->tag as $tag) {
-                    $content = '_content';
-                    $tags[] = $tag->$content;
+            if (!empty($video['tags'])) {
+                foreach($video['tags'] as $tag) {
+                    $tags[] = $tag['name'];
                 }
             }
 
-            $data['data']['img']         = $results->video[0]->thumbnails->thumbnail[1]->_content;
-            $data['canonical']           = "video/$custom_id";
-            $data['data']['tags']        = $tags;
-            #$data['data']['related']     = $this->_relatedVideos(null, array('api'=>$api,'tags'=>$data['data']['tags']));
+            $data['video']['img']         = $video['pictures']['sizes'][2]['link'];
+            $data['video']['tags']        = $tags;
+            // $data['video']['related']     = $this->_relatedVideos(null, array('api'=>$api,'tags'=>$data['video']['tags']));
         }
 
         elseif ($api == "YouTube") {
-            #$data['data']['embed_html']  = $results['videoCode'];
-            $data['data']['swf']['url']  = "https://www.youtube.com/v/".$id."?enablejsapi=1&playerapiid=ytplayer&version=3";
-            $data['data']['swf']['api']  = "ytapiplayer";
-            $data['data']['title']       = $results->title;
-            $data['data']['description'] = $results->description;
+            $results = json_decode($results, true)['entry'];
+
+            $data['video']['url']         = "https://www.youtube.com/watch?v=".$origId;
+            $data['video']['title']       = $results['title']['$t'];
+            $data['video']['description'] = $results['media$group']['media$description']['$t'];
             
             $tags = array();
-            for ($i=1;$i<=count($results->category);$i++) {
-                $tags[] = $results->category[$i];
+            $categoriesCount = count($results['category']) - 1;
+            for ($i = 1; $i <= $categoriesCount; $i++) {
+                $tags[] = $results['category'][$i]['term'];
             }
 
-            $data['data']['img']       = 'https://i.ytimg.com/vi/'.$id.'/0.jpg';
-            $data['canonical']         = "video/$custom_id";
-            $data['data']['tags']      = $tags;
-            $data['data']['related']   = $this->_relatedVideos(array('api'=>$api,'id'=>$id));
+            $data['video']['img']       = 'https://i.ytimg.com/vi/'.$origId.'/0.jpg';
+            $data['video']['tags']      = $tags;
+            // $data['video']['related']   = $this->_relatedVideos(array('api'=>$api,'id'=>$origId));
         }
 
-        $debug = $this->config->item('debug');
-
-        if ($debug['return_complete'] === TRUE) {
-
-            $data['data']['complete'] = $results;
-            if ($debug['print_complete'] === TRUE) {
-                prePrint($data['data']['complete']);
-            }
-        }
+        $data['customId']  = $customId;
+        $data['origId']    = $origId;
+        $data['source']    = $api;
+        $data['canonical'] = "video/$customId";
 
         $this->template->content->view('videoPage', $data);
-        $this->template->javascript->add('test.js');
+        // $this->template->javascript->add('dist/modules/video.js');
         $this->template->publish();
     }
 
@@ -182,7 +164,7 @@ class Video extends MX_Controller {
     /**
     * This function will retrieve related videos according to its id or some of its tags
     *
-    * @param string $id The id for which to look for data
+    * @param string $origId The id for which to look for data
     * @return the php response from parsing the data.
     */
     private function _relatedVideos($parameters = array(), $tags = array())
@@ -271,7 +253,7 @@ class Video extends MX_Controller {
                 $results = array();
                 foreach($vt as $tag)
                 {
-                    $parameters['query'] = $tag;
+                    $parameters['searchQuery'] = $tag;
                     $results[$parameters['api']][$i] = $this->$parameters['api']($parameters);
                     if($i == 2){break;}
                     $i++;

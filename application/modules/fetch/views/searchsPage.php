@@ -1,57 +1,79 @@
 <section>
 
-    <?php if(!isset($fail)) : ?>
-    <div id="results">
+    <div id="filter-options" class="row">
+        <div class="col-xs-7">
+            <div class="btn-group">
+                <button class="btn btn-white choosen-source">Source: All</button>
+                <button class="btn btn-white dropdown-toggle" data-toggle="dropdown">
+                    <span class="caret"></span>
+                </button>
+                <span class="dropdown-arrow dropdown-arrow-inverse"></span>
+                <ul class="dropdown-menu dropdown-inverse">
+                    <li>
+                        <a href="#" class="video-source" data-filter="*"> All </a>
+                    </li>
 
-        <div class="inside_top_bar">
-            <div class="resultsFor">
-                Search results for <span class="query"><?= $query; ?></span> in 
-                <span class="searchIn">
-                    <?php foreach($data as $key => $value): ?>
-                    <strong><?=$key;?></strong>
-                    <?php endforeach; ?>
-                </span>.
-            </div>
-
-            <div class="filters_sorts">
-                <?php if((count($data) > 0) && (count($data) !== 1)) : ?>
-                <h3>Filter Source</h3>
-                <ul id="filter_sources">
-                    <?php foreach($data as $api=>$v) : ?>
-                    <li><input type="checkbox" name="source" value="<?=mb_strtolower($api);?>" checked="false"/><span style="text-transform: capitalize;"><?=$api;?></span></li>
+                    <?php foreach ($data as $api => $v) : ?>
+                    <li>
+                        <a href="#" class="video-source" data-filter=".<?= $api ?>"> <?= $api ?> </a>
+                    </li>
                     <?php endforeach; ?>
                 </ul>
-                <?php endif; ?>
             </div>
         </div>
+    </div>
 
-        <ul id="videosList" class="">
-            <?php foreach($data as $key=>$value): foreach($value as $api): ?>
-            <li class="<?=$key;?>">
-                <a href="<?=$api['url'];?>" alt="<?=$api['title'];?>">
-                    <div></div>            
-                    <img src="<?=$api['img'];?>" alt="<?=$api['title'];?>" height="150" width="200">
-                    <h2><?=$api['title'];?></h2>
+    <div id="video-list" class="row">
+    <?php foreach ($data as $video): ?>
+    <div class="col-md-3 col-sm-6 col-xs-12 <?= $video['source'] ?>">
+        <div class="tile">
+            <div class="tile-image">
+                <a href="<?= $video['url'] ?>">
+                    <img data-original="<?= $video['img'] ?>" alt="<?= $video['title'] ?>" class="lazy-image"/>
                 </a>
-            </li>
-            <?php endforeach; endforeach; ?>
-        </ul>
-        <div class="clearfix"></div>
-        <div id="page" class="left">
-            <input type="button" class="previous" value="<< <?=lang('previous_button');?>">
-            <input type="button" class="next" value="<?=lang('next_button');?> >>">
+                <span class="fui-play" style="position: absolute; top: 35%; left: 45%; color: #fff; font-size: 30px; text-shadow: 0px 0px 20px #000, 1px -3px 0px #45c8a9" data-url="<?= $video['url'] ?>"></span>
+            </div>                        
+            <div class="tile-bottom">
+                <span class="source <?= $video['source'] ?>">
+                    <?= $video['source'] ?>
+                </span>
+
+                <h2 class="tile-title">
+                    <a href="<?= $video['url'] ?>" title="<?= $video['title'] ?>">
+                        <?= $video['title'] ?>
+                    </a>
+                </h2>
+            </div>
         </div>
     </div>
-    <?php else: ?>
-        <div class="resultsFor">
-        There was a problem retrieving results for <span class="query"><?=$query;?></span> from 
-        <span class="searchIn">
-            <?php foreach($fail as $api): ?>
-            <h2><?=$api;?></h2>
-            <?php endforeach; ?>
-        </span>. The service might be down and there for no results can be returned.
-    <?php endif; ?>
+    <?php endforeach; ?>
+    </div>
 
-    <div class="clearfix"></div>
+    <div id="page" class="row">
+        <div class="col-md-4 col-md-offset-4">
+            <ul class="pagination">
+                <li class="previous">
+                    <a href="#">
+                        <i class="fa fa-arrow-left"></i>
+                        Previous Page
+                    </a>
+                </li>
+                <li class="next">
+                    <a href="#">
+                        Next Page
+                        <i class="fa fa-arrow-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
 
 </section>
+
+<?php
+$this->template->scriptCode = <<<EOF
+<script type="text/javascript">
+    require(['modules/videosListing']);
+</script>
+EOF;
+?>

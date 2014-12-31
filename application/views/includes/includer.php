@@ -10,7 +10,7 @@
     }
     elseif (($view == "searchsPage") || ($view == 'tagsPage'))
     {
-        $header['title'] = $query.' - Videouri.com ';
+        $header['title'] = $searchQuery.' - Videouri.com ';
         $this->load->view('includes/header', $header);
     }
     else
