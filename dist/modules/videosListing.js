@@ -1,6 +1,8 @@
-require(['lazyload', 'isotope', 'jquery.query'], function() {
+// define(['jquery', 'isotope', 'jquery.bridget'], function($, Isotope) {
 
     'use strict';
+
+    // $.bridget('isotope', Isotope);
 
     var $isotopeContainer,
         page, curPage, nextPage;
@@ -19,7 +21,7 @@ require(['lazyload', 'isotope', 'jquery.query'], function() {
             itemSelector: '.col-md-3',
             layoutMode: 'masonry'
         });
-        
+
         // filter items on button click
         $('.video-source').on('click', function() {
             var filterValue = $(this).data('filter');
@@ -59,4 +61,4 @@ require(['lazyload', 'isotope', 'jquery.query'], function() {
         });
 
     });
-});
+// });

@@ -159,6 +159,7 @@ class Fetch extends MX_Controller {
         
         // dd($searchResults);
         $data['data'] = $searchResults;
+        $data['apis'] = $this->apiprocessing->apis;
 
         $data['canonical'] = '';
         $data['searchQuery'] = $searchQuery;

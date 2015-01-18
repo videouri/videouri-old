@@ -1,6 +1,4 @@
-define(function() {
-
-    'use strict';
+// define(['jquery', 'videojs', 'videojs-vimeo', 'videojs-youtube', 'videojs-dailymotion'], function($) {
 
     videojs.options.flash.swf = "/dist/misc/video-js.swf";
 
@@ -46,17 +44,18 @@ define(function() {
 
             console.log(videoSource);
             console.log(videoUrl);
-            
-        videojs('videoPlayer', { "techOrder": [videoSource], "src": videoUrl }).ready(function() {
+
+        videojs('videoPlayer', {"techOrder": [videoSource], "src": videoUrl}).ready(function() {
+
             // You can use the video.js events even though we use the vimeo controls
             // As you can see here, we change the background to red when the video is paused and set it back when unpaused
-            this.on('pause', function() {
-                document.body.style.backgroundColor = 'red';
-            });
+            // this.on('pause', function() {
+            //     document.body.style.backgroundColor = 'red';
+            // });
 
-            this.on('play', function() {
-                document.body.style.backgroundColor = '';
-            });
+            // this.on('play', function() {
+            //     document.body.style.backgroundColor = '';
+            // });
 
             // You can also change the video when you want
             // Here we cue a second video once the first is done
@@ -66,4 +65,4 @@ define(function() {
             // });
         });
     });
-});
+// });

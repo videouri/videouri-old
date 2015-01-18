@@ -10,7 +10,7 @@ require.config({
     // deps: ['main'],
 
     // automatically require this for production build
-    // insertRequire: ['assets/scripts/main'],
+    // insertRequire: ['main'],
 
     // packages: ['home', 'video'],
 
@@ -35,12 +35,15 @@ require.config({
          
         // 'flat-ui'              : 'vendor/flat-ui-pro',
 
-        "video-js"             : "../bower_components/video.js/dist/video-js/video",
-        "video-js-youtube"     : "../bower_components/videojs-youtube/dist/vjs.youtube",
-        "video-js-vimeo"       : "../bower_components/videojs-vimeo/vjs.vimeo",
-        "video-js-dailymotion" : "vendor/video.js-dailymotion/vjs.dailymotion",
+        "videojs"             : "../bower_components/video.js/dist/video-js/video",
+        "videojs-youtube"     : "../bower_components/videojs-youtube/dist/vjs.youtube",
+        "videojs-vimeo"       : "../bower_components/videojs-vimeo/vjs.vimeo",
+        "videojs-dailymotion" : "vendor/video.js-dailymotion/vjs.dailymotion"
     },
     shim: {
+        // jquery: {
+        //     exports: '$'
+        // },
         'jquery.ui':             ['jquery'],
         // 'jquery.bridget':        ['jquery'],
         'jquery.ui.touch-punch': ['jquery'],
@@ -51,27 +54,13 @@ require.config({
 
         'bootstrap':             ['jquery'],
         'lazyload':              ['jquery'],
-        // 'isotope':               ['jquery'], 
+        'isotope':               ['jquery'], 
         
         // 'flat-ui': ['jquery'],
 
+        'videojs': {exports: 'videojs'}
         // 'video-js-youtube':      ['video-js'],
         // 'video-js-vimeo':        ['video-js'],
         // 'video-js-dailymotion':  ['video-js']
     }
 });
-
-// Load the main app module to start the app
-// require(["main", '../bower_components/isotope/dist/isotope.pkgd'], function(x, Isotope) {
-
-//     isotope = new Isotope( '#video-list', {
-//         itemSelector: '.col-md-3',
-//         layoutMode: 'masonry'
-//     });
-
-//     // filter items on button click
-//     $('.video-source').on('click', function() {
-//         var filterValue = $(this).attr('data-filter');
-//         isotope({ filter: filterValue });
-//     });
-// });

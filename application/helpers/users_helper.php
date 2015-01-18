@@ -49,15 +49,13 @@ function getUserCountry($ip = null)
         $ip = getUserIPAdress();
         
         if ($ip !== '127.0.0.1') {
-            return geoip_country_code_by_name();
+            return geoip_country_code_by_name($ip);
         }
-        else {
-            return 'UK';
-        }
+
+        return 'UK';
     }
-    else {
-        return geoip_country_code_by_name($ip);
-    }
+
+    return geoip_country_code_by_name($ip);
 }
 
 

@@ -13,7 +13,7 @@
                         <a href="#" class="video-source" data-filter="*"> All </a>
                     </li>
 
-                    <?php foreach ($data as $api => $v) : ?>
+                    <?php foreach ($apis as $api) : ?>
                     <li>
                         <a href="#" class="video-source" data-filter=".<?= $api ?>"> <?= $api ?> </a>
                     </li>
@@ -72,8 +72,7 @@
 
 <?php
 $this->template->scriptCode = <<<EOF
-<script type="text/javascript">
-    require(['modules/videosListing']);
+<script type="text/javascript" src="/dist/modules/videosListing.js">
 </script>
 EOF;
 ?>

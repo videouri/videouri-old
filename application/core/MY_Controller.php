@@ -10,11 +10,6 @@ class MY_Controller extends MX_Controller {
 
         $this->_debug['on'] = false;
 
-        if ($_SERVER['SERVER_ADDR'] !== $_SERVER['REMOTE_ADDR']) {
-            $this->output->set_status_header(400, 'Batman or not, no remote access allowed.');
-            exit;
-        }
-
         // Set the country key in user's session
         if (!$this->session->userdata('country')) {
             $this->load->helper('users');

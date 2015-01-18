@@ -44,7 +44,7 @@
 
         <script src="<?= base_url() ?>dist/vendor/modernizr.min.js"></script>
 
-        <?php if (ENVIRONMENT !== 'development'): ?>
+        <?php if (ENVIRONMENT === 'production'): ?>
             <script type="text/javascript">
                 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
                 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -52,6 +52,7 @@
                 })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
                 ga('create', 'UA-28752800-1', 'auto');
+                ga('require', 'displayfeatures');
                 ga('send', 'pageview');
             </script>
         <?php endif; ?>
@@ -197,7 +198,7 @@
         </script>
 
         <!-- <script data-main="/scripts/build" src="/dist/require.js"></script> -->
-        <script data-main="/dist/videouri" src="/dist/require.js"></script> 
+        <script src="<?= base_url() ?>dist/videouri.js"></script> 
 
         <?= $this->template->javascript ?>
         <?= isset($scriptCode) ? $scriptCode : '' ?>

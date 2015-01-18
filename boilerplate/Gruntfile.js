@@ -107,35 +107,92 @@ module.exports = function(grunt) {
         },
 
         // pretty clear what this is
-        requirejs: {
-            dev: {
-                options: {
-                    baseUrl:            'scripts',
-                    mainConfigFile:     'scripts/build.js',
-                    // name:               '../bower_components/almond/almond',
-                    name:               'main',
-                    include:            ['build'],
-                    out:                '<%= project.dist %>/videouri.js',
-                    optimize: 'none',
-                    generateSourceMaps: true,
-                    useStrict: true,
-                    findNestedDependencies: true
-                }
-            },
+        // requirejs: {
+        //     dev: {
+        //         options: {
+        //             // almond: true,
+        //             modules: ['videosListing'],
+        //             // dir: '<%= project.dist %>',
+        //             baseUrl:            'scripts',
+        //             // mainConfigFile:     'scripts/build.js',
+        //             mainConfigFile:     'scripts/main.js',
+        //             // name:               '../bower_components/almond/almond',
+        //             name:               'main',
+        //             // include:            ['build', 'main'],
+        //             out:                '<%= project.dist %>/videouri.js',
+        //             optimize: 'none',
+        //             // useStrict: true,
+        //             // findNestedDependencies: true,
+        //             generateSourceMaps: true,
+        //             paths: {
+        //                 // "module": "../modules",
 
-            dist: {
-                options: {
-                    baseUrl:            'scripts',
-                    mainConfigFile:     'scripts/build.js',
-                    //name:               '<%= project.bowerDir %>/almond/almond',
-                    name:               'main',
-                    include:            ['build'],
-                    out:                '<%= project.dist %>/videouri.min.js',
-                    generateSourceMaps: true,
-                    optimize: 'uglify2'
-                }
-            }
-        },
+        //                 "jquery"               : "../bower_components/jquery/dist/jquery",
+        //                 "jquery.ui"            : "vendor/jquery-ui-1.10.3.custom.min",
+        //                 "jquery.bridget"       : "../bower_components/jquery-bridget/jquery.bridget",
+        //                 "jquery.ui.touch-punch": "vendor/jquery.ui.touch-punch.min",
+
+        //                 "jquery.placeholder"   : "vendor/jquery.placeholder",
+        //                 "jquery.cookie"        : "vendor/jquery.cookie",
+        //                 "jquery.query"         : "vendor/jquery.query",
+
+        //                 "bootstrap"            : "../bower_components/bootstrap/dist/js/bootstrap",
+        //                 "lazyload"             : "../bower_components/jquery.lazyload/jquery.lazyload",
+        //                 'isotope'              : '../bower_components/isotope/dist/isotope.pkgd',
+        //                 // "ajax-cache"           : "vendor/jquery-ajax-localstorage-cache",
+
+        //                 // "swfobject"            : "vendor/swfobject",
+                         
+        //                 // 'flat-ui'              : 'vendor/flat-ui-pro',
+
+        //                 "videojs"             : "../bower_components/video.js/dist/video-js/video",
+        //                 "videojs-youtube"     : "../bower_components/videojs-youtube/dist/vjs.youtube",
+        //                 "videojs-vimeo"       : "../bower_components/videojs-vimeo/vjs.vimeo",
+        //                 "videojs-dailymotion" : "vendor/video.js-dailymotion/vjs.dailymotion"
+        //             },
+        //             shim: {
+        //                 // jquery: {
+        //                 //     exports: '$'
+        //                 // },
+        //                 'jquery.ui':             ['jquery'],
+        //                 // 'jquery.bridget':        ['jquery'],
+        //                 'jquery.ui.touch-punch': ['jquery'],
+
+        //                 'jquery.placeholder':           ['jquery'],
+        //                 'jquery.cookie':                ['jquery'],
+        //                 'jquery.query':                 ['jquery'],
+
+        //                 'bootstrap':             ['jquery'],
+        //                 'lazyload':              ['jquery'],
+        //                 'isotope':               ['jquery'], 
+                        
+        //                 // 'flat-ui': ['jquery'],
+
+        //                 'videojs': {exports: 'videojs'}
+        //                 // 'video-js-youtube':      ['video-js'],
+        //                 // 'video-js-vimeo':        ['video-js'],
+        //                 // 'video-js-dailymotion':  ['video-js']
+        //             }
+        //         }
+        //     },
+
+        //     dist: {
+        //         options: {
+        //             baseUrl:            'scripts',
+        //             mainConfigFile:     'scripts/build.js',
+        //             //name:               '<%= project.bowerDir %>/almond/almond',
+        //             name:               'main',
+        //             include:            ['build'],
+        //             out:                '<%= project.dist %>/videouri.min.js',
+        //             generateSourceMaps: true,
+        //             preserveLicenseComments: false,
+        //             useStrict: true,
+        //             wrap: true,
+        //             inlineText: true, 
+        //             optimize: 'uglify2'
+        //         }
+        //     }
+        // },
 
         // Compile LESS files
         less: {
@@ -163,25 +220,35 @@ module.exports = function(grunt) {
 
 
         // Concatenate files
-        // concat: {
-        //     options: {
-        //         banner: '<%= banner %>',
-        //         stripBanners: true,
-        //         nonull: true,
-        //     },
-        //     /*js: {
-        //         src: scripts,
-        //         dest: 'scripts/main.js'
-        //     },*/
-        //     css: {
-        //         src: [
-        //                 'bower_components/bootstrap/dist/css/bootstrap.css', 
-        //                 'bower_components/font-awesome/css/font-awesome.css',
-        //                 '<%= project.dist %>/videouri.css'
-        //              ],
-        //         dest: '<%= project.dist %>/videouri.css',
-        //     }
-        // },
+        concat: {
+            options: {
+                banner: '<%= banner %>',
+                stripBanners: true,
+                nonull: true,
+            },
+            js: {
+                src: [
+                    "bower_components/jquery/dist/jquery.js",
+                    "scripts/vendor/jquery-ui-1.10.3.custom.min.js",
+                    "scripts/vendor/jquery.ui.touch-punch.min.js",
+
+                    "scripts/vendor/jquery.placeholder.js",
+                    "scripts/vendor/jquery.cookie.js",
+                    "scripts/vendor/jquery.query.js",
+
+                    "bower_components/bootstrap/dist/js/bootstrap.js",
+                    "bower_components/jquery.lazyload/jquery.lazyload.js",
+                    "bower_components/isotope/dist/isotope.pkgd.js",
+
+                    "bower_components/video.js/dist/video-js/video.js",
+                    "bower_components/videojs-youtube/dist/vjs.youtube.js",
+                    "bower_components/videojs-vimeo/vjs.vimeo.js",
+                    "scripts/vendor/video.js-dailymotion/vjs.dailymotion.js",
+                    "scripts/main.js"
+                ],
+                dest: '<%= project.dist %>/videouri.js'
+            }
+        },
 
         // Minify and such, for production
         /*uglify: {
@@ -274,14 +341,20 @@ module.exports = function(grunt) {
             //////
             /// SCRIPTS
             //////
-            requirejs: {
+            // requirejs: {
+            //     files: [
+            //         'scripts/vendor/{,*/}*.js',
+            //         'scripts/build.js',
+            //         'scripts/main.js'
+            //     ],
+            //     // tasks: ['jshint', 'requirejs:dev']
+            //     tasks: ['requirejs:dev']
+            // },
+            jsConcat: {
                 files: [
-                    'scripts/vendor/{,*/}*.js',
-                    'scripts/build.js',
                     'scripts/main.js'
                 ],
-                // tasks: ['jshint', 'requirejs:dev']
-                tasks: ['requirejs:dev']
+                tasks: ['concat:js']
             },
             jsModules: {
                 files: [
@@ -306,7 +379,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-copy');
     // grunt.loadNpmTasks('grunt-contrib-compress');
-    // grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-less');

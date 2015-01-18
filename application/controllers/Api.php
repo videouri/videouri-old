@@ -14,6 +14,11 @@ class Api extends MY_Controller
     public function __construct()
     {
         parent::__construct();
+        
+        if ($_SERVER['SERVER_ADDR'] !== $_SERVER['REMOTE_ADDR']) {
+            $this->output->set_status_header(400, 'Batman or not, no remote access allowed.');
+            exit;
+        }
 
         $this->load->library(array('response', 'Videouri/ApiProcessing'));
     }

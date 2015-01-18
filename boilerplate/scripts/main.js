@@ -1,11 +1,12 @@
-require([
-    'jquery', 'jquery.bridget', 'jquery.ui', 'jquery.ui.touch-punch',
-    'jquery.placeholder', 'jquery.cookie', 'jquery.query',
-    'bootstrap',
-    'lazyload', 'isotope',
-    'video-js', 'video-js-youtube', 'video-js-vimeo', 'video-js-dailymotion',
-    // 'swfobject', 'tagsinput',
-], function () {
+// require([
+//     'jquery', 'jquery.bridget', 'jquery.ui', 'jquery.ui.touch-punch',
+//     'jquery.placeholder', 'jquery.cookie', 'jquery.query',
+//     'bootstrap',
+//     'lazyload', 'isotope',
+//     'videojs'
+//     // 'video-js', 'video-js-youtube', 'video-js-vimeo', 'video-js-dailymotion',
+//     // 'swfobject', 'tagsinput',
+// ], function () {
 
     'use strict';
 
@@ -83,4 +84,4 @@ require([
 
     });
 
-});
+// });

@@ -3,17 +3,16 @@
 <div class="row">
     <div class="col-md-8">
         <div class="vbg">
-            <video id="videoPlayer" class="video-js vjs-default-skin"
+            <video id="videoPlayer" src="<?= $video['url'] ?>" class="video-js vjs-default-skin"
                    data-src="<?= strtolower($source) ?>" data-url="<?= $video['url'] ?>"
-                   controls preload="auto" width="640" height="360">
-               <p>Video Playback Not Supported</p>
+                   controls preload="auto" width="100%" height="360">
+                <p>Video Playback Not Supported</p>
             </video>
         </div>
         <div class="info">
-            <h1><?= $video['title'] ?></h1>
+            <h1 style="color: white; margin: 0; text-shadow: 3px 2px 1px #c0392b; font-size: 38px"><?= $video['title'] ?></h1>
             <div class="share">
-                <div class="left"></div>
-                <ul class="right">
+                <ul class="list-inline right">
                     <li>
                         <a href="http://www.facebook.com/sharer.php" id="facebook_share" class="popup" title="Share to Facebook"></a>
                     </li>
@@ -31,10 +30,10 @@
             <div class="clearfix"></div>
             <!--<div class="category"><strong>Category:</strong><h2><?#=$video['category'] ?></h2></div>-->
             <div class="tags">
-                <strong>Tags:</strong><hr>
-                <ul class="tags">
+                <strong>Tags:</strong>
+                <ul class="bootstrap-tagsinput">
                 <?php foreach($video['tags'] as $tag): $url=site_url('results?search_query='.$tag.'&action=tag'); ?>
-                <li>
+                <li class="tag label label-danger">
                     <a title="<?= $tag ?>" href="<?= $url ?>">
                         <?= $tag ?>
                     </a>
@@ -80,8 +79,6 @@
 
 <?php
 $this->template->scriptCode = <<<EOF
-<script type="text/javascript">
-    require(['modules/video']);
-</script>
+<script type="text/javascript" src="/dist/modules/video.js"></script>
 EOF;
 ?>
