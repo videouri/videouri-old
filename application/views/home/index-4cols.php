@@ -134,9 +134,5 @@
 </section>
 
 <?php
-$this->template->scriptCode = <<<EOF
-<script type="text/javascript">
-    require(['modules/videosListing']);
-</script>
-EOF;
+$this->template->scriptCode = '<script type="text/javascript" src="' . base_url() . '/dist/modules/videosListing.js"></script>';
 ?>

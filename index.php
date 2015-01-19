@@ -76,7 +76,7 @@ if (in_array($_SERVER['REMOTE_ADDR'], $ips)) {
         break;
         
         case 'testing.w0rldart.com':
-            define('ENVIRONMENT', 'testing');
+            define('ENVIRONMENT', 'development');
         break;
 
         case 'www.videouri.com':

@@ -78,7 +78,5 @@
 </div>
 
 <?php
-$this->template->scriptCode = <<<EOF
-<script type="text/javascript" src="/dist/modules/video.js"></script>
-EOF;
+$this->template->scriptCode = '<script type="text/javascript" src="' . base_url() . '/dist/modules/video.js"></script>';
 ?>
