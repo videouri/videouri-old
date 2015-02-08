@@ -68,7 +68,7 @@ class Video extends MX_Controller {
 
         if ($api === "Dailymotion") {
             $httpsUrl             = preg_replace("/^http:/i", "https:", $results['url']);
-            $data['video']['url'] = $results['url'];
+            $data['video']['url'] = $httpsUrl;
             
             $thumbnailUrl         = preg_replace("/^http:/i", "https:", $results['thumbnail_medium_url']);
             $data['video']['img'] = $thumbnailUrl;
