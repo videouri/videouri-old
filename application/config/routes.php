@@ -35,7 +35,6 @@ $route['api/([a-zA-Z_-]+)']['get']  = "api/get".ucfirst("$1");
 $route['legal/([a-zA-Z_-]+)']['get'] = "legal/index/$1";
 
 $route['video/(.+)$']['get'] = "video/id/$1";
-#$route['results$']    = "fetch/results$1";
 $route['results']['get' ]    = "fetch/results";
 $route['tag/(:any)']['get']  = "fetch/results?search_query=$1&search=tag";
 

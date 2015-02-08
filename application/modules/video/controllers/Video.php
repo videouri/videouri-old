@@ -216,12 +216,13 @@ class Video extends MX_Controller {
                     $url = $match[1].'/'.$match[2];
                     $url = site_url('video/'.substr($url,0,1).'d'.substr($url,1));
 
-                    $related[$i]['url']    = $url;
-                    $related[$i]['title']  = $video['title'];
+                    $httpsUrl           = preg_replace("/^http:/i", "https:", $url);
+                    $related[$i]['url'] = $httpsUrl;
                     
-                    $thumbnailUrl          = preg_replace("/^http:/i", "https:", $video['thumbnail_240_url']);
-                    $related[$i]['img']    = $thumbnailUrl;
-                    
+                    $thumbnailUrl       = preg_replace("/^http:/i", "https:", $video['thumbnail_240_url']);
+                    $related[$i]['img'] = $thumbnailUrl;
+
+                    $related[$i]['title']  = $video['title'];                    
                     $related[$i]['source'] = 'Dailymotion';
                     $i++;
                 }
