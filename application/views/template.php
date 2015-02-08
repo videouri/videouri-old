@@ -44,7 +44,7 @@
 
         <script src="<?= base_url() ?>dist/vendor/modernizr.min.js"></script>
 
-        <?php if (ENVIRONMENT === 'production'): ?>
+        <?php if (ENVIRONMENT !== 'development'): ?>
             <script type="text/javascript">
                 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
                 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
