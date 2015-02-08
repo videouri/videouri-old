@@ -1,40 +1,4 @@
 <?php
-/**
- * CodeIgniter
- *
- * An open source application development framework for PHP 5.2.4 or newer
- *
- * This content is released under the MIT License (MIT)
- *
- * Copyright (c) 2014, British Columbia Institute of Technology
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- *
- * @package     CodeIgniter
- * @author      EllisLab Dev Team
- * @copyright   Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
- * @copyright   Copyright (c) 2014, British Columbia Institute of Technology (http://bcit.ca/)
- * @license     http://opensource.org/licenses/MIT  MIT License
- * @link        http://codeigniter.com
- * @since       Version 1.0.0
- * @filesource
- */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /*
@@ -51,23 +15,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | path to your installation.
 |
 */
+$config['base_url'] = 'https://videouri.com/'; // note the HTTPS
 
-switch ($_SERVER['SERVER_NAME'])
-{
-    case 'localhost':
-        $config['base_url']	= 'http://localhost/videouri.com/';
-    break;
-    case 'local.videouri.com':
-        $config['base_url'] = 'http://local.videouri.com/';
-    break;
-    case 'testing.w0rldart.com':
-    	$config['base_url']	= 'http://testing.w0rldart.com/videouri/';
-    break;
-    case 'www.videouri.com':
-    case 'videouri.com':
-        $config['base_url']	= 'https://videouri.com/'; // note the HTTPS
-    break;
-}
 
 $config['modules_locations'] = array(
     APPPATH.'modules/' => '../modules/',
@@ -101,7 +50,8 @@ $config['index_page'] = '';
 | 'QUERY_STRING'    Uses $_SERVER['QUERY_STRING']
 |
 */
-$config['uri_protocol'] = 'REQUEST_URI';
+// $config['uri_protocol'] = 'REQUEST_URI';
+$config['uri_protocol'] = isset($_SERVER['REQUEST_URI']) ? 'REQUEST_URI' : 'argv';
 
 /*
 |--------------------------------------------------------------------------
@@ -240,11 +190,11 @@ $config['permitted_uri_chars'] = 'a-z 0-9~%.:_\-?';
 | use segment based URLs.
 |
 */
-$config['allow_get_array']		= TRUE;
+$config['allow_get_array']      = TRUE;
 $config['enable_query_strings'] = FALSE;
-$config['controller_trigger']	= 'c';
-$config['function_trigger']		= 'm';
-$config['directory_trigger']	= 'd';
+$config['controller_trigger']   = 'c';
+$config['function_trigger']     = 'm';
+$config['directory_trigger']    = 'd';
 
 /*
 |--------------------------------------------------------------------------
@@ -358,8 +308,8 @@ $config['cache_query_string'] = FALSE;
 | Encryption Key
 |--------------------------------------------------------------------------
 |
-| If you use the Encryption class or the Session class you
-| MUST set an encryption key.  See the user guide for info.
+| If you use the Encryption class, you must set an encryption key.
+| See the user guide for more info.
 |
 | http://codeigniter.com/user_guide/libraries/encryption.html
 | http://codeigniter.com/user_guide/libraries/sessions.html
@@ -372,33 +322,54 @@ $config['encryption_key'] = 's?Gufre_re$7tuTAq3@U_AbR';
 | Session Variables
 |--------------------------------------------------------------------------
 |
-| 'sess_driver'          = the driver to load: cookie (Classic), native (PHP sessions),
-|                          or your custom driver name
-| 'sess_valid_drivers'   = additional valid drivers which may be loaded
-| 'sess_cookie_name'     = the name you want for the cookie, must contain only [0-9a-z_-] characters
-| 'sess_expiration'      = the number of SECONDS you want the session to last.
-|                          by default sessions last 7200 seconds (two hours).  Set to zero for no expiration.
-| 'sess_expire_on_close' = Whether to cause the session to expire automatically
-|                          when the browser window is closed
-| 'sess_encrypt_cookie'  = Whether to encrypt the cookie
-| 'sess_use_database'    = Whether to save the session data to a database
-| 'sess_table_name'      = The name of the session database table
-| 'sess_match_ip'        = Whether to match the user's IP address when reading the session data
-| 'sess_match_useragent' = Whether to match the User Agent when reading the session data
-| 'sess_time_to_update'  = how many seconds between CI refreshing Session Information
+| 'sess_driver'
+|
+|   The storage driver to use: files, database, redis, memcached
+|
+| 'sess_cookie_name'
+|
+|   The session cookie name, must contain only [0-9a-z_-] characters
+|
+| 'sess_expiration'
+|
+|   The number of SECONDS you want the session to last.
+|   Setting to 0 (zero) means expire when the browser is closed.
+|
+| 'sess_save_path'
+|
+|   The location to save sessions to, driver dependant.
+|
+|   For the 'files' driver, it's a path to a writable directory.
+|   For the 'database' driver, it's a table name.
+|   Please read up the manual for the format with other session drivers.
+|
+|   IMPORTANT: You are REQUIRED to set a valid save path!
+|
+| 'sess_match_ip'
+|
+|   Whether to match the user's IP address when reading the session data.
+|
+| 'sess_time_to_update'
+|
+|   How many seconds between CI regenerating the session ID.
+|
+| 'sess_regenerate_destroy'
+|
+|   Whether to destroy session data associated with the old session ID
+|   when auto-regenerating the session ID. When set to FALSE, the data
+|   will be later deleted by the garbage collector.
+|
+| Other session cookie settings are shared with the rest of the application,
+| except for 'cookie_prefix' and 'cookie_httponly', which are ignored here.
 |
 */
-$config['sess_driver']          = 'cookie';
-$config['sess_valid_drivers']   = array();
-$config['sess_cookie_name']		= 'videouri_com';
-$config['sess_expiration']		= 7200;
-$config['sess_expire_on_close']	= FALSE;
-$config['sess_encrypt_cookie']	= FALSE;
-$config['sess_use_database']	= FALSE;
-$config['sess_table_name']		= 'sessions';
-$config['sess_match_ip']		= FALSE;
-$config['sess_match_useragent']	= TRUE;
-$config['sess_time_to_update']	= 300;
+$config['sess_driver']             = 'cookie';
+$config['sess_cookie_name']        = 'videouri_com';
+$config['sess_expiration']         = 7200;
+$config['sess_save_path']          = NULL;
+$config['sess_match_ip']           = FALSE;
+$config['sess_time_to_update']     = 300;
+$config['sess_regenerate_destroy'] = FALSE;
 
 /*
 |--------------------------------------------------------------------------
@@ -412,11 +383,11 @@ $config['sess_time_to_update']	= 300;
 | 'cookie_httponly' = Cookie will only be accessible via HTTP(S) (no javascript) 
 |
 */
-$config['cookie_prefix']	= '';
-$config['cookie_domain']	= 'videouri.com';
-$config['cookie_path']		= '/';
-$config['cookie_secure']	= FALSE;
-$config['cookie_httponly'] 	= FALSE;
+$config['cookie_prefix']    = '';
+$config['cookie_domain']    = 'videouri.com';
+$config['cookie_path']      = '/';
+$config['cookie_secure']    = FALSE;
+$config['cookie_httponly']  = FALSE;
 
 /*
 |--------------------------------------------------------------------------
@@ -481,7 +452,7 @@ $config['csrf_exclude_uris'] = array();
 | by the output class.  Do not 'echo' any values with compression enabled.
 |
 */
-$config['compress_output'] = false;
+$config['compress_output'] = TRUE;
 
 /*
 |--------------------------------------------------------------------------
@@ -524,10 +495,6 @@ $config['rewrite_short_tags'] = FALSE;
 | as well as specifying whole subnets. Here are a few examples:
 |
 | Comma-separated:  '10.0.1.200,192.168.5.0/24'
-| Array:        array('10.0.1.200', '192.168.5.0/24')
+| Array:            array('10.0.1.200', '192.168.5.0/24')
 */
 $config['proxy_ips'] = '';
-
-
-/* End of file config.php */
-/* Location: ./application/config/config.php */

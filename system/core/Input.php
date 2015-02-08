@@ -123,8 +123,6 @@ class CI_Input {
 	 */
 	public function __construct()
 	{
-		log_message('debug', 'Input Class Initialized');
-
 		$this->_allow_get_array		= (config_item('allow_get_array') === TRUE);
 		$this->_enable_xss		= (config_item('global_xss_filtering') === TRUE);
 		$this->_enable_csrf		= (config_item('csrf_protection') === TRUE);
@@ -140,6 +138,8 @@ class CI_Input {
 
 		// Sanitize global arrays
 		$this->_sanitize_globals();
+
+		log_message('info', 'Input Class Initialized');
 	}
 
 	// --------------------------------------------------------------------
@@ -702,7 +702,7 @@ class CI_Input {
 	 * only named with alpha-numeric text and a few other items.
 	 *
 	 * @param	string	$str	Input string
-	 * @param	string	$fatal	Whether to terminate script exection
+	 * @param	bool	$fatal	Whether to terminate script exection
 	 *				or to return FALSE if an invalid
 	 *				key is encountered
 	 * @return	string|bool
@@ -847,6 +847,3 @@ class CI_Input {
 	}
 
 }
-
-/* End of file Input.php */
-/* Location: ./system/core/Input.php */

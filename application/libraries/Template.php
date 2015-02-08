@@ -24,11 +24,10 @@
  * THE SOFTWARE.
  */
 
-if (!defined("BASEPATH"))
-    exit("No direct script access allowed");
+defined("BASEPATH") OR exit("No direct script access allowed");
 
-class CI_Template {
-    
+class Template
+{    
     /* default values */
     private $_template    = 'template';
     private $_parser      = FALSE;
@@ -42,7 +41,8 @@ class CI_Template {
      * Construct with configuration array. Codeigniter will use the config file otherwise
      * @param array $config
      */
-    public function __construct($config = array()) {
+    public function __construct($config = array())
+    {
         $this->_ci = & get_instance();
         
         // set the default widget path with APPPATH
@@ -60,7 +60,8 @@ class CI_Template {
      * @param array $config
      * @return Template
      */
-    public function initialize($config = array()) {
+    public function initialize($config = array())
+    {
         foreach ($config as $key => $val) {
             $this->{'_' . $key} = $val;
         }
@@ -79,7 +80,8 @@ class CI_Template {
      * @param string $index
      * @param mixed $value
      */
-    public function __set($name, $value) {
+    public function __set($name, $value)
+    {
         $this->partial($name)->set($value);
     }
     
@@ -88,7 +90,8 @@ class CI_Template {
      * @param string $name
      * @return mixed
      */
-    public function __get($name) {
+    public function __get($name)
+    {
         return $this->partial($name);
     }
     
@@ -97,7 +100,8 @@ class CI_Template {
      * @param string $index
      * @return boolean
      */
-    public function exists($index) {
+    public function exists($index)
+    {
         return array_key_exists($index, $this->_partials);
     }
     
@@ -105,7 +109,8 @@ class CI_Template {
      * Set the template file
      * @param string $template
      */
-    public function set_template($template) {
+    public function set_template($template)
+    {
         $this->_template = $template;
     }
     
@@ -115,7 +120,8 @@ class CI_Template {
      * @param string $template
      * @param array $data
      */
-    public function publish($template = FALSE, $data = array()) {
+    public function publish($template = FALSE, $data = array())
+    {
         if (is_array($template) || is_object($template)) {
             $data = $template;
         } else if ($template) {
@@ -148,7 +154,8 @@ class CI_Template {
      * @param string $default
      * @return Partial
      */
-    public function partial($name, $default = FALSE) {
+    public function partial($name, $default = FALSE)
+    {
         if ($this->exists($name)) {
             $partial = $this->_partials[$name];
         } else {
@@ -180,7 +187,8 @@ class CI_Template {
      * @param array $data
      * @return Widget
      */
-    public function widget($name, $data = array()) {
+    public function widget($name, $data = array())
+    {
         $class = str_replace('.php', '', trim($name, '/'));
         
         // determine path and widget class name
@@ -215,7 +223,8 @@ class CI_Template {
      * @param int $ttl
      * @param mixed $identifier
      */
-    public function cache($ttl = 60, $identifier = '') {
+    public function cache($ttl = 60, $identifier = '')
+    {
         foreach ($this->_partials as $partial) {
             $partial->cache($ttl, $identifier);
         }
@@ -229,7 +238,8 @@ class CI_Template {
      * Stylesheet trigger
      * @param string $source
      */
-    public function trigger_stylesheet($url, $attributes = FALSE) {
+    public function trigger_stylesheet($url, $attributes = FALSE)
+    {
         // array support
         if (is_array($url)) {
             $return = '';
@@ -265,7 +275,8 @@ class CI_Template {
      * Javascript trigger
      * @param string $source
      */
-    public function trigger_javascript($url) {
+    public function trigger_javascript($url)
+    {
         // array support
         if (is_array($url)) {
             $return = '';
@@ -288,7 +299,8 @@ class CI_Template {
      * @param mixed $value
      * @param enum $type
      */
-    public function trigger_meta($name, $value, $type = 'meta') {
+    public function trigger_meta($name, $value, $type = 'meta')
+    {
         $name = htmlspecialchars(strip_tags($name));
         $value = htmlspecialchars(strip_tags($value));
         
@@ -314,7 +326,8 @@ class CI_Template {
      * @param mixed $value
      * @param enum $type
      */
-    public function trigger_title($title) {
+    public function trigger_title($title)
+    {
         return htmlspecialchars(strip_tags($title));
     }
     
@@ -324,7 +337,8 @@ class CI_Template {
      * @param mixed $value
      * @param enum $type
      */
-    public function trigger_description($description) {
+    public function trigger_description($description)
+    {
         return htmlspecialchars(strip_tags($description));
     }
 
@@ -576,7 +590,8 @@ class Partial {
      * Can be used like bind($this, "function") or bind("function")
      * @param mixed $arg
      */
-    public function bind() {
+    public function bind()
+    {
         if ($count = func_num_args()) {
             if ($count >= 2) {
                 $args = func_get_args();
@@ -598,12 +613,13 @@ class Partial {
     }
 }
 
-class Widget extends Partial {
-    
+class Widget extends Partial
+{
     /* (non-PHPdoc)
      * @see Partial::content()
      */
-    public function content() {
+    public function content()
+    {
         if (!$this->_cached) {
             if (method_exists($this, 'display')) {
                 // capture output

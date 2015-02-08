@@ -39,7 +39,7 @@ class Fetch extends MX_Controller {
 
         // $action = ($this->input->get('search') == NULL) ? 'search' : $this->input->get('search', TRUE);
         
-        $this->apiprocessing->page = !empty($this->input->get('page')) ? $this->input->get('page') : null;
+        $this->apiprocessing->page = !empty($this->input->get('page')) ? $this->input->get('page') : 1;
         $this->apiprocessing->sort = !empty($this->input->get('sort')) ? $this->input->get('sort') : 'relevance';
 
         $this->apiprocessing->maxResults = 12;
@@ -160,9 +160,11 @@ class Fetch extends MX_Controller {
         // dd($searchResults);
         $data['data'] = $searchResults;
         $data['apis'] = $this->apiprocessing->apis;
-
-        $data['canonical'] = '';
+        
+        $data['canonical']   = '';
         $data['searchQuery'] = $searchQuery;
+        $this->template->title = 'Videouri | ' . $searchQuery;
+        $this->template->description = 'Searching for ' . $searchQuery . ', on ' . implode(', ', $data['apis']);
         $this->template->content->view('searchsPage', $data);
         $this->template->publish();
 

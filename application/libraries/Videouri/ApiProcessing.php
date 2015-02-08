@@ -75,7 +75,7 @@ class ApiProcessing
      */
     public $videoId = null,
            $searchQuery = null,
-           $page = null,
+           $page = '',
            $sort = null;
 
 
@@ -115,6 +115,7 @@ class ApiProcessing
         // $CI->load->driver('cache', array('adapter' => 'file', 'backup' => 'apc', 'key_prefix' => 'videouri_'));
         $CI->load->driver('cache', array('key_prefix' => 'videouri_'));
         $this->cache = $CI->cache->file;
+        // $this->cache = $CI->cache->apc;
 
         if ( ! in_array($this->period, $this->validPeriods)) {
             $this->period = 'today';
@@ -289,7 +290,7 @@ class ApiProcessing
             $results[$i] = array_merge($toMerge, array(
                 'category'    => $categories,
                 'description' => self::parseDescription($video['media$group']['media$description']['$t']),
-                'rating'      => $video['gd$rating']['average'],
+                'rating'      => isset($video['gd$rating']) ? $video['gd$rating']['average'] : 0,
                 'viewsCount'  => $video['yt$statistics']['viewCount'],
                 // 'img'         => $video['media$group']['media$thumbnail'][0]['url'],
                 'img'         => 'https://i.ytimg.com/vi/'.$origid.'/mqdefault.jpg',

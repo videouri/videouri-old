@@ -13,12 +13,12 @@
         
         <meta property="og:title" content="<?= $this->template->title ?>">
         <meta property="og:site_name" content="Videouri"/>
-        <meta property="og:url" content="<?= current_url() ?>"/>
+        <meta property="og:url" content="http://<?= $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'] ?>"/>
         <meta property="og:description" content="<?= $this->template->description ?>" />
 
-        <?php if(isset($data['img'])): ?>
+        <?php if(isset($img)): ?>
         <meta property="og:type" content="video"/>
-        <meta property="og:image" content="<?= $data['img'] ?>">
+        <meta property="og:image" content="<?= $img ?>">
         <?php endif ?>      
 
         <?= $this->template->meta ?>
@@ -130,9 +130,15 @@
         <?php endif; ?>
         <div class="clearfix"></div>
 
-        <div class="container" id="content">
+
+        <?php $dontWrap = filter_var($this->template->dontWrap, FILTER_VALIDATE_BOOLEAN); ?>
+        <?php if ($dontWrap === true): ?>
             <?= $this->template->content ?>
-        </div>
+        <?php else: ?>
+            <div class="container" id="content">
+                <?= $this->template->content ?>
+            </div>
+        <?php endif; ?>
 
         <div class="bottom-menu bottom-menu-inverse">
             <div class="container">
@@ -193,6 +199,8 @@
         <?php endif ?>
 
 
+        <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-54d2a8836c546f73" async="async"></script>
+
         <script type="text/javascript">
             (function (w,d) {var loader = function () {var s = d.createElement("script"), tag = d.getElementsByTagName("script")[0]; s.src = "//cdn.iubenda.com/iubenda.js"; tag.parentNode.insertBefore(s,tag);}; if(w.addEventListener){w.addEventListener("load", loader, false);}else if(w.attachEvent){w.attachEvent("onload", loader);}else{w.onload = loader;}})(window, document);
         </script>
@@ -208,6 +216,5 @@
             // $("select[name='video-category']").selectpicker({style: 'btn-primary', menuStyle: 'dropdown-inverse'});
             // requirejs(["module/home"]);
         </script>
-
     </body>
 </html>

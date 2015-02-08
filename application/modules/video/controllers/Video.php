@@ -64,19 +64,28 @@ class Video extends MX_Controller {
             show_error($e->getMessage(),$code);
         }
 
+        // dd($results);
+
         if ($api === "Dailymotion") {
             // $swfUrl = $result['swf_url'].'&enableApi=1&playerapiid=dmplayer';
             // $swfUrl = preg_replace("/^http:/i", "https:", $swfUrl);
 
             // $data['video']['swf']['url']  = $swfUrl;
             // $data['video']['swf']['api']  = 'dmapiplayer';
+            $data['video']['url']         = $results['url'];
             $data['video']['title']       = $results['title'];
             $data['video']['description'] = $results['description'];
 
             $thumbnailUrl = preg_replace("/^http:/i", "https:", $results['thumbnail_medium_url']);
             $data['video']['img']         = $thumbnailUrl;
             $data['video']['tags']        = $results['tags'];
-            // $data['video']['related']     = $this->_relatedVideos(array('api'=>$api,'id'=>$origId));
+            
+            // Video info
+            // $data['video']['ratings']     = $results['ratings'];
+            $data['video']['views']       = humanizeNumber($results['views_total']);
+            $data['video']['duration']    = humanizeSeconds($results['duration']);
+
+            $data['video']['related']     = $this->_relatedVideos($api, $origId);
         }
 
         elseif ($api === "Metacafe") {
@@ -114,6 +123,7 @@ class Video extends MX_Controller {
 
         elseif ($api == "Vimeo") {
             $video = $results['body'];
+            // dd($video);
 
             $data['video']['url']         = "https://vimeo.com/".$origId;
             $data['video']['title']       = $video['name'];
@@ -125,14 +135,18 @@ class Video extends MX_Controller {
                     $tags[] = $tag['name'];
                 }
             }
+            // $data['video']['ratings']     = $results['ratings'];
+            $data['video']['views']       = humanizeNumber($video['stats']['plays']);
+            $data['video']['duration']    = humanizeSeconds($video['duration']);
 
             $data['video']['img']         = $video['pictures']['sizes'][2]['link'];
             $data['video']['tags']        = $tags;
-            // $data['video']['related']     = $this->_relatedVideos(null, array('api'=>$api,'tags'=>$data['video']['tags']));
+            $data['video']['related']     = $this->_relatedVideos($api, $origId);
         }
 
         elseif ($api == "YouTube") {
             $results = json_decode($results, true)['entry'];
+            // dd($results);
 
             $data['video']['url']         = "https://www.youtube.com/watch?v=".$origId;
             $data['video']['title']       = $results['title']['$t'];
@@ -144,16 +158,27 @@ class Video extends MX_Controller {
                 $tags[] = $results['category'][$i]['term'];
             }
 
+            // $data['video']['ratings']     = $results['gd$rating']['average'];
+            $data['video']['views']       = humanizeNumber($results['yt$statistics']['viewCount']);
+            $data['video']['duration']    = humanizeSeconds($results['media$group']['yt$duration']['seconds']);
+
             $data['video']['img']       = 'https://i.ytimg.com/vi/'.$origId.'/0.jpg';
             $data['video']['tags']      = $tags;
-            // $data['video']['related']   = $this->_relatedVideos(array('api'=>$api,'id'=>$origId));
+            $data['video']['related']   = $this->_relatedVideos($api, $origId);
         }
 
+        $data['img']       = $data['video']['img'];
         $data['customId']  = $customId;
         $data['origId']    = $origId;
         $data['source']    = $api;
         $data['canonical'] = "video/$customId";
 
+        // don't wrap the partia view in div.container
+        $this->template->bodyId   = 'videoPage';
+        $this->template->dontWrap = true;
+
+        $this->template->title = 'Videouri | ' . $data['video']['title'];
+        $this->template->description = trim_text($data['video']['description'], 100);
         $this->template->content->view('videoPage', $data);
         // $this->template->javascript->add('dist/modules/video.js');
         $this->template->publish();
@@ -167,108 +192,88 @@ class Video extends MX_Controller {
     * @param string $origId The id for which to look for data
     * @return the php response from parsing the data.
     */
-    private function _relatedVideos($parameters = array(), $tags = array())
+    private function _relatedVideos($api, $origId = null)
     {
-        if (!empty($parameters)) {
-            $id = $parameters['id'];
-            $relatedVideos[$parameters['api']] = modules::run("apis/{$parameters['api']}Controller/related", $id);
-            switch ($parameters['api'])
-            {
-                case 'Dailymotion':
-                    $i = 0;
-                    foreach ($relatedVideos['Dailymotion']['list'] as $video)
-                    {
-                        preg_match('@video/([^_]+)_([^/]+)@', $video['url'], $match);
-                        $url = $match[1].'/'.$match[2];
-                        $url = site_url('video/'.substr($url,0,1).'d'.substr($url,1));
+        $this->apiprocessing->content    = 'getRelatedVideos';
+        $this->apiprocessing->maxResults = 8;
+        // $this->apiprocessing->api = $api;
+        // $this->apiprocessing->videoId = $origId;
+         
+        $results = $this->apiprocessing->individualCall($api);
+        // $results = $this->apiprocessing->parseApiResult($api, $results);
+        // dd($results);
 
-                        $related['Dailymotion'][$i]['url']   = $url;
-                        $related['Dailymotion'][$i]['title'] = $video['title'];
-                        $thumbnailUrl = preg_replace("/^http:/i", "https:", $video['thumbnail_small_url']);
-                        $related['Dailymotion'][$i]['img']   = $thumbnailUrl;
-                        $i++;
-                    }
-                break;
-                case "Metacafe":
-                    $i = 0;
-                    foreach ($relatedVideos['Metacafe']->channel->item as $video)
-                    {
-                        preg_match('/http:\/\/[w\.]*metacafe\.com\/watch\/([^?&#"\']*)/is', $video->link, $match);
-                        $id  = substr($match[1],0,-1);
-                        $url = site_url('video/'.substr($id,0,1).'M'.substr($id,1));
+        $related = [];
 
-                        $related['Metacafe'][$i]['url']   = $url;
-                        $related['Metacafe'][$i]['title'] = trim_text($video->title, 83);
-                        $related['Metacafe'][$i]['img']   = "http://www.metacafe.com/thumb/$video->id.jpg";
-                        $i++;
-                    }
-                break;
-                case "Vimeo":
-                    $i = 0;
-                    foreach ($related['Vimeo']->videos->video as $video)
-                    {
-                        $id  = substr($video->id,0,1).'v'.substr($video->id,1);
-                        $url = site_url('video/'.$id);
-
-                        $related['Vimeo'][$i]['url']   = $url;
-                        $related['Vimeo'][$i]['title'] = trim_text($video->title, 83);
-                        $related['Vimeo'][$i]['img']   = $video->thumbnails->thumbnail[1]->_content;
-                        $i++;
-                    }
-                break;
-                case 'YouTube':
-                    $i = 0;
-                    foreach ($relatedVideos['YouTube']['feed']['entry'] as $video) {
-                        $origid = substr( $video['id']['$t'], strrpos( $video['id']['$t'], '/' )+1 );
-                        $id     = substr($origid,0,1).'y'.substr($origid,1);
-                        $url    = site_url('video/'.$id);
-
-                        $related['YouTube'][$i]['url']   = $url;
-                        $related['YouTube'][$i]['title'] = trim_text($video['title']['$t'], 83);
-                        $thumbnailUrl = preg_replace("/^http:/i", "https:", $video['media$group']['media$thumbnail'][0]['url']);
-                        $related['YouTube'][$i]['img']   = $thumbnailUrl;
-                        $i++;
-                    }
-                break;
-            }
-            return $related;
-        }
-
-        if (!empty($tags['tags'])) {
-            $parameters['api']     = $tags['api'];
-            $parameters['content'] = 'tag';
-            $vt = array();
-            $i = 0;
-
-            foreach($tags['tags'] as $tag) {
-                $vt[] = $tag;
-                if($i == 5){break;}
-                $i++;
-            }
-
-            $tc = count($tags);
-
-            if($tc == 5)
-            {
-                $results = array();
-                foreach($vt as $tag)
+        switch ($api)
+        {
+            case 'Dailymotion':
+                $i = 0;
+                // dd($results);
+                foreach ($results['list'] as $video)
                 {
-                    $parameters['searchQuery'] = $tag;
-                    $results[$parameters['api']][$i] = $this->$parameters['api']($parameters);
-                    if($i == 2){break;}
+                    preg_match('@video/([^_]+)_([^/]+)@', $video['url'], $match);
+                    $url = $match[1].'/'.$match[2];
+                    $url = site_url('video/'.substr($url,0,1).'d'.substr($url,1));
+
+                    $related[$i]['url']    = $url;
+                    $related[$i]['title']  = $video['title'];
+                    
+                    $thumbnailUrl          = preg_replace("/^http:/i", "https:", $video['thumbnail_240_url']);
+                    $related[$i]['img']    = $thumbnailUrl;
+                    
+                    $related[$i]['source'] = 'Dailymotion';
                     $i++;
                 }
-                /*foreach($results as $key => $value)
+            break;
+            case "Metacafe":
+                $i = 0;
+                foreach ($results->channel->item as $video)
                 {
-                    prePrint($key);
-                }*/
-            }
+                    preg_match('/http:\/\/[w\.]*metacafe\.com\/watch\/([^?&#"\']*)/is', $video->link, $match);
+                    $id  = substr($match[1],0,-1);
+                    $url = site_url('video/'.substr($id,0,1).'M'.substr($id,1));
 
-            if(($tc < 5) && ($tc !== 0))
-            {
-                
-            }
+                    $related[$i]['url']    = $url;
+                    $related[$i]['title']  = trim_text($video->title, 83);
+                    $related[$i]['img']    = "http://www.metacafe.com/thumb/$video->id.jpg";
+                    $related[$i]['source'] = 'Metacafe';
+                    $i++;
+                }
+            break;
+            case "Vimeo":
+                $i = 0;
+                foreach ($results['body']['data'] as $video)
+                {
+                    $origid = explode('/', $video['uri'])[2];
+                    $id     = substr($origid,0,1).'v'.substr($origid,1);
+                    $url = site_url('video/'.$id);
+
+                    $related[$i]['url']    = $url;
+                    $related[$i]['title']  = trim_text($video['name'], 83);
+                    $related[$i]['img']    = $video['pictures']['sizes'][2]['link'];
+                    $related[$i]['source'] = 'Metacafe';
+                    $i++;
+                }
+            break;
+            case 'YouTube':
+                $i = 0;
+                foreach ($results['feed']['entry'] as $video) {
+                    $origid = substr( $video['id']['$t'], strrpos( $video['id']['$t'], '/' )+1 );
+                    $id     = substr($origid,0,1).'y'.substr($origid,1);
+                    $url    = site_url('video/'.$id);
+
+                    $related[$i]['url']    = $url;
+                    $related[$i]['title']  = trim_text($video['title']['$t'], 83);
+                    $thumbnailUrl          = preg_replace("/^http:/i", "https:", $video['media$group']['media$thumbnail'][0]['url']);
+                    $related[$i]['img']    = $thumbnailUrl;
+                    $related[$i]['source'] = 'YouTube';
+                    $i++;
+                }
+            break;
         }
+
+        return $related;
     }
 }
 

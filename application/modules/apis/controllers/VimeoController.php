@@ -70,10 +70,11 @@ class VimeoController extends MX_Controller {
                 $result = $this->vimeo->request("/videos/{$parameters['videoId']}");
                 break;
 
-            case 'related':
+            case 'getRelatedVideos':
                 $result = $this->vimeo->request("/videos/{$parameters['videoId']}/videos", [
                     'page'     => $parameters['page'],
                     'per_page' => $parameters['maxResults'],
+                    'filter'   => 'related',
                 ]);
                 break;
 

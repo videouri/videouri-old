@@ -60,33 +60,7 @@ function dd($data)
  *
  * NOTE: If you change these, also change the error_reporting() code below
  */
-
-$ips = array('87.218.116.86', '37.11.31.254', '37.11.17.184', '87.218.135.242', '188.78.244.136');
-
-if (in_array($_SERVER['REMOTE_ADDR'], $ips)) {
-
-    define('ENVIRONMENT', 'development');
-
-} else {
-
-    switch ($_SERVER['SERVER_NAME']) {
-        case 'localhost':
-        case 'local.videouri.com':
-            define('ENVIRONMENT', 'development');
-        break;
-        
-        case 'testing.w0rldart.com':
-            define('ENVIRONMENT', 'development');
-        break;
-
-        case 'www.videouri.com':
-        case 'videouri.com':
-            define('ENVIRONMENT', 'production');
-        break;
-    }
-
-}
-
+    define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
 
 /*
  *---------------------------------------------------------------

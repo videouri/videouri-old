@@ -1,186 +1,185 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
 
-    function in_array_r($needle, $haystack)
-    {
-        if (!is_array($needle)) {
-            return in_array_r(array($needle), $haystack);
-        }
-
-        foreach ($needle as $item) {
-            if (in_array($item, $haystack)) {
-                return true;
-            }
-        }
-
-        return false;
+/**
+ * Recursive in_array function
+ * 
+ * @param  array $needle
+ * @param  array $haystack
+ * @return boolean
+ */
+function in_array_r($needle, $haystack)
+{
+    if (!is_array($needle)) {
+        return in_array_r(array($needle), $haystack);
     }
 
-    function sortByViews($a, $b)
-    {
-        if ($a['viewsCount'] === null)
-            $a['viewsCount'] = 0;
-
-        if ($b['viewsCount'] === null)
-            $b['viewsCount'] = 0;
-
-        return $b['viewsCount'] - $a['viewsCount'];
+    foreach ($needle as $item) {
+        if (in_array($item, $haystack)) {
+            return true;
+        }
     }
 
-    function generateRandomString($length = 10)
+    return false;
+}
+
+/**
+ * Humanize numbers.
+ * For example: 5000 would become 5K
+ * 
+ * @param  int $number
+ * @return return string
+ */
+function humanizeNumber($number) 
+{
+    $abbrevs = array(12 => "T", 9 => "B", 6 => "M", 3 => "K", 0 => "");
+
+    foreach($abbrevs as $exponent => $abbrev) {
+        if($number >= pow(10, $exponent)) {
+            $display_num = $number / pow(10, $exponent);
+            $decimals = ($exponent >= 3 && round($display_num) < 100) ? 1 : 0;
+            return number_format($display_num,$decimals) . $abbrev;
+        }
+    }
+}
+
+function humanizeSeconds($seconds)
+{
+    if ($seconds > 86400) {
+        $seconds = $seconds % 86400;
+    }
+
+    return gmdate('H:i:s', $seconds);
+}
+
+/**
+ * Used to order an array, by it's viewsCount
+ * 
+ * @param  [type] $a [description]
+ * @param  [type] $b [description]
+ * @return [type]    [description]
+ */
+function sortByViews($a, $b)
+{
+    if ($a['viewsCount'] === null)
+        $a['viewsCount'] = 0;
+
+    if ($b['viewsCount'] === null)
+        $b['viewsCount'] = 0;
+
+    return $b['viewsCount'] - $a['viewsCount'];
+}
+
+
+function parseLinks($text)
+{
+    // The Regular Expression filter
+    $reg_exUrl = "/(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/";
+
+    // Check if there is a url in the text
+    if(preg_match($reg_exUrl, $text, $url)) {
+       // make the urls hyper links
+       echo preg_replace($reg_exUrl, '<a href="' . $url[0] . '" target="_blank">' . $url[0] . '</a>', $text);
+    } else {
+       // if no urls in the text just return the text
+       echo $text;
+    }
+}
+
+
+function generateRandomString($length = 10)
+{
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $randomString = '';
+    
+    for ($i = 0; $i < $length; $i++) {
+        $randomString .= $characters[rand(0, strlen($characters) - 1)];
+    }
+
+    return $randomString;
+}
+
+
+if( !function_exists('curl_get'))
+{
+    function curl_get($url)
     {
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $randomString = '';
+        // Initiate the curl session
+        $ch = curl_init();
+
+        // Set the URL
+        curl_setopt($ch, CURLOPT_URL, $url);
+
+        // Removes the headers from the output
+        curl_setopt($ch, CURLOPT_HEADER, 0);
         
-        for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, strlen($characters) - 1)];
-        }
+        #curl_setopt($ch, CURLOPT_VERBOSE, true);
 
-        return $randomString;
-    }
+        // Return the output instead of displaying it directly
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
-    if ( ! function_exists('prePrint')) {
-        function prePrint($data, $message = '')
-        {
-            if (!empty($message)) echo '<br/>'.$message.'<br/>';
-            echo '<pre>';
-            print_r($data);
-            echo '</pre>';
-        }
-    }
-    
-    if ( ! function_exists('preDump')) {
-        function preDump($data)
-        {
-            echo '<pre>';
-            var_dump($data);
-            echo '</pre>';
-        }
-    }
-    
-    if ( ! function_exists('dd')) {
-        function dd($data)
-        {
-            echo '<pre>';
-            var_dump($data);
-            echo '</pre>';
-            die;
-        }
-    }
+        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+        @curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 
-    /**
-    * Debug Helper
-    *
-    * http://philsturgeon.co.uk/blog/2010/09/power-dump-php-applications
-    * 
-    * Outputs the given variable(s) with formatting and location
-    *
-    * @access        public
-    * @param        mixed    variables to be output
-    */
-    
-    if( !function_exists('dump'))
+        // Execute the curl session
+        $output = curl_exec($ch);
+
+        // Return headers
+        $headers = curl_getinfo($ch);
+
+        // Close the curl session
+        curl_close($ch);
+        
+        var_dump($headers);
+        var_dump($output);
+
+        return $output;
+    }
+}
+
+
+if( !function_exists('trim_text')) {
+
+    function trim_text($input, $length, $lbreaks = true, $ellipses = true, $strip_html = true, $output_entities = true)
     {
-        function dump()
-        {
-            list($callee) = debug_backtrace();
-            $arguments = func_get_args();
-            $total_arguments = count($arguments);
 
-            echo '<fieldset style="background: #fefefe !important; border:2px red solid; padding:5px">';
-            echo '<legend style="background:lightgrey; padding:5px;">'.$callee['file'].' @ line: '.$callee['line'].'</legend><pre>';
-            $i = 0;
-            foreach ($arguments as $argument)
-            {
-                echo '<br/><strong>Debug #'.(++$i).' of '.$total_arguments.'</strong>: ';
-                var_dump($argument);
-            }
-
-            echo "</pre>";
-            echo "</fieldset>";
+        // Strip tags, if desired
+        if($strip_html) {
+            $input = strip_tags($input);
         }
-    }
+     
+        // No need to trim, already shorter than trim length
+        if(strlen($input) <= $length) {
+            return $input;
+        }
 
-    
-    if( !function_exists('curl_get'))
-    {
-        function curl_get($url)
-        {
-            // Initiate the curl session
-            $ch = curl_init();
-
-            // Set the URL
-            curl_setopt($ch, CURLOPT_URL, $url);
-
-            // Removes the headers from the output
-            curl_setopt($ch, CURLOPT_HEADER, 0);
+        if( ! $lbreaks) {
+            $elements = array(
+                "\n", "\n\r", "\n\t",
+                "\r", "\r\n", "\r\t",
+                "\t", "\t\n", "\t\r"
+            );
+            $input = str_replace($elements, '', $input);
             
-            #curl_setopt($ch, CURLOPT_VERBOSE, true);
-
-            // Return the output instead of displaying it directly
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-
-            curl_setopt($ch, CURLOPT_TIMEOUT, 60);
-            @curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-
-            // Execute the curl session
-            $output = curl_exec($ch);
-
-            // Return headers
-            $headers = curl_getinfo($ch);
-
-            // Close the curl session
-            curl_close($ch);
-            
-            var_dump($headers);
-            var_dump($output);
-
-            return $output;
+            $input = preg_replace('/[ ]+/', ' ', $input);
+            $input = preg_replace('/<!--[^-]*-->/', '', $input);
         }
+     
+        // Find last space within length
+        $last_space = strrpos(substr($input, 0, $length), ' ');
+        $trimmed_text = substr($input, 0, $last_space);
+
+         // Add ellipses (...)
+        if($ellipses){
+            $trimmed_text .= '...';
+        }
+     
+        if($output_entities){
+            $trimmed_text = htmlentities($trimmed_text);
+        }
+     
+        return $trimmed_text;
+
     }
 
-    
-    if( !function_exists('trim_text')) {
-
-        function trim_text($input, $length, $lbreaks = true, $ellipses = true, $strip_html = true, $output_entities = true)
-        {
-
-            // Strip tags, if desired
-            if($strip_html) {
-                $input = strip_tags($input);
-            }
-         
-            // No need to trim, already shorter than trim length
-            if(strlen($input) <= $length) {
-                return $input;
-            }
-
-            if( ! $lbreaks) {
-                $elements = array(
-                    "\n", "\n\r", "\n\t",
-                    "\r", "\r\n", "\r\t",
-                    "\t", "\t\n", "\t\r"
-                );
-                $input = str_replace($elements, '', $input);
-                
-                $input = preg_replace('/[ ]+/', ' ', $input);
-                $input = preg_replace('/<!--[^-]*-->/', '', $input);
-            }
-         
-            // Find last space within length
-            $last_space = strrpos(substr($input, 0, $length), ' ');
-            $trimmed_text = substr($input, 0, $last_space);
-
-             // Add ellipses (...)
-            if($ellipses){
-                $trimmed_text .= '...';
-            }
-         
-            if($output_entities){
-                $trimmed_text = htmlentities($trimmed_text);
-            }
-         
-            return $trimmed_text;
-
-        }
-
-    }
+}

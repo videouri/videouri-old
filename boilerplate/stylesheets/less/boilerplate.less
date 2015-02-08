@@ -36,6 +36,11 @@ body {
     }
 }
 
+body#videoPage {
+    padding-top: 53px;
+    color: white;
+}
+
 ::-webkit-input-placeholder {
    color: red;
 }
@@ -304,37 +309,6 @@ body {
     .filters_sorts ul li:hover { cursor: pointer; }
 
   /* Vide Page */
-#videoPage .section_header h1{ text-align: center; }
-#videoPage #content{
-    position: relative;
-    margin: 11px auto;
-    padding: 0 0 15px 0;
-}
-#content #video_data{
-    width: 64%;
-    max-width:640;
-    margin-left: 10px;
-}
-#content #video_sidebar{
-    width: 33%;
-    margin: 5px 10px 0 0;
-}
-#video_data .vbg{
-    display: block;
-    margin: 10px;
-    padding: 10px;
-    height: 100%;
-    background: #000;
-}
-#videoPage #content .vbg object{ }
-#videoPage #content .vbg embed{ }
-#video_data .info { margin: 15px 10px 10px; }
-#video_data .info div{ margin-bottom: 10px; }
-#video_data .info .share{ line-height: 21px; }
-.share .right li { float: left; margin-left: 5px; }
-.share .right #facebook_share{ display: block; width:24px; height:24px; background: url('./images/24x24/facebook.png'); }
-.share .right #tuenti_share{ display: block; width:24px; height:24px; background: url('./images/24x24/tuenti.png'); }
-.share .right #twitter_share{ display: block; width:24px; height:24px; background: url('./images/24x24/twitter.png'); }
 #video_data .info strong{ font-weight:bold; }
 #video_data .info .tags{ padding: 0; list-style: none; display: inline-block;}
 #video_data .info .tags li{ float:left; display: inline; }
@@ -342,39 +316,21 @@ body {
 #video_data .info .tags li a:hover{ text-decoration:underline; cursor: pointer; }
 #video_data .info .description{ text-align: justify; padding: 0; }
 
-.related { 
-    padding: 0;
-    margin: 0 auto;
-    list-style: none;
-    background: #F5EDE3;
-    
-    -webkit-box-shadow: inset 0 0 5px #888;
-       -moz-box-shadow: inset 0 0 5px #888;
-            box-shadow: inset 0 0 5px #888;
- 
-    li {
-        width: 90%;
-        display: inline-block;
-        padding: 5px;
-        margin-left: 15px;
-        border: solid #ddd;
-        border-width: 1px 0 0;
-        border-top: 1px solid #ddd;
-        border-bottom: 1px solid #fff;
+#video-info {
+    padding: 15px 0;
+    background: #222222;
 
-        &:first-child{ margin-top: 10px; border-top: none; }
-        &:last-child{ margin-bottom: 10px; border-bottom: none; }
-
-        a img {
-            float: left;
-            display: block;
-            margin-right: 10px;
+    .video-duration,
+    .video-views {
+        // Vertical align icons with the text
+        i.fa {
+            vertical-align: middle;
         }
 
-        a p {
-            padding: 0 10px 10px 10px;
-            font-size: 15px;
-            color: #000;
+        span {
+            font-size: 1.5em;
+            vertical-align: middle;
+            margin-left: 6px;
         }
     }
 }

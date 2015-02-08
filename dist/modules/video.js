@@ -1,8 +1,19 @@
 // define(['jquery', 'videojs', 'videojs-vimeo', 'videojs-youtube', 'videojs-dailymotion'], function($) {
 
     videojs.options.flash.swf = "/dist/misc/video-js.swf";
+    var $isotopeContainer;
 
     $(document).ready(function($) {
+
+        /**
+         * Isotope plugin
+         */
+        $isotopeContainer = $('#related-videos').isotope({
+            itemSelector: '.col-md-3',
+            layoutMode: 'masonry'
+        });
+
+        console.log($isotopeContainer);
 
         var title = encodeURIComponent(document.title),
             url   = encodeURI(window.location.href);
@@ -32,18 +43,9 @@
 
             return false;
         });
-
-        (function() {
-            var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-            po.src = 'https://apis.google.com/js/plusone.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-        })();
         
         var videoSource = $('#videoPlayer').data('src'),
             videoUrl    = $('#videoPlayer').data('url');
-
-            console.log(videoSource);
-            console.log(videoUrl);
 
         videojs('videoPlayer', {"techOrder": [videoSource], "src": videoUrl}).ready(function() {
 

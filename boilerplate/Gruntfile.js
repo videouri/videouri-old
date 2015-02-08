@@ -243,7 +243,8 @@ module.exports = function(grunt) {
                     "bower_components/video.js/dist/video-js/video.js",
                     "bower_components/videojs-youtube/dist/vjs.youtube.js",
                     "bower_components/videojs-vimeo/vjs.vimeo.js",
-                    "scripts/vendor/video.js-dailymotion/vjs.dailymotion.js",
+                    "bower_components/videojs-dailymotion/src/dailymotion.js",
+                    // "scripts/vendor/video.js-dailymotion/vjs.dailymotion.js",
                     "scripts/main.js"
                 ],
                 dest: '<%= project.dist %>/videouri.js'

@@ -24,29 +24,29 @@
     </div>
 
     <div id="video-list" class="row">
-    <?php foreach ($data as $video): ?>
-    <div class="col-md-3 col-sm-6 col-xs-12 <?= $video['source'] ?>">
-        <div class="tile">
-            <div class="tile-image">
-                <a href="<?= $video['url'] ?>">
-                    <img data-original="<?= $video['img'] ?>" alt="<?= $video['title'] ?>" class="lazy-image"/>
-                </a>
-                <span class="fui-play" style="position: absolute; top: 35%; left: 45%; color: #fff; font-size: 30px; text-shadow: 0px 0px 20px #000, 1px -3px 0px #45c8a9" data-url="<?= $video['url'] ?>"></span>
-            </div>                        
-            <div class="tile-bottom">
-                <span class="source <?= $video['source'] ?>">
-                    <?= $video['source'] ?>
-                </span>
-
-                <h2 class="tile-title">
-                    <a href="<?= $video['url'] ?>" title="<?= $video['title'] ?>">
-                        <?= $video['title'] ?>
+        <?php foreach ($data as $video): ?>
+        <div class="col-md-3 col-sm-6 col-xs-12 <?= $video['source'] ?>">
+            <div class="tile">
+                <div class="tile-image">
+                    <a href="<?= $video['url'] ?>">
+                        <img data-original="<?= $video['img'] ?>" alt="<?= $video['title'] ?>" class="lazy-image"/>
                     </a>
-                </h2>
+                    <span class="fui-play" style="position: absolute; top: 35%; left: 45%; color: #fff; font-size: 30px; text-shadow: 0px 0px 20px #000, 1px -3px 0px #45c8a9" data-url="<?= $video['url'] ?>"></span>
+                </div>
+                <div class="tile-bottom">
+                    <span class="source <?= $video['source'] ?>">
+                        <?= $video['source'] ?>
+                    </span>
+
+                    <h2 class="tile-title">
+                        <a href="<?= $video['url'] ?>" title="<?= $video['title'] ?>">
+                            <?= $video['title'] ?>
+                        </a>
+                    </h2>
+                </div>
             </div>
         </div>
-    </div>
-    <?php endforeach; ?>
+        <?php endforeach ?>
     </div>
 
     <div id="page" class="row">

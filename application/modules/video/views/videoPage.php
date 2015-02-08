@@ -1,81 +1,119 @@
-<br/>
+<div class="vbg">
+    <video id="videoPlayer" src="<?= $video['url'] ?>" class="video-js vjs-default-skin vjs-big-play-centered"
+           data-src="<?= strtolower($source) ?>" data-url="<?= $video['url'] ?>"
+           controls preload="auto" width="100%" height="530">
+        <p>Video Playback Not Supported</p>
+    </video>
+</div>
 
-<div class="row">
-    <div class="col-md-8">
-        <div class="vbg">
-            <video id="videoPlayer" src="<?= $video['url'] ?>" class="video-js vjs-default-skin"
-                   data-src="<?= strtolower($source) ?>" data-url="<?= $video['url'] ?>"
-                   controls preload="auto" width="100%" height="360">
-                <p>Video Playback Not Supported</p>
-            </video>
-        </div>
-        <div class="info">
-            <h1 style="color: white; margin: 0; text-shadow: 3px 2px 1px #c0392b; font-size: 38px"><?= $video['title'] ?></h1>
-            <div class="share">
-                <ul class="list-inline right">
-                    <li>
-                        <a href="http://www.facebook.com/sharer.php" id="facebook_share" class="popup" title="Share to Facebook"></a>
+<div id="video-info">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <ul class="video-details list-inline">
+                    <li class="video-vuration">
+                        <i class="fa fa-clock-o fa-2x"></i>
+                        <span>
+                            <?= $video['duration'] ?>
+                        </span>
                     </li>
                     <li>
-                        <a href="https://twitter.com/share" id="twitter_share" class="popup" title="Share to Twitter"></a>
+                        <span class="separator">
+                            |
+                        </span> 
                     </li>
-                    <li>
-                        <a href="http://www.tuenti.com/share" id="tuenti_share" class="popup" title="Share to Tuenti"></a>
-                    </li>
-                    <li>
-                        <div class="g-plusone" data-annotation="none" data-size="standard"></div>
+                    <li class="video-v-iews">
+                        <i class="fa fa-eye fa-2x"></i>
+                        <span>
+                            <?= $video['views'] ?>
+                        </span>
                     </li>
                 </ul>
             </div>
-            <div class="clearfix"></div>
-            <!--<div class="category"><strong>Category:</strong><h2><?#=$video['category'] ?></h2></div>-->
-            <div class="tags">
-                <strong>Tags:</strong>
-                <ul class="bootstrap-tagsinput">
-                <?php foreach($video['tags'] as $tag): $url=site_url('results?search_query='.$tag.'&action=tag'); ?>
-                <li class="tag label label-danger">
-                    <a title="<?= $tag ?>" href="<?= $url ?>">
-                        <?= $tag ?>
-                    </a>
-                </li>
-                <?php endforeach; ?>
+            <div class="col-md-6 pull-right text-right">
+                <ul class="list-inline">
+                    <li>
+                        <a href="http://www.facebook.com/sharer.php" class="popup btn-social-facebook" title="Share to Facebook">
+                            <i class="fa fa-facebook fa-2x" style="vertical-align: middle"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://twitter.com/share" id="twitter_share" class="popup btn-social-twitter" title="Share to Twitter">
+                            <i class="fa fa-twitter fa-2x" style="vertical-align: middle"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <div class="addthis_responsive_sharing"></div>
+                    </li>
                 </ul>
             </div>
-            <br/>
+        </div>
 
-            <div class="description">
-                <strong>Description:</strong><hr>
-                <p>
-                    <?php $video['description'] = !empty($video['description']) ? $video['description'] : 'No description' ; echo $video['description']; ?>
-                </p>
+        <div class="row">
+            <div class="col-md-9">
+                <h4 style="letter-spacing: 1px;">
+                    <?= $video['title'] ?>
+                </h4>
+                <br/>
+
+                <div class="description" style="font-size: 12px">
+                    <?php
+                        $video['description'] = !empty($video['description']) ? $video['description'] : 'No description';
+                        // echo parseLinks(nl2br($video['description']));
+                        echo nl2br($video['description']);
+                    ?>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <h6>Tags</h6>
+                <ul class="tags list-inline">
+                    <?php foreach($video['tags'] as $tag): $url = site_url('results?search_query='.$tag.'&action=tag'); ?>
+                    <li>
+                        <a title="<?= $tag ?>" href="<?= $url ?>">
+                            <?= $tag ?>
+                        </a>
+                    </li>
+                    <?php endforeach; ?>
+                </ul>
+                <br/>
             </div>
         </div>
-    </div>
-    <div class="col-md-4">
-    <?php if (!empty($video['related'])): ?>
-        <h2>Suggested Videos:</h2><br/>
-        <!--<ul id="nav">
-            <?php foreach($video['related'] as $key=>$value): ?>
-            <li><a href="#<?= $key ?>"><?= $key ?></a></li>
-            <?php endforeach; ?>
-        </ul>-->
-
-        <?php foreach ($video['related'] as $key => $value): ?>
-        <ul id="<?= $key ?>" class="related">
-            <?php foreach ($value as $api): ?>
-            <li>
-                <a href="<?= $api['url'] ?>" title="<?= $api['title'] ?>">
-                    <img src="<?= $api['img'] ?>" alt="<?= $api['title'] ?>" width="80" height="60">
-                    <p><?= $api['title'] ?></p>
-                </a>
-            </li>
-            <?php endforeach; ?>
-        </ul>
-        <?php endforeach; ?>
-        <div class="clearfix"></div>
-    <?php endif; ?>
     </div>
 </div>
+
+<?php if (!empty($video['related'])): ?>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 text-center">
+        <h4 style="margin-bottom: 0">
+            Recommended
+        </h4>
+        </div>
+    </div>
+    <hr style="border-color: #c0392b" />
+    <div id="related-videos" class="row">
+        <?php foreach ($video['related'] as $relatedVideo): ?>
+        <div class="col-md-3 col-sm-6 col-xs-12 <?= $relatedVideo['source'] ?>">
+            <div class="tile">
+                <div class="tile-image">
+                    <a href="<?= $relatedVideo['url'] ?>" title="<?= $relatedVideo['title'] ?>">
+                        <img src="<?= $relatedVideo['img'] ?>" alt="<?= $relatedVideo['title'] ?>">
+                        <!-- <p><?= $relatedVideo['title'] ?></p> -->
+                    </a>
+                </div>
+                <div class="tile-bottom">
+                    <h2 class="tile-title">
+                        <a href="<?= $relatedVideo['url'] ?>" title="<?= $relatedVideo['title'] ?>">
+                            <?= $relatedVideo['title'] ?>
+                        </a>
+                    </h2>
+                </div>
+            </div>
+        </div>
+        <?php endforeach ?>
+    </div>
+</div>
+<?php endif; ?>
 
 <?php
 $this->template->scriptCode = '<script type="text/javascript" src="' . base_url() . '/dist/modules/video.js"></script>';

@@ -44,7 +44,6 @@ class YouTubeController extends MY_Controller {
                 break;
         }
 
-
         switch ($parameters['content']) {
             /* Home content */
             case 'newest':
@@ -121,27 +120,24 @@ class YouTubeController extends MY_Controller {
             case 'getVideoEntry':
                 $result = $this->youtube->getVideoEntry($parameters['videoId'], false, array('alt' => 'json'));
                 break;
+
+            case 'getRelatedVideos':
+                $result = json_decode($this->youtube->getRelatedVideoFeed(
+                                $parameters['videoId'],
+                                array(
+                                    'max-results' => $parameters['maxResults'],
+                                    'start-index' => $this->page,
+                                    'fields'      => "entry(id,title,media:group(media:thumbnail(@url),yt:duration(@seconds)))",
+                                    'alt'         => 'json'
+                                )
+                            ), TRUE);
+                break;
+
         }
 
         #dd($result);
 
         return $result;
-    }
-
-    function related($id)
-    {
-        $result = json_decode($this->youtube->getRelatedVideoFeed(
-                        $id,
-                        array(
-                            'max-results' => $parameters['maxResults'],
-                            'start-index' => $this->page,
-                            'fields'      => "entry(id,title,media:group(media:thumbnail(@url),yt:duration(@seconds)))",
-                            'alt'         => 'json'
-                        )
-                    ), TRUE);
-
-        return $result;
-
     }
 
 }

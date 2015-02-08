@@ -54,7 +54,6 @@ class DailymotionController extends MX_Controller {
                 break;
         }
 
-
         $commonFields = array('id', 'duration', 'url', 'title', 'description', 'channel', 'thumbnail_medium_url', 'rating', 'views_total');
 
         switch ($parameters['content']) {
@@ -139,24 +138,21 @@ class DailymotionController extends MX_Controller {
                 );
                 break;
 
+            case 'getRelatedVideos':
+                $result = $this->dailymotion->call(
+                    '/video/' . $parameters['videoId'] . '/related',
+                    array(
+                        'fields'        => array('id', 'duration', 'title', 'thumbnail_240_url', 'url'),
+                        'family_filter' => $this->cookie
+                    )
+                );
+                break;
+
             default:
                 $result = '';
                 break;
         }
 
-        return $result;        
-    }
-
-    function related($id)
-    {
-        $result = $this->dailymotion->call(
-            "/video/{$id}/related",
-            array(
-                'fields'        => array('id', 'duration', 'title', 'thumbnail_small_url', 'url'),
-                'family_filter' => $this->cookie
-            )
-        );
-        
         return $result;
     }
 }

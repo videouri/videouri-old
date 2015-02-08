@@ -1,8 +1,8 @@
 # Stuff
-/folder-files/
 test.*
 /___adminpanel/
 /stats/
+/apc.php
 
 
 # CI related
