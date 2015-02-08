@@ -252,16 +252,21 @@ module.exports = function(grunt) {
         },
 
         // Minify and such, for production
-        /*uglify: {
+        uglify: {
             options: {
                 banner: '<%= banner %>'
             },
-            dist: {
-                files: {
-                    '<%= project.js %>': [scripts]
-                }
+            mainJs: {
+                src: '<%= project.dist %>/videouri.js',
+                dest: '<%= project.dist %>/videouri.js'
+            },
+            jsModules: {
+                expand: true,    // allow dynamic building
+                flatten: true,   // remove all unnecessary nesting
+                src: '<%= project.dist %>/modules/*.js',
+                dest: '<%= project.dist %>/modules/'
             }
-        },*/
+        },
 
         jshint: {
             files: [
@@ -392,7 +397,7 @@ module.exports = function(grunt) {
     //grunt.registerTask('default', ['less', 'concat']);
     //grunt.registerTask('production', ['less', 'jshint', 'concat', 'uglify']);
 
-    grunt.registerTask('production', ['clean', 'copy', 'less', 'concat', 'uglify']);
+    grunt.registerTask('production', ['clean', 'copy', 'less:dist', 'concat:js', 'uglify']);
     grunt.registerTask('default', ['watch']);
 
 };

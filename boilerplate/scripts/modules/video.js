@@ -13,8 +13,6 @@
             layoutMode: 'masonry'
         });
 
-        console.log($isotopeContainer);
-
         var title = encodeURIComponent(document.title),
             url   = encodeURI(window.location.href);
 
