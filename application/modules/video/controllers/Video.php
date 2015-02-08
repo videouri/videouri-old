@@ -67,21 +67,16 @@ class Video extends MX_Controller {
         // dd($results);
 
         if ($api === "Dailymotion") {
-            // $swfUrl = $result['swf_url'].'&enableApi=1&playerapiid=dmplayer';
-            // $swfUrl = preg_replace("/^http:/i", "https:", $swfUrl);
-
-            // $data['video']['swf']['url']  = $swfUrl;
-            // $data['video']['swf']['api']  = 'dmapiplayer';
-            $data['video']['url']         = $results['url'];
+            $httpsUrl             = preg_replace("/^http:/i", "https:", $results['url']);
+            $data['video']['url'] = $results['url'];
+            
+            $thumbnailUrl         = preg_replace("/^http:/i", "https:", $results['thumbnail_medium_url']);
+            $data['video']['img'] = $thumbnailUrl;
+            
+            // $data['video']['ratings']     = $results['ratings'];
             $data['video']['title']       = $results['title'];
             $data['video']['description'] = $results['description'];
-
-            $thumbnailUrl = preg_replace("/^http:/i", "https:", $results['thumbnail_medium_url']);
-            $data['video']['img']         = $thumbnailUrl;
             $data['video']['tags']        = $results['tags'];
-            
-            // Video info
-            // $data['video']['ratings']     = $results['ratings'];
             $data['video']['views']       = humanizeNumber($results['views_total']);
             $data['video']['duration']    = humanizeSeconds($results['duration']);
 
