@@ -163,7 +163,7 @@ class Fetch extends MX_Controller {
         
         $data['canonical']   = '';
         $data['searchQuery'] = $searchQuery;
-        $this->template->title = 'Videouri | ' . $searchQuery;
+        $this->template->title = $searchQuery . ' - Videouri';
         $this->template->description = 'Searching for ' . $searchQuery . ', on ' . implode(', ', $data['apis']);
         $this->template->content->view('searchsPage', $data);
         $this->template->publish();
