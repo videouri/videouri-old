@@ -170,7 +170,10 @@ class ApiProcessing
             // dd($apiResponse);
 
             // Caching results
-            $this->cache->save($apiParametersHash, $apiResponse, $this->_periodCachingTime[$this->period]);
+            // $this->cache->save($apiParametersHash, $apiResponse, $this->_periodCachingTime[$this->period]);
+            
+            // Set cache to expire in 6 hours
+            $this->cache->save($apiParametersHash, $apiResponse, 21600); 
         }
 
         return $apiResponse;
@@ -223,7 +226,10 @@ class ApiProcessing
 
         if (!$apiResponse) {
             $apiResponse = self::getContent($this->content, $api);
-            $this->cache->save($cacheVariable, $apiResponse, $this->_cacheTimeout);
+            // $this->cache->save($cacheVariable, $apiResponse, $this->_cacheTimeout);
+            
+            // Set cache to 6 hours
+            $this->cache->save($cacheVariable, $apiResponse, 21600);
         }
 
         return $apiResponse;
