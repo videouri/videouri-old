@@ -1,7 +1,7 @@
 # Stuff
 test.*
-/stats
-/boilerplate
+/stats/*
+/boilerplate/*
 
 # CI related
 application/config/development

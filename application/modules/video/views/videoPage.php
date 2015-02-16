@@ -31,14 +31,14 @@
                 </ul>
             </div>
             <div class="col-md-6 pull-right text-right">
-                <ul class="list-inline">
+                <ul class="list-inline" id="sharing">
                     <li>
-                        <a href="http://www.facebook.com/sharer.php" class="popup btn-social-facebook" title="Share to Facebook">
+                        <a href="https://www.facebook.com/sharer.php" id="facebook-share" class="popup btn-social-facebook" title="Share to Facebook">
                             <i class="fa fa-facebook fa-2x" style="vertical-align: middle"></i>
                         </a>
                     </li>
                     <li>
-                        <a href="https://twitter.com/share" id="twitter_share" class="popup btn-social-twitter" title="Share to Twitter">
+                        <a href="https://twitter.com/share" id="twitter-share" class="popup btn-social-twitter" title="Share to Twitter">
                             <i class="fa fa-twitter fa-2x" style="vertical-align: middle"></i>
                         </a>
                     </li>

@@ -26,19 +26,7 @@
             <input type="button" class="next" value="<?=lang('next_button');?> >>">
         </div>
     </div>
-
-    <div id="sidebar">
-        <div class="filters_sorts">
-            <?php if((count($data) > 0) && (count($data) !== 1)) : ?>
-            <h3>Filter Source</h3>
-            <ul id="filter_sources">
-                <?php foreach($data as $api=>$v) : ?>
-                <li><input type="checkbox" name="source" value="<?=mb_strtolower($api);?>" checked="false"/><span style="text-transform: capitalize;"><?=$api;?></span></li>
-                <?php endforeach; ?>
-            </ul>
-            <?php endif; ?>
-        </div>
-    </div>
+    
     <?php else: ?>
         <div class="resultsFor">
         There was a problem retrieving results for <span class="searchQuery"><?=$searchQuery;?></span> from 
