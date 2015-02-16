@@ -17,8 +17,6 @@ class Errors extends MY_Controller
             redirect('/');
 
         $this->output->set_status_header('404'); 
-        $this->template->bodyId = 'error';
-        $this->template->content->view('errors/html/error_'.$error);
-        $this->template->publish();
+        $this->load->view('errors/html/error_'.$error);
     }
 }
