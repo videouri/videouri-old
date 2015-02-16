@@ -65,7 +65,7 @@ class Video extends MX_Controller {
         if ($api === "Dailymotion") {
             $httpsUrl             = preg_replace("/^http:/i", "https:", $results['url']);
             $data['video']['url'] = $httpsUrl;
-            
+
             $thumbnailUrl         = preg_replace("/^http:/i", "https:", $results['thumbnail_medium_url']);
             $data['video']['img'] = $thumbnailUrl;
             
@@ -208,7 +208,7 @@ class Video extends MX_Controller {
                     $url = site_url('video/'.substr($url,0,1).'d'.substr($url,1));
 
                     $httpsUrl           = preg_replace("/^http:/i", "https:", $url);
-                    $related[$i]['url'] = $httpsUrl;
+                    $related[$i]['url'] = $url;
                     
                     $thumbnailUrl       = preg_replace("/^http:/i", "https:", $video['thumbnail_240_url']);
                     $related[$i]['img'] = $thumbnailUrl;
@@ -268,6 +268,3 @@ class Video extends MX_Controller {
         return $related;
     }
 }
-
-/* End of file video.php */
-/* Location: ./application/modules/video/controllers/video.php */

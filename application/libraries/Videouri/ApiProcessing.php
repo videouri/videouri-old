@@ -320,6 +320,9 @@ class ApiProcessing
             $url = $match[1].'/'.$match[2];
             $url = site_url('video/'.substr($url,0,1).'d'.substr($url,1));
 
+
+            $thumbnailUrl = preg_replace("/^http:/i", "https:", $video['thumbnail_medium_url']);
+
             $results[$i] = array(
                 'url'         => $url,
                 'title'       => $video['title'],
@@ -327,7 +330,7 @@ class ApiProcessing
                 'description' => self::parseDescription($video['description']),
                 'rating'      => $video['rating'],
                 'viewsCount'  => $video['views_total'],
-                'img'         => $video['thumbnail_medium_url'],
+                'img'         => $thumbnailUrl,
                 'source'      => 'Dailymotion',
             );
 

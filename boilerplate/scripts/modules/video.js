@@ -20,9 +20,9 @@
             tuentiUrl   = 'http://www.tuenti.com/?m=Share&func=index&url='+url+'&suggested-text=',
             twitterUrl  = 'https://twitter.com/intent/tweet?url='+url+'&text='+title+'&via=videouri';
 
-        $('#facebook_share').attr('href', facebookUrl);
-        $('#tuenti_share').attr('href', tuentiUrl);
-        $('#twitter_share').attr('href', twitterUrl);
+        $('#facebook-share').attr('href', facebookUrl);
+        $('#tuenti-share').attr('href', tuentiUrl);
+        $('#twitter-share').attr('href', twitterUrl);
 
         $('.popup').click(function(event) {
             var width  = 575,
