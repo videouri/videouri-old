@@ -50,18 +50,14 @@ class Video extends MX_Controller {
 
         try {
             $results = $this->apiprocessing->individualCall($api);
-        }
 
-        catch (ParameterException $e) {
-            prePrint($e);
-            #show_error($e->getMessage());
+            if (!$results) {
+                show_404();
+            }
         }
 
         catch (Exception $e) {
-            #prePrint($e);
-            $code = $e->getCode() ? $e->getCode() : 404;
-            //prePrint($e);
-            show_error($e->getMessage(),$code);
+            show_404();
         }
 
         // dd($results);
@@ -172,7 +168,7 @@ class Video extends MX_Controller {
         $this->template->bodyId   = 'videoPage';
         $this->template->dontWrap = true;
 
-        $this->template->title = 'Videouri | ' . $data['video']['title'];
+        $this->template->title = $data['video']['title'] . ' - Videouri';
         $this->template->description = trim_text($data['video']['description'], 100);
         $this->template->content->view('videoPage', $data);
         // $this->template->javascript->add('dist/modules/video.js');

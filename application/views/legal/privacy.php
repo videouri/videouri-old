@@ -1,3 +1,5 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed') ?>
+
 <div class="text_block">
     <p>MediaTram.com is committed to user privacy and/or our policy below and describes our principles in maintaining user trust and confidence and protecting your private data.</p>
 

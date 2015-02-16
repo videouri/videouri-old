@@ -1,3 +1,5 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed') ?>
+
 <div id="filter-options" class="row">
     <div class="col-xs-5">
         <div class="btn-group">
