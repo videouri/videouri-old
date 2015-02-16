@@ -38,7 +38,7 @@ $route['video/(.+)$']['get'] = "video/id/$1";
 $route['results']['get' ]    = "fetch/results";
 $route['tag/(:any)']['get']  = "fetch/results?search_query=$1&search=tag";
 
-$route['404_override']         = '';
+$route['404_override']         = "errors/index/404";
 $route['translate_uri_dashes'] = FALSE;
 
 /* End of file routes.php */

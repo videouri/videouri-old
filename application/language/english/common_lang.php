@@ -1,9 +1,9 @@
 <?php
 
 //meta data
-$lang['page_title']         =		'Videouri video search engine | Free online videos, funny videos and more';
-$lang['page_description']   =		'Search and watch funny videos, top rated videos, most viewed videos, scarry videos and much more Videouri';
-$lang['page_keywords']      =		'videoclips, funny videos, scarry videos, top rated videos, most viewed videos, videouri';
+$lang['page_title']         =		'Videouri.com, your friendly neighborhood video search engine';
+$lang['page_description']   =		'Search and watch funny videos, top rated videos, most viewed videos, scarry videos... all sorts of videos';
+$lang['page_keywords']      =		'videoclips,funny videos,scarry videos,top rated videos,most viewed videos,jokes,pranks,videouri';
 
 /* Visible on all pages */
 //Header

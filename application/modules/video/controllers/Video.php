@@ -50,18 +50,14 @@ class Video extends MX_Controller {
 
         try {
             $results = $this->apiprocessing->individualCall($api);
-        }
 
-        catch (ParameterException $e) {
-            prePrint($e);
-            #show_error($e->getMessage());
+            if (!$results) {
+                show_404();
+            }
         }
 
         catch (Exception $e) {
-            #prePrint($e);
-            $code = $e->getCode() ? $e->getCode() : 404;
-            //prePrint($e);
-            show_error($e->getMessage(),$code);
+            show_404();
         }
 
         // dd($results);
