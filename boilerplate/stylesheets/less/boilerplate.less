@@ -1,0 +1,67 @@
+/**
+ * Vendors
+ */
+@import 'vendor/bootstrap.less';
+@import 'vendor/flat-ui.less';
+@import 'vendor/font-awesome.less';
+@import 'vendor/video-js.less';
+
+/**
+ * Custom shit
+ */
+@import 'helpers.less';
+@import 'variables.less';
+@import 'bootstrap-overwrites';
+
+// 383838
+
+@font-face {
+    font-family: 'Sacramento';
+    src: url('/dist/fonts/Sacramento-Regular.ttf') format('truetype');
+    font-style: cursive;
+}
+
+body {
+    background-color: #E74C3C;
+    font: 12px/20px 'Cabin', Helvetica, Arial, sans-serif;
+    text-rendering: optimizeLegibility;
+    
+    margin: 0 auto;
+    padding-top: 53px;
+
+    &#videoPage {
+        color: white;
+    }
+}
+
+@import 'module/navbar';
+@import 'module/home';
+@import 'module/videosListing';
+@import 'module/login';
+
+  /* Vide Page */
+#video_data .info strong{ font-weight:bold; }
+#video_data .info .tags{ padding: 0; list-style: none; display: inline-block;}
+#video_data .info .tags li{ float:left; display: inline; }
+#video_data .info .tags li a{ color: #925C3E; }
+#video_data .info .tags li a:hover{ text-decoration:underline; cursor: pointer; }
+#video_data .info .description{ text-align: justify; padding: 0; }
+
+#video-info {
+    padding: 15px 0;
+    background: #222222;
+
+    .video-duration,
+    .video-views {
+        // Vertical align icons with the text
+        i.fa {
+            vertical-align: middle;
+        }
+
+        span {
+            font-size: 1.5em;
+            vertical-align: middle;
+            margin-left: 6px;
+        }
+    }
+}
