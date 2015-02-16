@@ -1,9 +1,7 @@
 # Stuff
 test.*
-/___adminpanel/
-/stats/
-/apc.php
-
+/stats/*
+/boilerplate/*
 
 # CI related
 application/config/development
@@ -15,7 +13,3 @@ application/cache/*
 application/logs/*
 !application/logs/index.html
 !application/logs/.htaccess
-
-# Boilerplate files
-boilerplate/bower_components
-boilerplate/node_modules
