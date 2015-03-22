@@ -3,6 +3,7 @@ test.*
 /___adminpanel/
 /stats/
 /apc.php
+/.idea
 
 
 # CI related

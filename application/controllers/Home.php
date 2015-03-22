@@ -11,7 +11,8 @@ class Home extends MY_Controller {
         /**
          * Default parameters for homepage
          */
-        $this->apiprocessing->apis       = ['YouTube', 'Dailymotion'];
+        // $this->apiprocessing->apis       = ['YouTube', 'Dailymotion'];
+        $this->apiprocessing->apis       = ['YouTube'];
         $this->apiprocessing->content    = ['most_viewed'];
         $this->apiprocessing->period     = 'today';
         $this->apiprocessing->maxResults = 8;
