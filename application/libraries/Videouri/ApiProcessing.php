@@ -397,7 +397,7 @@ class ApiProcessing
         $i = 0;
         $results = array();
 
-        if (empty($data) && isset($data['body']['error'])) {
+        if (empty($data) || isset($data['body']['error'])) {
             return $results;
         }
 
