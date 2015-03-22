@@ -157,12 +157,12 @@ class ApiProcessing
                 }
 
                 catch (ParameterException $e) {
-                    prePrint($e);
-                    #echo "Encountered an API error -- code {$e->getCode()} - {$e->getMessage()}";
+                    // var_dump($e);
+                    # echo "Encountered an API error -- code {$e->getCode()} - {$e->getMessage()}";
                 }
 
                 catch (Exception $e) {
-                    prePrint($e);
+                    // var_dump($e);
                     #echo "Some other Exception was thrown -- code {$e->getCode()} - {$e->getMessage()}";
                 }
             }
@@ -396,6 +396,10 @@ class ApiProcessing
     {
         $i = 0;
         $results = array();
+
+        if (empty($data) && isset($data['body']['error'])) {
+            return $results;
+        }
 
         foreach ($data['body']['data'] as $video) {
             $origid = explode('/', $video['uri'])[2];

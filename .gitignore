@@ -1,6 +1,7 @@
 # Stuff
 /stats/*
 /boilerplate/*
+/.idea
 
 # CI related
 application/config/development
