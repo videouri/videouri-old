@@ -365,7 +365,7 @@ $config['encryption_key'] = 's?Gufre_re$7tuTAq3@U_AbR';
 | except for 'cookie_prefix' and 'cookie_httponly', which are ignored here.
 |
 */
-$config['sess_driver']             = 'cookie';
+$config['sess_driver']             = 'files';
 $config['sess_cookie_name']        = 'videouri_com';
 $config['sess_expiration']         = 7200;
 $config['sess_save_path']          = NULL;
