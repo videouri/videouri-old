@@ -1,9 +1,0 @@
-[feature]
-    -> Implement REST routes
-        https://github.com/jamierumbelow/pigeon
-
-    -> Start implementing database to
-        - Track links opened
-        - Video views
-        - 
-            http://stackoverflow.com/questions/9154065/how-do-i-run-codeigniter-migrations

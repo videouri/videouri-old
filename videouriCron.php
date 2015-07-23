@@ -1,5 +1,7 @@
 <?php
 
+// IDEA
+
 /* make sure this isn't called from a web browser */
 if (isset($_SERVER['REMOTE_ADDR'])) die('Permission denied.');
 

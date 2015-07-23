@@ -1,0 +1,55 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
+
+/*
+|--------------------------------------------------------------------------
+| Dailymotion Config Parameters
+|--------------------------------------------------------------------------
+|
+| Config Parameters to be used in Dailymotion's library / functions
+|
+*/
+$config['dailymotion']['api_key']	 = '';
+$config['dailymotion']['api_secret'] = '';
+
+/*
+|--------------------------------------------------------------------------
+| Metacafe Config Parameters
+|--------------------------------------------------------------------------
+|
+| Config Parameters to be used in Metacafe's library / functions
+|
+*/
+$config['metacafe']['consumer_key']	   = null;
+$config['metacafe']['consumer_secret'] = null;
+
+/*
+|--------------------------------------------------------------------------
+| Vimeo Config Parameters
+|--------------------------------------------------------------------------
+|
+| Parameters to be used in using Vimeo library and its functions
+|
+*/
+$config['vimeo']['client_id']	  = '';
+$config['vimeo']['client_secret'] = '';
+
+# public
+$config['vimeo']['access_token'] = '';
+
+# authenticated
+// $config['vimeo']['access_token'] = '';
+
+
+/*
+|--------------------------------------------------------------------------
+| YouTube Config Parameters
+|--------------------------------------------------------------------------
+|
+| Parameters to be used in using YouTube library and its functions
+|
+*/
+$config['youtube']['apikey'] = '';
+
+
+$config['debug']['return_complete'] = FALSE;
+$config['debug']['print_complete']  = FALSE;

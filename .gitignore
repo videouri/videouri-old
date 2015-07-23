@@ -8,6 +8,7 @@ test.*
 
 # CI related
 application/config/development
+application/config/app_libraries.php
 
 application/cache/*
 !application/cache/index.html
