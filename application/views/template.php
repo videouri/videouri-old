@@ -19,7 +19,7 @@
         <?php if(isset($img)): ?>
         <meta property="og:type" content="video"/>
         <meta property="og:image" content="<?= $img ?>">
-        <?php endif ?>      
+        <?php endif ?>
 
         <?= $this->template->meta ?>
 
