@@ -3,6 +3,9 @@
 /**
  * Ajax API handling operations
  *
+ *  @IDEA
+ *    This to have way of to asynchronous calls to an api?
+ *
  */
 class Api extends MY_Controller
 {
@@ -14,7 +17,7 @@ class Api extends MY_Controller
     public function __construct()
     {
         parent::__construct();
-        
+
         if ($_SERVER['SERVER_ADDR'] !== $_SERVER['REMOTE_ADDR']) {
             $this->output->set_status_header(400, 'Batman or not, no remote access allowed.');
             exit;
@@ -34,12 +37,12 @@ class Api extends MY_Controller
     {
         dd(false);
         if ($this->input->is_ajax_request()) {
-            
+
             // Mock up Ajax request to load data from model
             // Configure this to your liking
             $id = $_POST['id'];
             if ($id != null) {
-                
+
                 // Query and/or process here
                 //$this->load->model('example_model');
                 //$data = $this->example_model->get($id);
@@ -76,14 +79,14 @@ class Api extends MY_Controller
     {
         #$this->apiprocessing->sorts  = ['top_rated', 'most_viewed'];
         #$this->apiprocessing->period = 'today';
-        
+
         if (!empty($this->input->get('maxResults'))) {
             $this->apiParameters['maxResults'] = $this->input->get('maxResults');
         }
 
         if (!empty($this->input->get('source')) && $this->input->get('source') !== 'all') {
             $apis = $this->input->get('source');
-            
+
             if (strpos($apis, ',') !== false) {
                 $apis = explode(',', $apis);
             } else {
@@ -102,7 +105,7 @@ class Api extends MY_Controller
         }
         else {
             $content = $this->input->get('content');
-            
+
             if (strpos($content, ',') !== false) {
                 $content = explode(',', $content);
             }/* else {
@@ -175,7 +178,7 @@ class Api extends MY_Controller
      * If your intention is to update your db or some other data manipulation,
      * force your api to only accept POST, its safer
      *
-     * @access public 
+     * @access public
      * @return JSON
      */
     public function post() {

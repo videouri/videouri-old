@@ -39,7 +39,7 @@ class DailymotionController extends MX_Controller {
             case 'today':
                 $period = '-today';
                 break;
-            
+
             case 'week':
                 $period = '-week';
                 break;
@@ -112,13 +112,13 @@ class DailymotionController extends MX_Controller {
                     )
                 );
                 break;
-            
+
             case 'tag':
                 $result = $this->dailymotion->call(
                     '/videos',
                     array(
                         'fields'        => $commonFields,
-                        'tags'          => $parameters['searchQuery'], 
+                        'tags'          => $parameters['searchQuery'],
                         'page'          => $parameters['page'],
                         'limit'         => $parameters['maxResults'],
                         'sort'          => $parameters['sort'],
@@ -156,6 +156,3 @@ class DailymotionController extends MX_Controller {
         return $result;
     }
 }
-
-/* End of file c_dailymotion.php */
-/* Location: ./application/modules/apis/controllers/c_dailymotion.php */

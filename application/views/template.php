@@ -10,7 +10,7 @@
         <meta name="description" content="<?= $this->template->description->default(lang('page_description')) ?>" />
 
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        
+
         <meta property="og:title" content="<?= $this->template->title ?>">
         <meta property="og:site_name" content="Videouri"/>
         <meta property="og:url" content="http://<?= $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'] ?>"/>
@@ -36,7 +36,7 @@
 
         <link rel="stylesheet" href="<?= base_url() ?>dist/videouri.css">
         <?= $this->template->stylesheet ?>
-        
+
         <?php if(isset($canonical)) : ?>
         <link rel="canonical" href="<?= base_url().$canonical ?>" />
         <?php endif ?>
@@ -49,7 +49,7 @@
             m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
             })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-            ga('create', 'UA-28752800-1', 'auto');
+            ga('create', 'UA-CODE-HERE', 'auto');
             ga('require', 'displayfeatures');
             ga('send', 'pageview');
         </script>
@@ -69,55 +69,12 @@
                                     <input class="form-control" type="text" name="search_query" placeholder="Search"
                                             value="<?= isset($searchQuery) ? $searchQuery : '' ?>">
                                     <span class="input-group-btn">
-                                        <?php if (false): // @TODO ?>
-                                        <!-- <button class="btn" data-toggle="dropdown">
-                                            <i class="fa fa-filter"></i>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-inverse" role="menu">
-                                            <li><a href="#">Action</a></li>
-                                            <li><a href="#">Another action</a></li>
-                                            <li><a href="#">Something else here</a></li>
-                                            <li class="divider"></li>
-                                            <li><a href="#">Separated link</a></li>
-                                        </ul> -->
-                                        <?php endif ?>
                                         <button type="submit" class="btn"><i class="fa fa-search"></i></button>
                                     </span>
                                 </div>
                             </div>
                         <?= form_close() ?>
                     </div>
-                    <?php if (false): // @TODO ?>
-                    <div class="col-md-3">
-                        <ul class="nav navbar-nav navbar-right">
-                            <?php if ($this->session->userdata('logged_in') == true): ?>
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                    Alex <b class="caret"></b>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li><a href="#">Action</a></li>
-                                    <li><a href="#">Another action</a></li>
-                                    <li><a href="#">Something else here</a></li>
-                                    <li class="divider"></li>
-                                    <li><a href="#">Separated link</a></li>
-                                </ul>
-                            </li>
-                            <?php else: ?>
-                            <li>
-                                <a href="<?= base_url(); ?>/signin" class="modal-trigger">
-                                    <?= $this->lang->line('signin'); ?>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="<?= base_url(); ?>/signup" class="modal-trigger">
-                                    <?= $this->lang->line('signup'); ?>
-                                </a>
-                            </li>
-                            <?php endif; ?>
-                        </ul>
-                    </div>
-                    <?php endif; ?>
                 </div>
             </div>
         </header>
@@ -164,28 +121,11 @@
             </div>
         </div>
 
-        <?php if (false): // @TODO ?>
-        <!-- .modal -->
-        <div id="videouri-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
-            <div class="modal-dialog modal-sm">
-                <div class="modal-content">
-                    <div class="modal-body">
-                        <p><i class="icon-spinner icon-spin icon-large"></i> Loading...</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn pull-left" data-dismiss="modal">Cerrar</button>
-                    </div>
-                </div><!-- /.modal-content -->
-            </div>
-        </div>
-        <!-- / .modal -->
-        <?php endif ?>
-
         <script type="text/javascript">
             (function (w,d) {var loader = function () {var s = d.createElement("script"), tag = d.getElementsByTagName("script")[0]; s.src = "//cdn.iubenda.com/iubenda.js"; tag.parentNode.insertBefore(s,tag);}; if(w.addEventListener){w.addEventListener("load", loader, false);}else if(w.attachEvent){w.attachEvent("onload", loader);}else{w.onload = loader;}})(window, document);
         </script>
 
-        <script src="<?= base_url() ?>dist/videouri.js"></script> 
+        <script src="<?= base_url() ?>dist/videouri.js"></script>
 
         <?= $this->template->javascript ?>
         <?= isset($scriptCode) ? $scriptCode : '' ?>

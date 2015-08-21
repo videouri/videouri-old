@@ -1,11 +1,11 @@
-<?php if (! defined('BASEPATH')) exit('No direct script access allowed');
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
 
 class YouTubeController extends MY_Controller {
-    
+
     function __construct()
     {
         parent::__construct();
-        
+
         $this->load->library('API/youtube');
 
         #$this->_debug['on'] = true;
@@ -29,7 +29,7 @@ class YouTubeController extends MY_Controller {
             case 'today':
                 $period = 'today';
                 break;
-            
+
             case 'week':
                 $period = 'this_week';
                 break;
@@ -135,12 +135,6 @@ class YouTubeController extends MY_Controller {
 
         }
 
-        #dd($result);
-
         return $result;
     }
-
 }
-
-/* End of file c_youtube.php */
-/* Location: ./application/modules/apis/controllers/c_youtube.php */

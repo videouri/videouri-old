@@ -17,7 +17,5 @@
         Videouri services are not intended for children under 13. In case you are under 13 years of age, then please do not use Videouri. Ask your parents for advice and they will help you to find lots of other great websites which are appropriate for you.
     </p>
 
-    <?php if (false): ?>
     <p>Videouri is a trademark of Videouri Corporation. The information from this website and its databases may not be used, copied, distributed, performed, sublicensed, modified, rented, altered, reverse engineered or recompiled in any way without written permission of its owner. All other trademarks are the property of their respective owners.</p>
-    <?php endif; ?>
 </div>

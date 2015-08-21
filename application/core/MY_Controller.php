@@ -19,5 +19,3 @@ class MY_Controller extends MX_Controller {
         #$this->output->enable_profiler(TRUE);
     }
 }
-/* End of file MY_Controller.php */
-/* Location: ./application/core/MY_Controller.php */
