@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
  * Recursive in_array function
- * 
+ *
  * @param  array $needle
  * @param  array $haystack
  * @return boolean
@@ -26,11 +26,11 @@ function in_array_r($needle, $haystack)
 /**
  * Humanize numbers.
  * For example: 5000 would become 5K
- * 
+ *
  * @param  int $number
  * @return return string
  */
-function humanizeNumber($number) 
+function humanizeNumber($number)
 {
     $abbrevs = array(12 => "T", 9 => "B", 6 => "M", 3 => "K", 0 => "");
 
@@ -54,7 +54,7 @@ function humanizeSeconds($seconds)
 
 /**
  * Used to order an array, by it's viewsCount
- * 
+ *
  * @param  [type] $a [description]
  * @param  [type] $b [description]
  * @return [type]    [description]
@@ -91,7 +91,7 @@ function generateRandomString($length = 10)
 {
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     $randomString = '';
-    
+
     for ($i = 0; $i < $length; $i++) {
         $randomString .= $characters[rand(0, strlen($characters) - 1)];
     }
@@ -112,7 +112,7 @@ if( !function_exists('curl_get'))
 
         // Removes the headers from the output
         curl_setopt($ch, CURLOPT_HEADER, 0);
-        
+
         #curl_setopt($ch, CURLOPT_VERBOSE, true);
 
         // Return the output instead of displaying it directly
@@ -129,7 +129,7 @@ if( !function_exists('curl_get'))
 
         // Close the curl session
         curl_close($ch);
-        
+
         var_dump($headers);
         var_dump($output);
 
@@ -147,7 +147,7 @@ if( !function_exists('trim_text')) {
         if($strip_html) {
             $input = strip_tags($input);
         }
-     
+
         // No need to trim, already shorter than trim length
         if(strlen($input) <= $length) {
             return $input;
@@ -160,11 +160,11 @@ if( !function_exists('trim_text')) {
                 "\t", "\t\n", "\t\r"
             );
             $input = str_replace($elements, '', $input);
-            
+
             $input = preg_replace('/[ ]+/', ' ', $input);
             $input = preg_replace('/<!--[^-]*-->/', '', $input);
         }
-     
+
         // Find last space within length
         $last_space = strrpos(substr($input, 0, $length), ' ');
         $trimmed_text = substr($input, 0, $last_space);
@@ -173,13 +173,62 @@ if( !function_exists('trim_text')) {
         if($ellipses){
             $trimmed_text .= '...';
         }
-     
+
         if($output_entities){
             $trimmed_text = htmlentities($trimmed_text);
         }
-     
+
         return $trimmed_text;
 
     }
 
 }
+
+
+
+/**
+ * Try and get the acurrate IP
+ * @return string IP
+ */
+function getUserIPAdress()
+{
+    //check ip from share internet
+    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+        $ip = $_SERVER['HTTP_CLIENT_IP'];
+    }
+
+    //to check ip is pass from proxy
+    elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+    }
+
+    else {
+        $ip = $_SERVER['REMOTE_ADDR'];
+    }
+
+    return $ip;
+}
+
+
+/**
+ * Return user's country, based on his IP
+ * @return string Country
+ */
+function getUserCountry($ip = null)
+{
+    if (empty($ip)) {
+        $ip = getUserIPAdress();
+
+        if ($ip !== '127.0.0.1') {
+            return geoip_country_code_by_name($ip);
+        }
+
+        return 'UK';
+    }
+
+    return geoip_country_code_by_name($ip);
+}
+
+
+/* End of file users_helper.php */
+/* Location: ./application/helpers/users_helper.php */

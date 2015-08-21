@@ -89,7 +89,7 @@ $autoload['drivers'] = array();
 |	$autoload['helper'] = array('url', 'file');
 */
 
-$autoload['helper'] = array('url', 'language', 'form', 'commons', 'users');
+$autoload['helper'] = array('url', 'language', 'form', 'commons');
 
 
 /*
@@ -105,7 +105,7 @@ $autoload['helper'] = array('url', 'language', 'form', 'commons', 'users');
 |
 */
 
-$autoload['config'] = array('app_settings');
+$autoload['config'] = array();
 
 
 /*
@@ -121,7 +121,7 @@ $autoload['config'] = array('app_settings');
 |
 */
 
-$autoload['language'] = array('common', 'messages');
+$autoload['language'] = array('common');
 
 
 /*

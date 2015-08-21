@@ -5,7 +5,7 @@ class VimeoController extends MX_Controller {
     function __construct()
     {
         parent::__construct();
-        
+
         $this->load->library('API/vimeo');
 
         #$this->_debug['on'] = true;
@@ -39,10 +39,6 @@ class VimeoController extends MX_Controller {
                     break;
             }
         }
-
-        // $data = $this->vimeo->buildAuthorizationEndpoint('http://local.videouri.com/', ['public', 'private'], '12QWGAEg1235!');
-        // $token = $this->vimeo->clientCredentials(['public', 'private']);
-        // dd($token);
 
         switch ($parameters['content'])
         {
@@ -82,8 +78,4 @@ class VimeoController extends MX_Controller {
 
         return $result;
     }
-
 }
-
-/* End of file c_vimeo.php */
-/* Location: ./application/modules/apis/controllers/c_vimeo.php */

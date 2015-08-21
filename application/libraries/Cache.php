@@ -428,6 +428,3 @@ class Cache
         $this->_reset();
     }
 }
-
-/* End of file Cache.php */
-/* Location: ./application/libraries/Cache.php */

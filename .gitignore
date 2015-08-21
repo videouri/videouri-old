@@ -1,6 +1,5 @@
 # Stuff
 test.*
-/___adminpanel/
 /stats/
 /apc.php
 /.idea

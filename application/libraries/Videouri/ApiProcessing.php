@@ -28,7 +28,7 @@ class ApiProcessing
 
     /**
      * Available contents
-     * 
+     *
      * @var array
      */
     private $mixedContents =  array(
@@ -167,13 +167,11 @@ class ApiProcessing
                 }
             }
 
-            // dd($apiResponse);
-
             // Caching results
             // $this->cache->save($apiParametersHash, $apiResponse, $this->_periodCachingTime[$this->period]);
-            
+
             // Set cache to expire in 6 hours
-            $this->cache->save($apiParametersHash, $apiResponse, 21600); 
+            $this->cache->save($apiParametersHash, $apiResponse, 21600);
         }
 
         return $apiResponse;
@@ -218,7 +216,7 @@ class ApiProcessing
             else {
                 $dynamicVariable = "{$this->content}";
             }
-            
+
             $cacheVariable = "{$api}_{$dynamicVariable}_{$this->period}";
         }
 
@@ -227,7 +225,7 @@ class ApiProcessing
         if (!$apiResponse) {
             $apiResponse = self::getContent($this->content, $api);
             // $this->cache->save($cacheVariable, $apiResponse, $this->_cacheTimeout);
-            
+
             // Set cache to 6 hours
             $this->cache->save($cacheVariable, $apiResponse, 21600);
         }
@@ -309,7 +307,7 @@ class ApiProcessing
         if ($content = $this->contentForParser) {
             // $results[$content]['YouTube'] = $results['YouTube'];
             // unset($results['YouTube']);
-            
+
             return array($content => $results);
         }
 
@@ -365,7 +363,7 @@ class ApiProcessing
             preg_match('/http:\/\/[w\.]*metacafe\.com\/watch\/([^?&#"\']*)/is', $video['link'], $match);
             $id  = substr($match[1],0,-1);
             $url = site_url('video/'.substr($id,0,1).'M'.substr($id,1));
-            
+
             $results['Metacafe'][$i] = array(
                 'url'         => $url,
                 'title'       => $video['title'],
@@ -379,7 +377,7 @@ class ApiProcessing
             );
 
             if ($i === $this->maxResults) break;
-            
+
             $i++;
 
         }
@@ -418,7 +416,7 @@ class ApiProcessing
             );
 
             if ($i === $this->maxResults) break;
-            
+
             $i++;
 
         }

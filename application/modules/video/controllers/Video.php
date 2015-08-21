@@ -60,7 +60,6 @@ class Video extends MX_Controller {
             show_404();
         }
 
-        // dd($results);
 
         if ($api === "Dailymotion") {
             $httpsUrl             = preg_replace("/^http:/i", "https:", $results['url']);
@@ -68,7 +67,7 @@ class Video extends MX_Controller {
 
             $thumbnailUrl         = preg_replace("/^http:/i", "https:", $results['thumbnail_medium_url']);
             $data['video']['img'] = $thumbnailUrl;
-            
+
             // $data['video']['ratings']     = $results['ratings'];
             $data['video']['title']       = $results['title'];
             $data['video']['description'] = $results['description'];
@@ -97,7 +96,7 @@ class Video extends MX_Controller {
 
             $xml = simplexml_import_dom($dom);
             $p   = (string)$xml->body->p;
-            
+
             $data['video']['description'] = strstr($p, 'Ranked', true);
 
             $tags  = array();
@@ -142,7 +141,7 @@ class Video extends MX_Controller {
             $data['video']['url']         = "https://www.youtube.com/watch?v=".$origId;
             $data['video']['title']       = $results['title']['$t'];
             $data['video']['description'] = $results['media$group']['media$description']['$t'];
-            
+
             $tags = array();
             $categoriesCount = count($results['category']) - 1;
             for ($i = 1; $i <= $categoriesCount; $i++) {
@@ -189,7 +188,7 @@ class Video extends MX_Controller {
         $this->apiprocessing->maxResults = 8;
         // $this->apiprocessing->api = $api;
         // $this->apiprocessing->videoId = $origId;
-         
+
         $results = $this->apiprocessing->individualCall($api);
         // $results = $this->apiprocessing->parseApiResult($api, $results);
         // dd($results);
@@ -209,11 +208,11 @@ class Video extends MX_Controller {
 
                     $httpsUrl           = preg_replace("/^http:/i", "https:", $url);
                     $related[$i]['url'] = $url;
-                    
+
                     $thumbnailUrl       = preg_replace("/^http:/i", "https:", $video['thumbnail_240_url']);
                     $related[$i]['img'] = $thumbnailUrl;
 
-                    $related[$i]['title']  = $video['title'];                    
+                    $related[$i]['title']  = $video['title'];
                     $related[$i]['source'] = 'Dailymotion';
                     $i++;
                 }

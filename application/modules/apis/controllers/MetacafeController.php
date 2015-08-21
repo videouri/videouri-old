@@ -8,10 +8,6 @@ class MetacafeController extends MX_Controller {
 
         $this->load->library('API/metacafe');
 
-        if (!class_exists('CI_CACHE')) {
-            $this->load->driver('cache', array('adapter' => 'apc', 'backup' => 'file', 'key_prefix' => 'videouri_'));
-        }
-
         #$this->_debug['on'] = true;
     }
 
@@ -73,7 +69,7 @@ class MetacafeController extends MX_Controller {
             $result['embed'] = $this->metacafe->getEmbedData($parameters['id']);
             return $result;
         }
-        
+
         else {
             return simplexml_load_string($result);
         }
@@ -84,8 +80,4 @@ class MetacafeController extends MX_Controller {
         $result = $this->metacafe->getRelatedVideos($id);
         return simplexml_load_string($result);
     }
-    
 }
-
-/* End of file c_metacafe.php */
-/* Location: ./application/modules/apis/controllers/c_metacafe.php */
